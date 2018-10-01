@@ -16,10 +16,10 @@ async def on_ready() :
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
-    try :
-        threading.Thread(target=bot_thread).start()
-    except :
-        print('Error: unable to start thread')
+    #try :
+    #    threading.Thread(target=bot_thread).start()
+    #except :
+    #    print('Error: unable to start thread')
     print('------')
 
 @bot.command()
