@@ -95,7 +95,7 @@ async def on_ready() :
 async def register(ctx, username):
     if not user_registered(ctx):
         #check that the desired username is available (not case sensitive)
-        cur.execute("SELECT * FROM playerTable WHERE LOWER(username) LIKE LOWER(\"%s\");" % username)
+        cur.execute("SELECT * FROM playerTable WHERE LOWER(username)=\"%s\";" % username.lower())
         if cur.fetchone() == None:
             cur.execute("INSERT INTO playerTable (discordID, username) VALUES (%s, \"%s\");" % (ctx.author.id, username))
             cur.commit()
