@@ -6,7 +6,7 @@ from discord.ext import commands
 import os
 import psycopg2
 
-from queue import Queue
+from mm import *
 
 NOT_REGISTERED_MESSAGE = "Please register before participating in CGL. You can register by using the \"!register *username*\" command."
 
