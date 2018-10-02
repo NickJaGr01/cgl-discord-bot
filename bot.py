@@ -97,7 +97,7 @@ async def register(ctx, username):
         #check that the desired username is available (not case sensitive)
         cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
         if cur.fetchone() == None:
-            cur.execute("INSERT INTO playerTable (discordID, username) VALUES (%s, \"%s\");" % (ctx.author.id, username))
+            cur.execute("INSERT INTO playerTable (discordID, username) VALUES (%s, '%s');" % (ctx.author.id, username))
             cur.commit()
             await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
         else:
