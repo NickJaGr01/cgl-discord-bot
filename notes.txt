@@ -1,0 +1,2 @@
+SQL to execute:
+CREATE TABLE playerTable (discordID INT, username TEXT);
