@@ -1,4 +1,4 @@
-class Queue:
+class MMQueue:
     def __init__(self):
         self.queue = {}
 

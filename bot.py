@@ -83,7 +83,7 @@ async def on_ready() :
     print(bot.user.id)
     print('------')
 
-    queue = Queue()
+    queue = MMQueue()
     matches = {}
 
     try :
