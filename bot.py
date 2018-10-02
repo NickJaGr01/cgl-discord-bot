@@ -42,7 +42,7 @@ def cycle_queue():
         queue.move(id, lobby, team)
         user = bot.get_user(id)
         user.send("A game has been found! Type \"!accept\" to confirm.")
-        await user.send("30 seconds left")
+        user.send("30 seconds left")
     queue.step_time()
     lobbies = queue.lobbies()
     for l in lobbies.keys():
@@ -50,22 +50,25 @@ def cycle_queue():
         for id in lobbies[l]["players"]:
             if not lobbies[l]["players"][id]["confirmed"]:
                 ready = False
-                break
+                user = bot.get_user(id)
+                user.send("%s" % lobbies[l]["time"])
         if ready:
             matches[l] = {}
             for id in lobbies[l]["players"]:
                 matches[l][id] = {"team": queue.queue[id]["team"]}
+            continue
+
         if lobbies[l]["time"] <= 0:
             for id in lobbies[l]["players"]:
                 if lobbies[l]["players"][id]["confirmed"]:
                     queue.move(id, -1)
                     user = bot.get_user(id)
-                    await user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
+                    user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
                 else:
                     del queue.queue[id]
                     queue.pop(id)
                     user = bot.get_user(id)
-                    await user.send("You failed to confirm your match. You have been removed from the queue.")
+                    user.send("You failed to confirm your match. You have been removed from the queue.")
             available_lobbies.append(l)
 
     time.sleep(1)
