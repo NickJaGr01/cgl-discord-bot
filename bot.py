@@ -41,7 +41,7 @@ def cycle_queue():
             team = 1
         queue.move(id, lobby, team)
         user = bot.get_user(id)
-        await user.send("A game has been found! Type \"!accept\" to confirm.")
+        user.send("A game has been found! Type \"!accept\" to confirm.")
         await user.send("30 seconds left")
     queue.step_time()
     lobbies = queue.lobbies()
