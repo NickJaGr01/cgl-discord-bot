@@ -16,8 +16,8 @@ DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 
-queue = None
-matches = None
+queue = MMQueue()
+matches = {}
 
 available_lobbies = [i for i in range(20)]
 
@@ -82,9 +82,6 @@ async def on_ready() :
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-
-    queue = MMQueue()
-    matches = {}
 
     try :
         threading.Thread(target=bot_thread).start()
