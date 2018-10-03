@@ -16,7 +16,7 @@ DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 
-queue = MMQueue()
+mmqueue = MMQueue()
 matches = {}
 
 available_lobbies = [i for i in range(20)]
@@ -30,7 +30,7 @@ def bot_thread():
         cycle_queue()
 
 def cycle_queue():
-    inq = queue.in_queue()
+    inq = mmqueue.in_queue()
     lobby = 0
     for i in range(floor(len(inq)/10)*10):
         if i%10 == 0:
@@ -42,12 +42,12 @@ def cycle_queue():
         team = 0
         if i%10/5 >= 1:
             team = 1
-        queue.move(id, lobby, team)
+        mmqueue.move(id, lobby, team)
         user = bot.get_user(id)
         user.send("A game has been found! Type \"!accept\" to confirm.")
         user.send("30 seconds left")
-    queue.step_time()
-    lobbies = queue.lobbies()
+    mmqueue.step_time()
+    lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
         ready = True
         for id in lobbies[l]["players"]:
@@ -58,18 +58,18 @@ def cycle_queue():
         if ready:
             matches[l] = {}
             for id in lobbies[l]["players"]:
-                matches[l][id] = {"team": queue.queue[id]["team"]}
+                matches[l][id] = {"team": mmqueue.queue[id]["team"]}
             continue
 
         if lobbies[l]["time"] <= 0:
             for id in lobbies[l]["players"]:
                 if lobbies[l]["players"][id]["confirmed"]:
-                    queue.move(id, -1)
+                    mmqueue.move(id, -1)
                     user = bot.get_user(id)
                     user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
                 else:
-                    del queue.queue[id]
-                    queue.pop(id)
+                    del mmqueue.queue[id]
+                    mmqueue.pop(id)
                     user = bot.get_user(id)
                     user.send("You failed to confirm your match. You have been removed from the queue.")
             available_lobbies.append(l)
@@ -106,7 +106,7 @@ async def register(ctx, username):
 async def accept(ctx):
     if user_registered(ctx):
         #find the user in the queue
-        for e in queue:
+        for e in mmqueue:
             if e[0].id == ctx.author.id:
                 if e[1] == 0:
                     return
@@ -121,7 +121,7 @@ async def accept(ctx):
 @bot.command()
 async def queue(ctx):
     if user_registered(ctx):
-        queue.push(ctx.author.id)
+        mmqueue.push(ctx.author.id)
         await ctx.author.send("You have been added to the queue.\nPlayers in queue: %s" % len(queue.in_queue()))
     else:
         await ctx.author.send(NOT_REGISTERED_MESSAGE)
