@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 import os
 import psycopg2
+import math
 
 from mm import *
 
@@ -32,7 +33,7 @@ def bot_thread():
 def cycle_queue():
     inq = mmqueue.in_queue()
     lobby = 0
-    for i in range(floor(len(inq)/10)*10):
+    for i in range(math.floor(len(inq)/10)*10):
         if i%10 == 0:
             if len(available_lobbies) == 0:
                 break
