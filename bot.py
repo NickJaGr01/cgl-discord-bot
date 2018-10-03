@@ -123,7 +123,7 @@ async def accept(ctx):
 async def queue(ctx):
     if user_registered(ctx):
         mmqueue.push(ctx.author.id)
-        await ctx.author.send("You have been added to the queue.\nPlayers in queue: %s" % len(queue.in_queue()))
+        await ctx.author.send("You have been added to the queue.\nPlayers in queue: %s" % len(mmqueue.in_queue()))
     else:
         await ctx.author.send(NOT_REGISTERED_MESSAGE)
 
