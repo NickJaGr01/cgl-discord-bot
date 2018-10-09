@@ -53,7 +53,7 @@ def mm_thread():
         cycle_matches()
         time.sleep(1)
 
-def cycle_queue():
+async def cycle_queue():
     inq = mmqueue.in_queue()
     lobby = 0
     #for i in range(math.floor(len(inq)/10)*10):
@@ -123,7 +123,7 @@ def cycle_queue():
 
 ELO_K_FACTOR = 16
 
-def cycle_matches():
+async def cycle_matches():
     for m in matches:
         if matches[m]["map"] is list:
             if matches[m]["time"] % 5:
