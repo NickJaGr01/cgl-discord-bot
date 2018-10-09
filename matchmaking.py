@@ -49,11 +49,11 @@ MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblest
 
 async def mm_thread():
     while True:
-        await cycle_queue()
-        await cycle_matches()
+        cycle_queue()
+        cycle_matches()
         time.sleep(1)
 
-async def cycle_queue():
+def cycle_queue():
     inq = mmqueue.in_queue()
     lobby = 0
     for i in range(math.floor(len(inq)/10)*10):
@@ -68,8 +68,8 @@ async def cycle_queue():
             team = 2
         mmqueue.move(id, lobby, team)
         user = bot.get_user(id)
-        await user.send("A game has been found! Type \"!accept\" to confirm.")
-        await user.send("30 seconds left")
+        user.send("A game has been found! Type \"!accept\" to confirm.")
+        user.send("30 seconds left")
     mmqueue.step_time()
     lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
@@ -111,17 +111,17 @@ async def cycle_queue():
                 if lobbies[l]["players"][id]["confirmed"]:
                     mmqueue.move(id, -1)
                     user = bot.get_user(id)
-                    await user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
+                    user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
                 else:
                     del mmqueue.queue[id]
                     mmqueue.pop(id)
                     user = bot.get_user(id)
-                    await user.send("You failed to confirm your match. You have been removed from the queue.")
+                    user.send("You failed to confirm your match. You have been removed from the queue.")
             available_lobbies.append(l)
 
 ELO_K_FACTOR = 16
 
-async def cycle_matches():
+def cycle_matches():
     for m in matches:
         if matches[m]["map"] is list:
             if matches[m]["time"] % 5:
