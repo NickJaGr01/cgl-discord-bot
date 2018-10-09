@@ -48,5 +48,5 @@ async def on_voice_state_update(member, before, after):
     if before.channel != None:
         if before.channel.id == MM_CHANNEL_ID and before.channel != after.channel:
             print("leave queue")
-            matchmaking.mmqueue.remove(member.id)
+            matchmaking.mmqueue.pop(member.id)
             await member.edit(deafen=False)
