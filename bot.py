@@ -24,9 +24,10 @@ async def on_ready() :
 
     try:
         await threading.Thread(target=matchmaking.mm_thread).start()
-    except e, var:
+    except e:
         print('Error: unable to start thread')
-        print("%s: %s" % (type(e), var))
+        #print("%s: %s" % (type(e), var))
+        print(type(e))
 
 @bot.event
 async def on_message(msg):
