@@ -49,8 +49,8 @@ MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblest
 
 def mm_thread():
     while True:
-        cycle_queue()
-        cycle_matches()
+        await cycle_queue()
+        await cycle_matches()
         time.sleep(1)
 
 async def cycle_queue():

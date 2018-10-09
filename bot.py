@@ -29,7 +29,7 @@ async def on_ready() :
 
 @bot.event
 async def on_message(msg):
-    matchmaking.process_match_commands(msg)
+    await matchmaking.process_match_commands(msg)
     await bot.process_commands(msg)
 
 MM_CHANNEL_ID = 498928703091507220
