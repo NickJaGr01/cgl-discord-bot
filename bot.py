@@ -8,9 +8,6 @@ import os
 import psycopg2
 import math
 
-import matchmaking
-import cgl_commands
-
 bot = commands.Bot(command_prefix='!')
 
 CGL_server = None
@@ -49,3 +46,6 @@ async def on_voice_state_update(member, before, after):
 
 token = os.environ['DISCORD_KEY']
 bot.run(token)
+
+import matchmaking
+import cgl_commands
