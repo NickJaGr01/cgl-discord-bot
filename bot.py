@@ -13,6 +13,9 @@ bot = commands.Bot(command_prefix='!')
 CGL_server = None
 lobby_category = None
 
+import matchmaking
+import cgl_commands
+
 @bot.event
 async def on_ready() :
     print('Logged in as')
@@ -23,9 +26,9 @@ async def on_ready() :
     CGL_server = bot.get_guild(os.environ["OFFICIAL_DISCORD_ID"])
     lobby_catergory = bot.get_channel(os.environ["LOBBY_CATEGORY_ID"])
 
-    try :
+    try:
         threading.Thread(target=matchmaking.mm_thread).start()
-    except :
+    except:
         print('Error: unable to start thread')
 
 @bot.event
@@ -46,6 +49,3 @@ async def on_voice_state_update(member, before, after):
 
 token = os.environ['DISCORD_KEY']
 bot.run(token)
-
-import matchmaking
-import cgl_commands
