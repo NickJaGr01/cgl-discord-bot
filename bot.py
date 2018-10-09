@@ -10,8 +10,8 @@ import math
 
 bot = commands.Bot(command_prefix='!')
 
-CGL_server = None
-lobby_category = None
+CGL_server = 495761319639646208
+lobby_category = 497054873678774288
 
 import matchmaking
 
@@ -21,9 +21,6 @@ async def on_ready() :
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-
-    CGL_server = bot.get_guild(os.environ["OFFICIAL_DISCORD_ID"])
-    lobby_catergory = bot.get_channel(os.environ["LOBBY_CATEGORY_ID"])
 
     try:
         threading.Thread(target=matchmaking.mm_thread).start()
@@ -35,7 +32,6 @@ async def on_message(msg):
     matchmaking.process_match_commands(msg)
     await bot.process_commands(msg)
 
-#MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
 MM_CHANNEL_ID = 498928703091507220
 
 @bot.event

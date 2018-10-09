@@ -56,8 +56,10 @@ def mm_thread():
 def cycle_queue():
     inq = mmqueue.in_queue()
     lobby = 0
-    for i in range(math.floor(len(inq)/10)*10):
-        if i%10 == 0:
+    #for i in range(math.floor(len(inq)/10)*10):
+    for i in range(len(inq)):
+        #if i%10 == 0:
+        if i%1 == 0:
             if len(available_lobbies) == 0:
                 break
             lobby = available_lobbies[0]
@@ -127,7 +129,8 @@ def cycle_matches():
             if matches[m]["time"] % 5:
                 matches[m]["channels"][0].send("%s seconds remaining" % matches[m]["time"])
             matches[m]["time"] -= 1
-            if len(matches[m]["votes"]) == 10 or matches[m]["time"] <= 0:
+            #if len(matches[m]["votes"]) == 10 or matches[m]["time"] <= 0:
+            if len(matches[m]["votes"]) == 1 or matches[m]["time"] <= 0:
                 #determine most popular vote
                 track = {}
                 for key, value in matches[m]["votes"].items():
