@@ -1,4 +1,4 @@
-from bot
+import bot
 import os
 
 bot.bot = commands.Bot(command_prefix='!')
