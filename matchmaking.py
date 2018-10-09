@@ -70,8 +70,8 @@ def cycle_queue():
             team = 2
         mmqueue.move(id, lobby, team)
         user = bot.get_user(id)
-        user.send("A game has been found! Type \"!accept\" to confirm.")
-        user.send("30 seconds left")
+        await user.send("A game has been found! Type \"!accept\" to confirm.")
+        await user.send("30 seconds left")
     mmqueue.step_time()
     lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
@@ -113,12 +113,12 @@ def cycle_queue():
                 if lobbies[l]["players"][id]["confirmed"]:
                     mmqueue.move(id, -1)
                     user = bot.get_user(id)
-                    user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
+                    await user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
                 else:
                     del mmqueue.queue[id]
                     mmqueue.pop(id)
                     user = bot.get_user(id)
-                    user.send("You failed to confirm your match. You have been removed from the queue.")
+                    await user.send("You failed to confirm your match. You have been removed from the queue.")
             available_lobbies.append(l)
 
 ELO_K_FACTOR = 16
@@ -216,9 +216,9 @@ def process_match_commands(msg):
                 if map in matches[lobby]["map"]:
                     matches[lobby]["votes"][msg.author.id] = map
                 else:
-                    msg.channel.send("%s is not a valid map." % map)
+                    await msg.channel.send("%s is not a valid map." % map)
         elif msg.content.startswith("result "):
             if msg.author.id not in matches[lobby]["votes"]:
                 result = msg.content[7:]
                 if result != "win" and result != "lose":
-                    msg.channel.send("%s is not a valid match result." % result)
+                    await msg.channel.send("%s is not a valid match result." % result)
