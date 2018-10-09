@@ -201,7 +201,7 @@ async def cycle_matches():
                     del matches[m]
 
 
-def process_match_commands(msg):
+async def process_match_commands(msg):
     is_game_chat = False
     lobby = None
     for l in matches:
