@@ -14,6 +14,8 @@ bot = commands.Bot(command_prefix='!')
 CGL_server = None
 lobby_category = None
 
+import matchmaking
+
 @bot.event
 async def on_ready() :
     print('Logged in as')
@@ -39,6 +41,7 @@ MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
 
 @bot.event
 async def on_voice_state_update(member, before, after):
+    print(voice_state_update)
     if after.channel.id == MM_CHANNEL_ID and before.channel.id != MM_CHANNEL_ID:
         matchmaking.mmqueue.push(member.id)
         await member.edit(deafen=True)
