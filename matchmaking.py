@@ -47,7 +47,7 @@ matches = {}
 
 MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblestone"]
 
-async def mm_thread():
+def mm_thread():
     while True:
         cycle_queue()
         cycle_matches()
