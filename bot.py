@@ -46,6 +46,3 @@ async def on_voice_state_update(member, before, after):
     elif after.channel.id != MM_CHANNEL_ID and before.channel.id == MM_CHANNEL_ID:
         matchmaking.mmqueue.remove(member.id)
         await member.edit(deafen=False)
-
-token = os.environ['DISCORD_KEY']
-bot.run(token)

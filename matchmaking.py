@@ -1,5 +1,5 @@
-#from bot import bot
-#import database
+from bot import bot
+import database
 
 class MMQueue:
     def __init__(self):
