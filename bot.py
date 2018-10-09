@@ -8,7 +8,8 @@ import os
 import psycopg2
 import math
 
-bot = None
+#bot = None
+bot = commands.Bot(command_prefix='!')
 
 CGL_server = None
 lobby_category = None
@@ -36,7 +37,8 @@ async def on_message(msg):
     matchmaking.process_match_commands(msg)
     await bot.process_commands(msg)
 
-MM_CHANNEL_ID = None
+#MM_CHANNEL_ID = None
+MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
 
 @bot.event
 async def on_voice_state_update(member, before, after):
