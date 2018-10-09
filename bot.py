@@ -8,7 +8,6 @@ import os
 import psycopg2
 import math
 
-#bot = None
 bot = commands.Bot(command_prefix='!')
 
 CGL_server = None
@@ -36,12 +35,10 @@ async def on_message(msg):
     matchmaking.process_match_commands(msg)
     await bot.process_commands(msg)
 
-#MM_CHANNEL_ID = None
 MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    print(voice_state_update)
     if after.channel.id == MM_CHANNEL_ID and before.channel.id != MM_CHANNEL_ID:
         matchmaking.mmqueue.push(member.id)
         await member.edit(deafen=True)
