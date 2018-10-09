@@ -1,3 +1,5 @@
+import math
+
 from bot import bot
 import database
 
