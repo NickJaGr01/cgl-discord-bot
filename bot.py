@@ -39,22 +39,13 @@ MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    join = False
-    leave = False
-    if after.channel == None:
-        if before.channel != None:
-            if before.channel.id == MM_CHANNEL_ID:
-                leave = True
-    else:
-        if before.channel != None:
-            if before.channel.id == MM_CHANNEL_ID and after.channel.id != MM_CHANNEL_ID:
-                leave = True
-        if after.channel.id == MM_CHANNEL_ID:
-            if before.channel != after.channel:
-                join = True
-    if join:
-        matchmaking.mmqueue.push(member.id)
-        await member.edit(deafen=True)
-    if leave:
-        matchmaking.mmqueue.remove(member.id)
-        await member.edit(deafen=False)
+    if after.channel != None:
+        if after.channel.id == MM_CHANNEL_ID and after.channel != before.channel:
+            print("join queue")
+            matchmaking.mmqueue.push(member.id)
+            await member.edit(deafen=True)
+    if before.channel != None:
+        if before.channel.id == MM_CHANNEL_ID and before.channel != after.channel:
+            print("leave queue")
+            matchmaking.mmqueue.remove(member.id)
+            await member.edit(deafen=False)
