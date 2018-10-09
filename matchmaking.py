@@ -139,7 +139,7 @@ def cycle_matches():
                 if len(matches[m]["map"]) == 1:
                     matches[m]["time"] = 300
                     matches[m]["map"] = matches[m]["map"][0]
-                    matches[m]["channels"][0].send("The match will be played on %s.\nThe match host is %s.\nPlease create a lobby on popflash.site and paste the link in this channel.\nWhen the game has finished, all players must report the result by typing \"result win\" or \"result lose\"." % (matches[m]["map"], bot.get_user(matches[m]["host"]).mention)
+                    matches[m]["channels"][0].send("The match will be played on %s.\nThe match host is %s.\nPlease create a lobby on popflash.site and paste the link in this channel.\nWhen the game has finished, all players must report the result by typing \"result win\" or \"result lose\"." % (matches[m]["map"], bot.get_user(matches[m]["host"]).mention))
                 else:
                     mapliststring = "maps remaining:"
                     for mv in matches[m]["map"]:
