@@ -14,9 +14,6 @@ bot = commands.Bot(command_prefix='!')
 CGL_server = None
 lobby_category = None
 
-import matchmaking
-import cgl_commands
-
 @bot.event
 async def on_ready() :
     print('Logged in as')
