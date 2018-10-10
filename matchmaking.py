@@ -87,7 +87,7 @@ async def cycle_queue():
         if ready:
             #create the lobbies for the teams
             guild = bot.get_guild(CGL_server)
-            cat = bot.get_category(lobby_category)
+            cat = guild.get_category(lobby_category)
             textchat = guild.create_text_channel("Game Chat", category=cat)
             teamchat = [None, None]
             teamchat[0] = guild.create_voice_channel("Your Team", category=cat)
