@@ -27,7 +27,7 @@ async def on_ready() :
     except Exception as e:
         print('Error: unable to start thread')
         #print("%s: %s" % (type(e), var))
-        print(e)
+        print("error: %s" % e)
 
 @bot.event
 async def on_message(msg):
