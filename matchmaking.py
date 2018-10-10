@@ -218,6 +218,7 @@ async def process_match_commands(msg):
         if msg.content.startswith("vote "):
             if msg.author.id not in matches[lobby]["votes"]:
                 map = msg.content[5:]
+                print("map = %s" % map)
                 if map in matches[lobby]["map"]:
                     matches[lobby]["votes"][msg.author.id] = map
                 else:
