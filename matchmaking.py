@@ -93,7 +93,7 @@ async def cycle_queue():
             teamchat[0] = guild.create_voice_channel("Your Team", category=cat)
             teamchat[1] = guild.create_voice_channel("Your Team", category=cat)
             matches[l] = {"map": MAP_LIST.copy(), "votes": {}, "time": 30, "channels": {0: textchat, 1: teamchat[0], 2: teamchat[1]}, "players": {}}
-            host = lobbies[l]["players"]
+            host = lobbies[l]["players"].keys()[0]
             host_rep = database.player_rep(host)
             for id in lobbies[l]["players"]:
                 this_rep = database.player_rep(id)
