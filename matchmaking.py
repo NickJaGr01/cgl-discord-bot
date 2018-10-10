@@ -108,9 +108,9 @@ async def cycle_queue():
                 await user.edit(voice_channel=teamchat[team-1])
             matches[l]["host"] = host
             mapliststring = "maps remaining:"
-            for mv in matches[m]["map"]:
+            for mv in matches[l]["map"]:
                 mapliststring += "\n    %s" % mv
-            matches[m]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
+            matches[l]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
             continue
         if lobbies[l]["time"] <= 0:
             for id in lobbies[l]["players"]:
