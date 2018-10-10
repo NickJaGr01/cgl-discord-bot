@@ -23,7 +23,7 @@ async def on_ready() :
     print('------')
 
     try:
-        await threading.Thread(target=matchmaking.mm_thread).start()
+        threading.Thread(target=matchmaking.mm_thread).start()
     except Exception as e:
         print('Error: unable to start thread')
         #print("%s: %s" % (type(e), var))
