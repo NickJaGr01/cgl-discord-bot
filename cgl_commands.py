@@ -3,6 +3,7 @@ import discord
 import database
 from bot import bot
 from bot import CGL_server
+from matchmaking import mmqueue
 
 NOT_REGISTERED_MESSAGE = "Please register before participating in CGL. You can register by using the \"!register *username*\" command."
 
