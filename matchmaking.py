@@ -3,6 +3,7 @@ import asyncio
 
 from bot import bot
 from bot import CGL_server
+from bot import lobby_category
 import database
 
 class MMQueue:
@@ -85,10 +86,12 @@ async def cycle_queue():
         #begin the game if all players have confirmed the match
         if ready:
             #create the lobbies for the teams
-            textchat = CGL_server.create_text_channel("Game Chat", category=lobby_category)
+            guild = bot.get_guild(CGL_server)
+            cat = bot.get_category(lobby_category)
+            textchat = guild.create_text_channel("Game Chat", category=cat)
             teamchat = [None, None]
-            teamchat[0] = CGL_server.create_voice_channel("Your Team", category=lobby_category)
-            teamchat[1] = CGL_server.create_voice_channel("Your Team", category=lobby_category)
+            teamchat[0] = guild.create_voice_channel("Your Team", category=cat)
+            teamchat[1] = guild.create_voice_channel("Your Team", category=cat)
             matches[l] = {"map": MAP_LIST.copy(), "votes": {}, "time": 30, "channels": {0: textchat, 1: teamchat[0], 2: teamchat[1]}, "players": {}}
             host = lobbies[l]["players"]
             host_rep = database.player_rep(host)
