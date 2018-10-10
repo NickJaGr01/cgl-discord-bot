@@ -2,6 +2,7 @@ import math
 import asyncio
 
 from bot import bot
+from bot import CGL_server
 import database
 
 class MMQueue:
@@ -49,7 +50,6 @@ MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblest
 
 async def mm_thread():
     while True:
-        print("cycle")
         await cycle_queue()
         await cycle_matches()
         await asyncio.sleep(1)
