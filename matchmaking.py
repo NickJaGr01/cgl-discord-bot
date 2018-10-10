@@ -110,7 +110,7 @@ async def cycle_queue():
             mapliststring = "maps remaining:"
             for mv in matches[l]["map"]:
                 mapliststring += "\n    %s" % mv
-            matches[l]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
+            await matches[l]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
             continue
         if lobbies[l]["time"] <= 0:
             for id in lobbies[l]["players"]:
