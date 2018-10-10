@@ -130,7 +130,7 @@ ELO_K_FACTOR = 16
 async def cycle_matches():
     for m in matches:
         if matches[m]["map"] is list:
-            if matches[m]["time"] % 5:
+            if matches[m]["time"] % 5 == 0:
                 await matches[m]["channels"][0].send("%s seconds remaining" % matches[m]["time"])
             matches[m]["time"] -= 1
             #if len(matches[m]["votes"]) == 10 or matches[m]["time"] <= 0:
