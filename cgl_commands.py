@@ -26,15 +26,11 @@ async def register(ctx, username):
 async def accept(ctx):
     if database.user_registered(ctx):
         #find the user in the queue
-        for e in mmqueue:
-            if e[0].id == ctx.author.id:
-                if e[1] == 0:
-                    return
-                if e[1] < 0:
-                    e[1] *= -1
-                    await ctx.author.send("You have accepted your game.\nWaiting for remaining players...")
-                return
-        await ctx.author.send("You are not in the queue. You can join it by typing \"!queue\"")
+        if ctx.author.id in mmqueue.queue:
+            mmqueue.queue[ctx.author.id]["confirmed"] = True
+            await ctx.author.send("You have accepted your game.\nWaiting for remaining players...")
+        else:
+            await ctx.author.send("You are not in the queue. You can join it by connecting to the matchmaking channel.")
     else:
         await ctx.author.send(NOT_REGISTERED_MESSAGE)
 
