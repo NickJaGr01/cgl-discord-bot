@@ -19,7 +19,7 @@ class MMQueue:
         d = {}
         for id in self.queue.keys():
             if self.queue[id]["lobby"] >= 0:
-                if not self.queue[id]["lobby"] in dict:
+                if self.queue[id]["lobby"] not in d:
                     d[self.queue[id]["lobby"]] = {"time": self.queue[id]["time"], "players": {}}
                 d[self.queue[id]["lobby"]]["players"][id] = {"team": self.queue[id]["team"], "confirmed": self.queue[id]["confirmed"]}
         return d
