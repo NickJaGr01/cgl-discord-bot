@@ -1,5 +1,5 @@
 import math
-import time
+import asyncio
 
 from bot import bot
 import database
@@ -49,9 +49,10 @@ MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblest
 
 async def mm_thread():
     while True:
+        print("cycle")
         await cycle_queue()
         await cycle_matches()
-        time.sleep(1)
+        await asyncio.sleep(1)
 
 async def cycle_queue():
     inq = mmqueue.in_queue()
