@@ -39,11 +39,9 @@ MM_CHANNEL_ID = 498928703091507220
 async def on_voice_state_update(member, before, after):
     if after.channel != None:
         if after.channel.id == MM_CHANNEL_ID and after.channel != before.channel:
-            print("join queue")
             matchmaking.mmqueue.push(member.id)
             await member.edit(deafen=True)
     if before.channel != None:
         if before.channel.id == MM_CHANNEL_ID and before.channel != after.channel:
-            print("leave queue")
             matchmaking.mmqueue.pop(member.id)
             await member.edit(deafen=False)
