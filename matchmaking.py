@@ -52,6 +52,7 @@ def mm_thread():
         cycle_queue()
         cycle_matches()
         time.sleep(1)
+        print("cycle")
 
 def cycle_queue():
     inq = mmqueue.in_queue()
