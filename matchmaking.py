@@ -208,6 +208,7 @@ async def cycle_matches():
 async def process_match_commands(msg):
     is_game_chat = False
     lobby = None
+    print("channel id = %s" % msg.channel.id)
     for l in matches:
         if matches[l]["channels"][0].id == msg.channel.id:
             is_game_chat = True
