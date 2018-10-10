@@ -25,7 +25,7 @@ async def on_ready() :
     print(bot.user.id)
     print('------')
 
-    task = asyncio.create_task(mathmaking.mm_thread())
+    task = asyncio.create_task(matchmaking.mm_thread())
 
 @bot.event
 async def on_message(msg):
