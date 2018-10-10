@@ -47,13 +47,13 @@ matches = {}
 
 MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblestone"]
 
-def mm_thread():
+async def mm_thread():
     while True:
-        cycle_queue()
-        cycle_matches()
+        await cycle_queue()
+        await cycle_matches()
         time.sleep(1)
 
-def cycle_queue():
+async def cycle_queue():
     inq = mmqueue.in_queue()
     lobby = 0
     #for i in range(math.floor(len(inq)/10)*10):
@@ -70,8 +70,8 @@ def cycle_queue():
             team = 2
         mmqueue.move(id, lobby, team)
         user = bot.get_user(id)
-        user.send("A game has been found! Type \"!accept\" to confirm.")
-        user.send("30 seconds left")
+        await user.send("A game has been found! Type \"!accept\" to confirm.")
+        await user.send("30 seconds left")
     mmqueue.step_time()
     lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
@@ -80,7 +80,7 @@ def cycle_queue():
             if not lobbies[l]["players"][id]["confirmed"]:
                 ready = False
                 user = bot.get_user(id)
-                user.send("%s" % lobbies[l]["time"])
+                await user.send("%s" % lobbies[l]["time"])
         #begin the game if all players have confirmed the match
         if ready:
             #create the lobbies for the teams
@@ -118,16 +118,16 @@ def cycle_queue():
                     del mmqueue.queue[id]
                     mmqueue.pop(id)
                     user = bot.get_user(id)
-                    user.send("You failed to confirm your match. You have been removed from the queue.")
+                    await user.send("You failed to confirm your match. You have been removed from the queue.")
             available_lobbies.append(l)
 
 ELO_K_FACTOR = 16
 
-def cycle_matches():
+async def cycle_matches():
     for m in matches:
         if matches[m]["map"] is list:
             if matches[m]["time"] % 5:
-                matches[m]["channels"][0].send("%s seconds remaining" % matches[m]["time"])
+                await matches[m]["channels"][0].send("%s seconds remaining" % matches[m]["time"])
             matches[m]["time"] -= 1
             #if len(matches[m]["votes"]) == 10 or matches[m]["time"] <= 0:
             if len(matches[m]["votes"]) == 1 or matches[m]["time"] <= 0:
@@ -145,12 +145,12 @@ def cycle_matches():
                 if len(matches[m]["map"]) == 1:
                     matches[m]["time"] = 300
                     matches[m]["map"] = matches[m]["map"][0]
-                    matches[m]["channels"][0].send("The match will be played on %s.\nThe match host is %s.\nPlease create a lobby on popflash.site and paste the link in this channel.\nWhen the game has finished, all players must report the result by typing \"result win\" or \"result lose\"." % (matches[m]["map"], bot.get_user(matches[m]["host"]).mention))
+                    await matches[m]["channels"][0].send("The match will be played on %s.\nThe match host is %s.\nPlease create a lobby on popflash.site and paste the link in this channel.\nWhen the game has finished, all players must report the result by typing \"result win\" or \"result lose\"." % (matches[m]["map"], bot.get_user(matches[m]["host"]).mention))
                 else:
                     mapliststring = "maps remaining:"
                     for mv in matches[m]["map"]:
                         mapliststring += "\n    %s" % mv
-                    matches[m]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
+                    await matches[m]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
         else:
             if len(matches[m]["votes"]) > 0:
                 matches[m]["time"] -= 1

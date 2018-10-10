@@ -7,6 +7,7 @@ import discord
 import os
 import psycopg2
 import math
+import asyncio
 
 bot = commands.Bot(command_prefix='!')
 
@@ -15,6 +16,8 @@ lobby_category = 497054873678774288
 
 import matchmaking
 
+task = None
+
 @bot.event
 async def on_ready() :
     print('Logged in as')
@@ -22,12 +25,7 @@ async def on_ready() :
     print(bot.user.id)
     print('------')
 
-    try:
-        threading.Thread(target=matchmaking.mm_thread).start()
-    except Exception as e:
-        print('Error: unable to start thread')
-        #print("%s: %s" % (type(e), var))
-        print("error: %s" % e)
+    task = asyncio.create_task(mathmaking.mm_thread())
 
 @bot.event
 async def on_message(msg):
