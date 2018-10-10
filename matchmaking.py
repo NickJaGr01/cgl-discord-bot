@@ -103,9 +103,9 @@ async def cycle_queue():
                 team = mmqueue.queue[id]["team"]
                 matches[l]["players"][id] = {"team": team}
                 user = bot.get_user(id)
-                textchat.set_permissions(user, read_messages=True)
+                await textchat.set_permissions(user, read_messages=True)
                 teamchat[team-1].set_permissions(user, connect=True)
-                user.edit(voice_channel=teamchat[team-1])
+                await user.edit(voice_channel=teamchat[team-1])
             matches[l]["host"] = host
             mapliststring = "maps remaining:"
             for mv in matches[m]["map"]:
