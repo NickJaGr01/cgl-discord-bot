@@ -30,7 +30,7 @@ class MMQueue:
     def step_time(self):
         for id in self.queue.keys():
             self.queue[id]["time"] = self.queue[id]["time"] - delta_time
-            print("delta_time = %s" % delta_time)
+            print("delta_time2 = %s" % delta_time)
 
 
     def push(self, discordID):
@@ -64,6 +64,7 @@ async def mm_thread():
         now = loop.time()
         delta_time = now - last_time
         last_time = now
+        print("delta_time1 = %s" % delta_time)
         await cycle_queue()
         await cycle_matches()
         await asyncio.sleep(.1)
