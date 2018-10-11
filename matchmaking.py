@@ -90,11 +90,12 @@ async def cycle_queue():
     lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
         ready = True
+        print("time left = %s" % lobbies[l]["time"])
         for id in lobbies[l]["players"]:
             if lobbies[l]["last message time"] - lobbies[l]["time"] >= MESSAGE_TIME_DIFFERENCE:
                 user = bot.get_user(id)
                 mmqueue.queue[id]["last message time"] = lobbies[l]["last message time"] - MESSAGE_TIME_DIFFERENCE
-                await user.send("%s" % mmqueue.queue[id]["last message time"])
+                await user.send("%s seconds remaining" % mmqueue.queue[id]["last message time"])
             if not lobbies[l]["players"][id]["confirmed"]:
                 ready = False
         #begin the game if all players have confirmed the match
