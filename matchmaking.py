@@ -64,6 +64,7 @@ async def mm_thread():
         last_time = now
         await cycle_queue()
         await cycle_matches()
+        await asyncio.sleep(.1)
 
 async def cycle_queue():
     inq = mmqueue.in_queue()
