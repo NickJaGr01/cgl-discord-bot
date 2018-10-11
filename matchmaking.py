@@ -59,7 +59,6 @@ async def mm_thread():
     loop = asyncio.get_event_loop()
     last_time = loop.time()
     while True:
-        print("cycle")
         now = loop.time()
         delta_time = now - last_time
         last_time = now
