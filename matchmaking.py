@@ -137,12 +137,16 @@ async def cycle_matches():
             if len(matches[m]["votes"]) == 1 or matches[m]["time"] <= 0:
                 #determine most popular vote
                 track = {}
-                for key, value in matches[m]["votes"].items():
+                maxvote = 0
+                map = ""
+                for value in matches[m]["votes"].items():
                     if value not in track:
                         track[value] = 0
                     else:
                         track[value] += 1
-                map = max(track,key=track.get)
+                    if track[value] > maxvote:
+                        maxvote = track[value]
+                        map = value
                 matches[m]["votes"] = {}
                 matches[m]["map"].remove(map)
                 matches[m]["time"] = 30
