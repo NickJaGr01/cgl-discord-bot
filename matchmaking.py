@@ -140,7 +140,8 @@ async def cycle_matches():
                 track = {}
                 maxvote = 0
                 map = ""
-                for value in matches[m]["votes"].items():
+                for vote in matches[m]["votes"]:
+                    value = matches[m]["votes"][vote]
                     if value not in track:
                         track[value] = 0
                     else:
@@ -216,7 +217,6 @@ async def cycle_matches():
 async def process_match_commands(msg):
     is_game_chat = False
     lobby = None
-    print("channel id = %s" % msg.channel.id)
     for l in matches:
         if matches[l]["channels"][0].id == msg.channel.id:
             is_game_chat = True
@@ -226,7 +226,6 @@ async def process_match_commands(msg):
         if msg.content.startswith("vote "):
             if msg.author.id not in matches[lobby]["votes"]:
                 map = msg.content[5:]
-                print("map = %s" % map)
                 if map in matches[lobby]["map"]:
                     matches[lobby]["votes"][msg.author.id] = map
                 else:
