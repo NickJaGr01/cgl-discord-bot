@@ -29,7 +29,9 @@ class MMQueue:
 
     def step_time(self):
         for id in self.queue.keys():
-            self.queue[id]["time"] -= delta_time
+            self.queue[id]["time"] = self.queue[id]["time"] - delta_time
+            print("time left = %s" % self.queue[l=id]["time"])
+
 
     def push(self, discordID):
         self.queue[discordID] = {"lobby": -1, "confirmed": False, "time": 0, "team": 0}
@@ -89,7 +91,6 @@ async def cycle_queue():
     lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
         ready = True
-        print("time left = %s" % lobbies[l]["time"])
         for id in lobbies[l]["players"]:
             if lobbies[l]["last message time"] - lobbies[l]["time"] >= MESSAGE_TIME_DIFFERENCE:
                 user = bot.get_user(id)
