@@ -27,12 +27,6 @@ class MMQueue:
                 d[self.queue[id]["lobby"]]["players"][id] = {"team": self.queue[id]["team"], "confirmed": self.queue[id]["confirmed"]}
         return d
 
-    def step_time(self):
-        for id in self.queue.keys():
-            self.queue[id]["time"] = self.queue[id]["time"] - delta_time
-            print("delta_time2 = %s" % delta_time)
-
-
     def push(self, discordID):
         self.queue[discordID] = {"lobby": -1, "confirmed": False, "time": 0, "team": 0}
 
@@ -88,7 +82,9 @@ async def cycle_queue():
         user = bot.get_user(id)
         await user.send("A game has been found! Type \"!accept\" to confirm.")
         await user.send("30 seconds remaining")
-    mmqueue.step_time()
+    for id in mmqueue.queue():
+        mmqueue.queue[id]["time"] -= delta_time
+        print("delta_time2 = %s" % delta_time)
     lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
         ready = True
