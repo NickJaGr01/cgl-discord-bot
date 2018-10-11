@@ -30,7 +30,6 @@ class MMQueue:
     def step_time(self):
         for id in self.queue:
             self.queue[id]["time"] -= delta_time
-            print("delta_time2 = %s" % delta_time)
 
     def push(self, discordID):
         self.queue[discordID] = {"lobby": -1, "confirmed": False, "time": 0, "team": 0}
