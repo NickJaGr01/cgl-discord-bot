@@ -1,7 +1,6 @@
 import math
 import asyncio
 import random
-import time
 
 from bot import bot
 from bot import CGL_server
@@ -57,9 +56,10 @@ MESSAGE_TIME_DIFFERENCE = 5
 delta_time = 0
 
 async def mm_thread():
-    last_time = time.time()
+    loop = asyncio.get_event_loop()
+    last_time = loop.time()
     while True:
-        now = time.time()
+        now = loop.time()
         delta_time = now - last_time
         last_time = now
         await cycle_queue()
