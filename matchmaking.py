@@ -1,6 +1,7 @@
 import math
 import asyncio
 import random
+import time
 
 from bot import bot
 from bot import CGL_server
@@ -23,13 +24,13 @@ class MMQueue:
         for id in self.queue.keys():
             if self.queue[id]["lobby"] >= 0:
                 if self.queue[id]["lobby"] not in d:
-                    d[self.queue[id]["lobby"]] = {"time": self.queue[id]["time"], "players": {}}
+                    d[self.queue[id]["lobby"]] = {"time": self.queue[id]["time"], "last message time": self.queue[id]["last message time"], "players": {}}
                 d[self.queue[id]["lobby"]]["players"][id] = {"team": self.queue[id]["team"], "confirmed": self.queue[id]["confirmed"]}
         return d
 
     def step_time(self):
         for id in self.queue.keys():
-            self.queue[id]["time"] -= 1
+            self.queue[id]["time"] -= delta_time
 
     def push(self, discordID):
         self.queue[discordID] = {"lobby": -1, "confirmed": False, "time": 0, "team": 0}
@@ -41,6 +42,7 @@ class MMQueue:
         self.queue[discordID]["lobby"] = lobby
         self.queue[discordID]["confirmed"] = False
         self.queue[discordID]["time"] = 30
+        self.queue[discordID]["last message time"] = 30
         self.queue[discordID]["team"] = team
 
 available_lobbies = [i for i in range(20)]
@@ -50,11 +52,18 @@ matches = {}
 
 MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblestone"]
 
+MESSAGE_TIME_DIFFERENCE = 5
+
+delta_time = 0
+
 async def mm_thread():
+    last_time = time.time()
     while True:
+        now = time.time()
+        delta_time = now - last_time
+        last_time = now
         await cycle_queue()
         await cycle_matches()
-        await asyncio.sleep(1)
 
 async def cycle_queue():
     inq = mmqueue.in_queue()
@@ -74,16 +83,18 @@ async def cycle_queue():
         mmqueue.move(id, lobby, team)
         user = bot.get_user(id)
         await user.send("A game has been found! Type \"!accept\" to confirm.")
-        await user.send("30 seconds left")
+        await user.send("30 seconds remaining")
     mmqueue.step_time()
     lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
         ready = True
         for id in lobbies[l]["players"]:
+            if lobbies[l]["last message time"] - lobbies[l]["time"] >= MESSAGE_TIME_DIFFERENCE:
+                user = bot.get_user(id)
+                mmqueue.queue[id]["last message time"] = lobbies[l]["last message time"] - MESSAGE_TIME_DIFFERENCE
+                await user.send("%s" % mmqueue.queue[id]["last message time"])
             if not lobbies[l]["players"][id]["confirmed"]:
                 ready = False
-                user = bot.get_user(id)
-                await user.send("%s" % lobbies[l]["time"])
         #begin the game if all players have confirmed the match
         if ready:
             #create the lobbies for the teams
@@ -93,7 +104,7 @@ async def cycle_queue():
             teamchat = [None, None]
             teamchat[0] = await guild.create_voice_channel("Your Team", category=cat)
             teamchat[1] = await guild.create_voice_channel("Your Team", category=cat)
-            matches[l] = {"map": MAP_LIST.copy(), "votes": {}, "time": 30, "channels": {0: textchat, 1: teamchat[0], 2: teamchat[1]}, "players": {}}
+            matches[l] = {"map": MAP_LIST.copy(), "votes": {}, "time": 30, "last message time": 30+MESSAGE_TIME_DIFFERENCE, "channels": {0: textchat, 1: teamchat[0], 2: teamchat[1]}, "players": {}}
             host = list(lobbies[l]["players"].keys())[0]
             host_rep = database.player_rep(host)
             for id in lobbies[l]["players"]:
@@ -131,9 +142,10 @@ ELO_K_FACTOR = 16
 async def cycle_matches():
     for m in matches:
         if type(matches[m]["map"]) is list:
-            if matches[m]["time"] % 5 == 0:
-                await matches[m]["channels"][0].send("%s seconds remaining" % matches[m]["time"])
-            matches[m]["time"] -= 1
+            if matches[m]["last message time"] - matches[m]["time"] >= MESSAGE_TIME_DIFFERENCE:
+                matches[m]["last message time"] = matches[m]["last message time"] - MESSAGE_TIME_DIFFERENCE
+                await matches[m]["channels"][0].send("%s seconds remaining" % matches[m]["last message time"])
+            matches[m]["time"] -= delta_time
             #if len(matches[m]["votes"]) == 10 or matches[m]["time"] <= 0:
             if len(matches[m]["votes"]) == 1 or matches[m]["time"] <= 0:
                 #determine most popular vote
