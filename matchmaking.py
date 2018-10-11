@@ -62,6 +62,7 @@ async def mm_thread():
         now = loop.time()
         delta_time = now - last_time
         last_time = now
+        print("delta time = %s" % delta_time)
         await cycle_queue()
         await cycle_matches()
         await asyncio.sleep(.1)
