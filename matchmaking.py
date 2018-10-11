@@ -58,7 +58,6 @@ async def mm_thread():
         now = loop.time()
         delta_time = now - last_time
         last_time = now
-        print("delta_time1 = %s" % delta_time)
         await cycle_queue()
         await cycle_matches()
         await asyncio.sleep(.1)
@@ -82,7 +81,7 @@ async def cycle_queue():
         user = bot.get_user(id)
         await user.send("A game has been found! Type \"!accept\" to confirm.")
         await user.send("30 seconds remaining")
-    for id in mmqueue.queue():
+    for id in mmqueue.queue:
         mmqueue.queue[id]["time"] -= delta_time
         print("delta_time2 = %s" % delta_time)
     lobbies = mmqueue.lobbies()
