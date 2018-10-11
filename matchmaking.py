@@ -163,7 +163,7 @@ async def cycle_matches():
                     if track[value] > maxvote:
                         maxvote = track[value]
                         map = value
-                if map == "":
+                if map not in matches[m]["map"]:
                     matches[m]["map"][random.randint(0, len(matches[m]["map"])-1)]
                 matches[m]["votes"] = {}
                 print("map = %s" % map)
