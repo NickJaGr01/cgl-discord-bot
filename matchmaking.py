@@ -1,5 +1,6 @@
 import math
 import asyncio
+import random
 
 from bot import bot
 from bot import CGL_server
