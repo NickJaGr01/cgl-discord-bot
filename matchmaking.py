@@ -147,6 +147,8 @@ async def cycle_matches():
                     if track[value] > maxvote:
                         maxvote = track[value]
                         map = value
+                if maxvote == 0:
+                    matches[m]["map"][random.randint(0, len(matches[m]["map"])-1)]
                 matches[m]["votes"] = {}
                 matches[m]["map"].remove(map)
                 matches[m]["time"] = 30
