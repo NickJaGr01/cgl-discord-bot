@@ -27,7 +27,7 @@ class MMQueue:
                 d[self.queue[id]["lobby"]]["players"][id] = {"team": self.queue[id]["team"], "confirmed": self.queue[id]["confirmed"]}
         return d
 
-    def step_time(self, delta_time):
+    def step_time(self):
         for id in self.queue:
             self.queue[id]["time"] -= delta_time
             print("delta_time2 = %s" % delta_time)
@@ -54,18 +54,21 @@ MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblest
 
 MESSAGE_TIME_DIFFERENCE = 5
 
+delta_time = 0
+
 async def mm_thread():
+    global delta_time
     loop = asyncio.get_event_loop()
     last_time = loop.time()
     while True:
         now = loop.time()
         delta_time = now - last_time
         last_time = now
-        await cycle_queue(delta_time)
-        await cycle_matches(delta_time)
+        await cycle_queue()
+        await cycle_matches()
         await asyncio.sleep(.1)
 
-async def cycle_queue(delta_time):
+async def cycle_queue():
     inq = mmqueue.in_queue()
     lobby = 0
     #for i in range(math.floor(len(inq)/10)*10):
@@ -84,7 +87,7 @@ async def cycle_queue(delta_time):
         user = bot.get_user(id)
         await user.send("A game has been found! Type \"!accept\" to confirm.")
         await user.send("30 seconds remaining")
-    mmqueue.step_time(delta_time)
+    mmqueue.step_time()
     lobbies = mmqueue.lobbies()
     for l in lobbies.keys():
         ready = True
@@ -139,7 +142,7 @@ async def cycle_queue(delta_time):
 
 ELO_K_FACTOR = 16
 
-async def cycle_matches(delta_time):
+async def cycle_matches():
     for m in matches:
         if type(matches[m]["map"]) is list:
             if matches[m]["last message time"] - matches[m]["time"] >= MESSAGE_TIME_DIFFERENCE:
