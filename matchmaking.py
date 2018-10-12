@@ -157,7 +157,7 @@ async def cycle_matches():
                 for vote in matches[m]["votes"]:
                     value = matches[m]["votes"][vote]
                     if value not in track:
-                        track[value] = 0
+                        track[value] = 1
                     else:
                         track[value] += 1
                     if track[value] > maxvote:
@@ -252,5 +252,6 @@ async def process_match_commands(msg):
         elif msg.content.startswith("result "):
             if msg.author.id not in matches[lobby]["votes"]:
                 result = msg.content[7:]
+                print("result = %s" % result)
                 if result != "win" and result != "lose":
                     await msg.channel.send("%s is not a valid match result." % result)
