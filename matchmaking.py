@@ -181,8 +181,8 @@ async def cycle_matches():
                     await matches[m]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
         else:
             if len(matches[m]["votes"]) > 0:
-                matches[m]["time"] -= 1
-                if matches[m]["time"] == 0:
+                matches[m]["time"] -= delta_time
+                if matches[m]["time"] == 0 or len(matches[m]["votes"]) == 1:
                     for channel in matches[m]["channels"]:
                         channel.delete()
                     available_lobbies.append(m)
@@ -221,10 +221,14 @@ async def cycle_matches():
                         expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
                         new_elo = winners[id] + ELO_K_FACTOR*(1-expected_score)
                         database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
+                        user = bot.get_user(id)
+                        await user.send("Your last match has been recorded as a win.")
                     for id in losers:
                         expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
                         new_elo = winners[id] + ELO_K_FACTOR*(0-expected_score)
                         database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
+                        user = bot.get_user(id)
+                        await user.send("Your last match has been recorded as a loss.")
                     database.conn.commit()
                     del matches[m]
 

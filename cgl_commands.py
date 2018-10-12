@@ -36,7 +36,7 @@ async def accept(ctx):
 
 @bot.command()
 async def elo(ctx):
-    if user_registered(ctx):
+    if database.user_registered(ctx):
         await ctx.author.send("Your current elo is %s." % database.player_elo(ctx.author.id))
     else:
         await ctx.author.send(NOT_REGISTERED_MESSAGE)
