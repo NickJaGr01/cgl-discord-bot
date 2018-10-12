@@ -142,6 +142,7 @@ async def cycle_queue():
 ELO_K_FACTOR = 16
 
 async def cycle_matches():
+    finished_matches = []
     for m in matches:
         if type(matches[m]["map"]) is list:
             if matches[m]["last message time"] - matches[m]["time"] >= MESSAGE_TIME_DIFFERENCE:
@@ -182,58 +183,60 @@ async def cycle_matches():
             if len(matches[m]["votes"]) > 0:
                 matches[m]["time"] -= delta_time
                 if matches[m]["time"] == 0 or len(matches[m]["votes"]) == 1:
-                    for channel in matches[m]["channels"]:
-                        await matches[m]["channels"][channel].delete()
-                    available_lobbies.append(m)
-                    result = 0 #positive - team 1 wins; negative - team 2 wins
-                    for id in matches[m]["votes"]:
-                        vote = 0
-                        if matches[m]["votes"][id] == "win":
-                            vote = 1
-                        elif matches[m]["votes"][id] == "lose":
-                            vote = -1
-                        if matches[m]["players"][id]["team"] == 2:
-                            vote *= -1
-                        result += vote
-                    winners = {}
-                    winner_average = 0
-                    losers = {}
-                    loser_average = 0
-                    for id in matches[m]["players"]:
-                        elo = database.player_elo(id)
-                        team = 0
-                        if matches[m]["players"][id]["team"] == 1:
-                            team = 1
-                        elif matches[m]["players"][id]["team"] == 2:
-                            team = -1
-                        if result < 0:
-                            team *= -1
-                        if team == 1:
-                            winners[id] = elo
-                            winner_average += elo
-                        elif team == -1:
-                            losers[id] = elo
-                            loser_average += elo
-                    #winner_average /= 5
-                    #loser_average /= 5
-                    if winner_average == 0:
-                        winner_average = 1500
-                    if loser_average == 0:
-                        loser_average = 1500
-                    for id in winners:
-                        expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
-                        new_elo = winners[id] + ELO_K_FACTOR*(1-expected_score)
-                        database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
-                        user = bot.get_user(id)
-                        await user.send("Your last match has been recorded as a win.")
-                    for id in losers:
-                        expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
-                        new_elo = winners[id] + ELO_K_FACTOR*(0-expected_score)
-                        database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
-                        user = bot.get_user(id)
-                        await user.send("Your last match has been recorded as a loss.")
-                    database.conn.commit()
-                    del matches[m]
+                    finished_matches.append(m)
+    for m in finished_matches:
+        for channel in matches[m]["channels"]:
+            await matches[m]["channels"][channel].delete()
+        available_lobbies.append(m)
+        result = 0 #positive - team 1 wins; negative - team 2 wins
+        for id in matches[m]["votes"]:
+            vote = 0
+            if matches[m]["votes"][id] == "win":
+                vote = 1
+            elif matches[m]["votes"][id] == "lose":
+                vote = -1
+            if matches[m]["players"][id]["team"] == 2:
+                vote *= -1
+            result += vote
+        winners = {}
+        winner_average = 0
+        losers = {}
+        loser_average = 0
+        for id in matches[m]["players"]:
+            elo = database.player_elo(id)
+            team = 0
+            if matches[m]["players"][id]["team"] == 1:
+                team = 1
+            elif matches[m]["players"][id]["team"] == 2:
+                team = -1
+            if result < 0:
+                team *= -1
+            if team == 1:
+                winners[id] = elo
+                winner_average += elo
+            elif team == -1:
+                losers[id] = elo
+                loser_average += elo
+        #winner_average /= 5
+        #loser_average /= 5
+        if winner_average == 0:
+            winner_average = 1500
+        if loser_average == 0:
+            loser_average = 1500
+        for id in winners:
+            expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
+            new_elo = winners[id] + ELO_K_FACTOR*(1-expected_score)
+            database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
+            user = bot.get_user(id)
+            await user.send("Your last match has been recorded as a win.")
+        for id in losers:
+            expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
+            new_elo = winners[id] + ELO_K_FACTOR*(0-expected_score)
+            database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
+            user = bot.get_user(id)
+            await user.send("Your last match has been recorded as a loss.")
+        database.conn.commit()
+        del matches[m]
 
 
 async def process_match_commands(msg):
