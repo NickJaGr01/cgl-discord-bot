@@ -5,7 +5,6 @@ import random
 from bot import bot
 from bot import CGL_server
 from bot import lobby_category
-from bot import AFK_CHANNEL_ID
 import database
 
 class MMQueue:
@@ -44,6 +43,8 @@ class MMQueue:
         self.queue[discordID]["time"] = 30
         self.queue[discordID]["last message time"] = 30
         self.queue[discordID]["team"] = team
+
+AFK_CHANNEL_ID = 500376383818825733
 
 available_lobbies = [i for i in range(20)]
 

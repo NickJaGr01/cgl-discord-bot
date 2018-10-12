@@ -34,7 +34,6 @@ async def on_message(msg):
 
 #MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
 MM_CHANNEL_ID = 498928703091507220
-AFK_CHANNEL_ID = 500376383818825733
 
 @bot.event
 async def on_voice_state_update(member, before, after):
