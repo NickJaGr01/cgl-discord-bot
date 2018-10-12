@@ -252,6 +252,7 @@ async def process_match_commands(msg):
         elif msg.content.startswith("result "):
             if msg.author.id not in matches[lobby]["votes"]:
                 result = msg.content[7:]
-                print("result = %s" % result)
-                if result != "win" and result != "lose":
+                if result == "win" or result == "lose":
+                    matches[lobby]["votes"][msg.author.id] = map
+                else:
                     await msg.channel.send("%s is not a valid match result." % result)
