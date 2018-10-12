@@ -84,7 +84,7 @@ async def cycle_queue():
             team = 2
         mmqueue.move(id, lobby, team)
         user = bot.get_user(id)
-        await user.send("A game has been found! Type \"!accept\" to confirm.")
+        await user.send("A match has been found. Type \"!accept\" to confirm.")
         await user.send("30 seconds remaining")
     mmqueue.step_time()
     lobbies = mmqueue.lobbies()
