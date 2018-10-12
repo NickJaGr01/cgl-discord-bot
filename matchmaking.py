@@ -188,9 +188,9 @@ async def cycle_matches():
                     result = 0 #positive - team 1 wins; negative - team 2 wins
                     for id in matches[m]["votes"]:
                         vote = 0
-                        if matches[m]["votes"][vote] == "win":
+                        if matches[m]["votes"][id] == "win":
                             vote = 1
-                        elif matches[m]["votes"][vote] == "lose":
+                        elif matches[m]["votes"][id] == "lose":
                             vote = -1
                         if matches[m]["players"][id]["team"] == 2:
                             vote *= -1
