@@ -11,8 +11,8 @@ def user_registered(ctx):
 
 def player_elo(discordID):
     cur.execute("SELECT elo FROM playerTable WHERE discordID=%s;" % discordID)
-    return cur.fetchone()
+    return cur.fetchone()[0]
 
 def player_rep(discordID):
     cur.execute("SELECT rep FROM playerTable WHERE discordID=%s;" % discordID)
-    return cur.fetchone()
+    return cur.fetchone()[0]
