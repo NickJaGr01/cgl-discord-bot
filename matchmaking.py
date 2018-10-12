@@ -183,7 +183,7 @@ async def cycle_matches():
                 matches[m]["time"] -= delta_time
                 if matches[m]["time"] == 0 or len(matches[m]["votes"]) == 1:
                     for channel in matches[m]["channels"]:
-                        awair channel.delete()
+                        await channel.delete()
                     available_lobbies.append(m)
                     result = 0 #positive - team 1 wins; negative - team 2 wins
                     for id in matches[m]["votes"]:
