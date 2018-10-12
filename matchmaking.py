@@ -72,10 +72,8 @@ async def mm_thread():
 async def cycle_queue():
     inq = mmqueue.in_queue()
     lobby = 0
-    #for i in range(math.floor(len(inq)/10)*10):
-    for i in range(len(inq)):
-        #if i%10 == 0:
-        if i%1 == 0:
+    for i in range(math.floor(len(inq)/10)*10):
+        if i%10 == 0:
             if len(available_lobbies) == 0:
                 break
             lobby = available_lobbies[0]
@@ -153,8 +151,7 @@ async def cycle_matches():
                 matches[m]["last message time"] = matches[m]["last message time"] - MESSAGE_TIME_DIFFERENCE
                 await matches[m]["channels"][0].send("%s seconds remaining" % matches[m]["last message time"])
             matches[m]["time"] -= delta_time
-            #if len(matches[m]["votes"]) == 10 or matches[m]["time"] <= 0:
-            if len(matches[m]["votes"]) == 1 or matches[m]["time"] <= 0:
+            if len(matches[m]["votes"]) == 10 or matches[m]["time"] <= 0:
                 #determine most popular vote
                 track = {}
                 maxvote = 0
@@ -186,7 +183,7 @@ async def cycle_matches():
         else:
             if len(matches[m]["votes"]) > 0:
                 matches[m]["time"] -= delta_time
-                if matches[m]["time"] == 0 or len(matches[m]["votes"]) == 1:
+                if matches[m]["time"] == 0 or len(matches[m]["votes"]) == 10:
                     finished_matches.append(m)
     for m in finished_matches:
         for channel in matches[m]["channels"]:
@@ -221,12 +218,8 @@ async def cycle_matches():
             elif team == -1:
                 losers[id] = elo
                 loser_average += elo
-        #winner_average /= 5
-        #loser_average /= 5
-        if winner_average == 0:
-            winner_average = 1500
-        if loser_average == 0:
-            loser_average = 1500
+        winner_average /= 5
+        loser_average /= 5
         for id in winners:
             expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
             new_elo = winners[id] + ELO_K_FACTOR*(1-expected_score)
