@@ -120,6 +120,7 @@ async def cycle_queue():
                 await textchat.set_permissions(user, read_messages=True)
                 await teamchat[team-1].set_permissions(user, connect=True)
                 await user.edit(voice_channel=teamchat[team-1])
+                await user.send("Your match is ready. Please return to the CGL Dicord server to vote for the map.")
             matches[l]["host"] = host
             mapliststring = "maps remaining:"
             for mv in matches[l]["map"]:
@@ -133,7 +134,6 @@ async def cycle_queue():
                     user = bot.get_user(id)
                     user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
                 else:
-                    del mmqueue.queue[id]
                     mmqueue.pop(id)
                     user = bot.get_user(id)
                     await user.send("You failed to confirm your match. You have been removed from the queue.")

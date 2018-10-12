@@ -13,7 +13,7 @@ async def register(ctx, username):
         #check that the desired username is available (not case sensitive)
         database.cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
         if database.cur.fetchone() == None:
-            database.cur.execute("INSERT INTO playerTable (discordID, username) VALUES (%s, '%s');" % (ctx.author.id, username))
+            database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep) VALUES (%s, '%s', %s, %s);" % (ctx.author.id, username, 1500, 100))
             database.conn.commit()
             await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
             await ctx.author.edit(nick=username, roles=[bot.get_guild(CGL_server).get_role(499276055585226773)])
@@ -37,6 +37,13 @@ async def accept(ctx):
 @bot.command()
 async def elo(ctx):
     if database.user_registered(ctx):
-        await ctx.author.send("Your current elo is %s." % database.player_elo(ctx.author.id))
+        await ctx.send("Your current elo is %s." % database.player_elo(ctx.author.id))
     else:
-        await ctx.author.send(NOT_REGISTERED_MESSAGE)
+        await ctx.send(NOT_REGISTERED_MESSAGE)
+
+@bot.command()
+async def rep(ctx):
+    if database.user_registered(ctx):
+        await ctx.send("Your current rep is %s." % database.player_rep(ctx.author.id))
+    else:
+        await ctx.send(NOT_REGISTERED_MESSAGE)
