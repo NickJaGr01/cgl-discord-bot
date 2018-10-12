@@ -214,8 +214,12 @@ async def cycle_matches():
                         elif team == -1:
                             losers[id] = elo
                             loser_average += elo
-                    winner_average /= 5
-                    loser_average /= 5
+                    #winner_average /= 5
+                    #loser_average /= 5
+                    if winner_average == 0:
+                        winner_average = 1500
+                    if loser_average == 0:
+                        loser_average = 1500
                     for id in winners:
                         expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
                         new_elo = winners[id] + ELO_K_FACTOR*(1-expected_score)
@@ -252,6 +256,6 @@ async def process_match_commands(msg):
             if msg.author.id not in matches[lobby]["votes"]:
                 result = msg.content[7:]
                 if result == "win" or result == "lose":
-                    matches[lobby]["votes"][msg.author.id] = map
+                    matches[lobby]["votes"][msg.author.id] = result
                 else:
                     await msg.channel.send("%s is not a valid match result." % result)
