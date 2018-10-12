@@ -135,7 +135,8 @@ async def cycle_queue():
                     user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
                 else:
                     mmqueue.pop(id)
-                    user = bot.get_member(id)
+                    guild = bot.get_guild(CGL_server)
+                    user = guild.get_member(id)
                     await user.edit(voice_channel=None)
                     await user.send("You failed to confirm your match. You have been removed from the queue.")
             available_lobbies.append(l)
