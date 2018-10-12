@@ -230,8 +230,8 @@ async def cycle_matches():
             user = bot.get_user(id)
             await user.send("Your last match has been recorded as a win.")
         for id in losers:
-            expected_score = 1/(1+pow(10, (loser_average-winners[id])/400))
-            new_elo = winners[id] + ELO_K_FACTOR*(0-expected_score)
+            expected_score = 1/(1+pow(10, (winner_average-losers[id])/400))
+            new_elo = losers[id] + ELO_K_FACTOR*(0-expected_score)
             database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
             user = bot.get_user(id)
             await user.send("Your last match has been recorded as a loss.")
