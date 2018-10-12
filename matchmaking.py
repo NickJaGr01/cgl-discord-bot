@@ -169,6 +169,7 @@ async def cycle_matches():
                 print("map = %s" % map)
                 matches[m]["map"].remove(map)
                 matches[m]["time"] = 30
+                matches[m]["last message time"] = 30+MESSAGE_TIME_DIFFERENCE
                 if len(matches[m]["map"]) == 1:
                     matches[m]["time"] = 300
                     matches[m]["map"] = matches[m]["map"][0]
