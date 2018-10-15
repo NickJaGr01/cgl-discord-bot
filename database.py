@@ -16,3 +16,7 @@ def player_elo(discordID):
 def player_rep(discordID):
     cur.execute("SELECT rep FROM playerTable WHERE discordID=%s;" % discordID)
     return cur.fetchone()[0]
+
+def player_suspension(discordID):
+    cur.execute("SELECT end_of_suspension FROM playerTable WHERE discordID=%s;" % discordID)
+    return cur.fetchone()[0]

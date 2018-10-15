@@ -16,7 +16,8 @@ async def register(ctx, username):
             database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep) VALUES (%s, '%s', %s, %s);" % (ctx.author.id, username, 1500, 100))
             database.conn.commit()
             await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
-            await ctx.author.edit(nick=username, roles=[bot.get_guild(CGL_server).get_role(499276055585226773)])
+            await ctx.author.edit(nick=username)
+            await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(499276055585226773))
         else:
             await ctx.author.send("The username %s is not available. Please choose another one to register for CGL." % username)
     else:
