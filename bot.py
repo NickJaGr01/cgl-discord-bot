@@ -25,6 +25,8 @@ async def on_ready() :
     print(bot.user.id)
     print('------')
 
+    bot.appinfo = await bot.application_info()
+
     task = asyncio.create_task(matchmaking.mm_thread())
 
 @bot.event
