@@ -8,7 +8,7 @@ from bot import bot
 
 CGL_server = 495761319639646208
 
-MOD_ROLE = bot.get_guild(CGL_server).get_role(501438451284049920)
+MOD_ROLE_ID = 501438451284049920
 NOT_MOD_MESSAGE = "That command is only for use by CGL moderators."
 
 MAJOR_OFFENSE_TABLE = {
@@ -18,7 +18,8 @@ MAJOR_OFFENSE_TABLE = {
 
 @bot.command()
 async def majoroffense(ctx, target: discord.User):
-    if ctx.message.author.top_role >= MOD_ROLE:
+    modrole = bot.get_guild(CGL_server).get_role(MOD_ROLE_ID)
+    if ctx.message.author.top_role >= modrole:
         now = datetime.now()
         database.cur.execute("SELECT number_of_suspensions FROM playerTable WHERE discordID=%s;" % target.id)
         nofsuspensions = database.cur.fetchone()[0] + 1
