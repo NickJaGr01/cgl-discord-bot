@@ -174,7 +174,7 @@ async def cycle_matches():
                 if len(matches[m]["map"]) == 1:
                     matches[m]["time"] = 300
                     matches[m]["map"] = matches[m]["map"][0]
-                    await matches[m]["channels"][0].send("The match will be played on %s.\nThe match host is %s.\nPlease create a lobby on popflash.site and paste the link in this channel.\nWhen the game has finished, all players must report the result by typing \"result win\" or \"result lose\"." % (matches[m]["map"], bot.get_user(matches[m]["host"]).mention))
+                    await matches[m]["channels"][0].send("The match will be played on %s.\nThe match host is %s.\nPlease create a lobby on popflash.site and paste the link in this channel.\nWhen the game has finished, all players must report the result by typing \"result win\" or \"result loss\"." % (matches[m]["map"], bot.get_user(matches[m]["host"]).mention))
                 else:
                     mapliststring = "maps remaining:"
                     for mv in matches[m]["map"]:
@@ -194,7 +194,7 @@ async def cycle_matches():
             vote = 0
             if matches[m]["votes"][id] == "win":
                 vote = 1
-            elif matches[m]["votes"][id] == "lose":
+            elif matches[m]["votes"][id] == "loss":
                 vote = -1
             if matches[m]["players"][id]["team"] == 2:
                 vote *= -1
@@ -226,12 +226,36 @@ async def cycle_matches():
             database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
             user = bot.get_user(id)
             await user.send("Your last match has been recorded as a win.")
+            #update rep
+            penalize = False
+            if id not in matches[m]["votes"]:
+                penalize = True
+                await user.send("You failed to report the result of your match and have received a penalty of -20 rep.")
+            elif matches[m]["votes"][id] == "loss":
+                penalize = True
+                await user.send("You reported a match result which conflicted with the rest of the players. You have received a penalty of -20 rep.")
+            if penalize:
+                rep = database.player_rep(id)
+                rep -= 20
+                database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, id))
         for id in losers:
             expected_score = 1/(1+pow(10, (winner_average-losers[id])/400))
             new_elo = losers[id] + ELO_K_FACTOR*(0-expected_score)
             database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (new_elo, id))
             user = bot.get_user(id)
             await user.send("Your last match has been recorded as a loss.")
+            #update rep
+            penalize = False
+            if id not in matches[m]["votes"]:
+                penalize = True
+                await user.send("You failed to report the result of your match and have received a penalty of -20 rep.")
+            elif matches[m]["votes"][id] == "win":
+                penalize = True
+                await user.send("You reported a match result which conflicted with the rest of the players. You have received a penalty of -20 rep.")
+            if penalize:
+                rep = database.player_rep(id)
+                rep -= 20
+                database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, id))
         database.conn.commit()
         del matches[m]
 
@@ -255,7 +279,7 @@ async def process_match_commands(msg):
         elif msg.content.startswith("result "):
             if msg.author.id not in matches[lobby]["votes"]:
                 result = msg.content[7:]
-                if result == "win" or result == "lose":
+                if result == "win" or result == "loss":
                     matches[lobby]["votes"][msg.author.id] = result
                 else:
                     await msg.channel.send("%s is not a valid match result." % result)
