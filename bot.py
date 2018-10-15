@@ -9,6 +9,7 @@ import psycopg2
 import math
 import asyncio
 from datetime import datetime
+import database
 
 bot = commands.Bot(command_prefix='!')
 
