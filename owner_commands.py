@@ -1,8 +1,10 @@
 from discord.ext import commands
 import discord
+from bot import bot
 
 import database
 
+@bot.command()
 async def owner_command(ctx, func):
     async def wrapper(ctx, *args, **kwargs):
         if ctx.message.author.id == discord.AppInfo.owner.id:
@@ -11,7 +13,7 @@ async def owner_command(ctx, func):
             await ctx.send("This command is only for use by the owner.")
     return wrapper
 
-@owner_command
+@owner_command()
 async def giveelo(ctx, target: discord.User, delo):
     elo = database.player_elo(target.id)
     elo += delo
