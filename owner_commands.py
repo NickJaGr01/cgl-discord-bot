@@ -4,8 +4,8 @@ from bot import bot
 
 import database
 
-async def owner_command(func, ctx):
-    async def wrapper(ctx, *args, **kwargs):
+async def owner_command(ctx):
+    async def wrapper(func, ctx, *args, **kwargs):
         if ctx.message.author.id == discord.AppInfo.owner.id:
             await func(ctx, *args, **kwargs)
         else:
