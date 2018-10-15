@@ -5,7 +5,8 @@ from datetime import timedelta
 
 import database
 from bot import bot
-from bot import CGL_server
+
+CGL_server = 495761319639646208
 
 MOD_ROLE = bot.get_guild(CGL_server).get_role(501438451284049920)
 NOT_MOD_MESSAGE = "That command is only for use by CGL moderators."
