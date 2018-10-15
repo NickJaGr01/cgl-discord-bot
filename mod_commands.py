@@ -27,7 +27,7 @@ async def majoroffense(ctx, target: discord.User):
         nofsuspensions = min(nofsuspensions, 5)
         suspension = MAJOR_OFFENSE_TABLE["length of suspension"][nofsuspensions-1]
         endofsuspension = now + suspension
-        database.cur.execute("UPDATE playerTable SET end_of_suspension=%s WHERE discordID=%s;" % (end_of_suspension, target.id))
+        database.cur.execute("UPDATE playerTable SET end_of_suspension=%s WHERE discordID=%s;" % (endofsuspension, target.id))
         reppen = MAJOR_OFFENSE_TABLE["rep penalty"][nofsuspensions-1]
         rep = database.player_rep(target.id) - reppen
         database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
