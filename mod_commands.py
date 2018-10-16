@@ -12,7 +12,7 @@ MOD_ROLE_ID = 501438451284049920
 NOT_MOD_MESSAGE = "That command is only for use by CGL moderators."
 
 MAJOR_OFFENSE_TABLE = {
-    "length of suspension": [timedelta(minutes=2), timedelta(hours=6), timedelta(hours=24), timedelta(days=3), timedelta(days=7)],
+    "length of suspension": [timedelta(minutes=30), timedelta(hours=6), timedelta(hours=24), timedelta(days=3), timedelta(days=7)],
     "rep penalty": [15, 30, 50, 80, 120]
 }
 
