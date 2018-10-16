@@ -67,15 +67,19 @@ async def commend(ctx, target: discord.User):
                     break
             if inmatch:
                 break
-        if inmatch:
-            if target.id == ctx.author.id:
-                if ctx.author.id not in matches[match]["commendations"]:
-                    if target.id in matches[match]["players"]:
+        #if inmatch:
+        if True:
+            #if target.id != ctx.author.id:
+            if True:
+                #if ctx.author.id not in matches[match]["commendations"]:
+                if True:
+                    #if target.id in matches[match]["players"]:
+                    if True:
                         rep = database.player_rep(target.id)
                         rep += 1
                         database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
                         database.conn.commit()
-                        matches[match]["commendations"].append(ctx.author.id)
+                        #matches[match]["commendations"].append(ctx.author.id)
                         await ctx.send("You commended %s." % target.mention)
                         await target.send("Someone commended you. You have gained 1 rep.")
                     else:
