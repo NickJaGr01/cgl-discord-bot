@@ -4,6 +4,7 @@ import database
 from bot import bot
 from bot import CGL_server
 from matchmaking import mmqueue
+from matchmaking import matches
 
 NOT_REGISTERED_MESSAGE = "Please register before participating in CGL. You can register by using the \"!register *username*\" command."
 
@@ -13,7 +14,7 @@ async def register(ctx, username):
         #check that the desired username is available (not case sensitive)
         database.cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
         if database.cur.fetchone() == None:
-            database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep) VALUES (%s, '%s', %s, %s);" % (ctx.author.id, username, 1500, 100))
+            database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep) VALUES (%s, '%s', %s, %s);" % (ctx.author.id, username, 1300, 100))
             database.conn.commit()
             await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
             await ctx.author.edit(nick=username)
@@ -48,3 +49,42 @@ async def rep(ctx):
         await ctx.send("Your current rep is %s." % database.player_rep(ctx.author.id))
     else:
         await ctx.send(NOT_REGISTERED_MESSAGE)
+
+@bot.command()
+async def commend(ctx, target: discord.User):
+    if database.user_registered(ctx):
+        if target == None:
+            await ctx.send("That is not a valid player.")
+            return
+        #find the user in a lobby
+        inmatch = False
+        match = None
+        for m in matches:
+            for id in matches[m]["players"]:
+                if id == ctx.author.id:
+                    inmatch = True
+                    match = m
+                    break
+            if inmatch:
+                break
+        if inmatch:
+            if target.id == ctx.author.id:
+                if ctx.author.id not in matches[match]["commendations"]:
+                    if target.id in matches[match]["players"]:
+                        rep = database.player_rep(target.id)
+                        rep += 1
+                        database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
+                        database.conn.commit()
+                        matches[match]["commendations"].append(ctx.author.id)
+                        await ctx.send("You commended %s." % target.mention)
+                        await target.send("Someone commended you. You have gained 1 rep.")
+                    else:
+                        await ctx.send("You can only commend someone who is in the same match as you are.")
+                else:
+                    await ctx.send("You can only commend one other player per match.")
+            else:
+                await ctx.send("You cannot commend yourself")
+        else:
+            await ctx.send("You are not currently in a match. You cannot commend anyone.")
+    else:
+        await ctx.author.send(NOT_REGISTERED_MESSAGE)
