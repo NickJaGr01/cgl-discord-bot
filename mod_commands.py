@@ -2,13 +2,16 @@ from discord.ext import commands
 import discord
 from datetime import datetime
 from datetime import timedelta
+import os
 
 import database
 from bot import bot
 
-CGL_server = 495761319639646208
+#CGL_server = 495761319639646208
+CGL_server = int(os.environ['CGL_SERVER'])
 
-MOD_ROLE_ID = 501438451284049920
+#MOD_ROLE_ID = 501438451284049920
+MOD_ROLE_ID = int(os.environ['MOD_ROLE'])
 NOT_MOD_MESSAGE = "That command is only for use by CGL moderators."
 
 MAJOR_OFFENSE_TABLE = {

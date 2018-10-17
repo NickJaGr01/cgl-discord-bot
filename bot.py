@@ -13,9 +13,12 @@ import database
 
 bot = commands.Bot(command_prefix='!')
 
-CGL_server = 495761319639646208
-lobby_category = 497054873678774288
-AFK_CHANNEL_ID = 500376383818825733
+#CGL_server = 495761319639646208
+CGL_server = int(os.environ['CGL_SERVER'])
+#lobby_category = 497054873678774288
+lobby_category = int(os.environ['LOBBY_CATEGORY'])
+#AFK_CHANNEL_ID = 500376383818825733
+AFK_CHANNEL_ID = int(os.environ['AFK_CHANNEL'])
 
 import matchmaking
 
@@ -38,7 +41,8 @@ async def on_message(msg):
     await bot.process_commands(msg)
 
 #MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
-MM_CHANNEL_ID = 498928703091507220
+#MM_CHANNEL_ID = 498928703091507220
+MM_CHANNEL_ID = int(os.environ['MM_CHANNEL'])
 
 @bot.event
 async def on_voice_state_update(member, before, after):
