@@ -1,4 +1,5 @@
 from discord.ext import commands
+import os
 import discord
 import database
 from bot import bot
@@ -7,6 +8,8 @@ from matchmaking import mmqueue
 from matchmaking import matches
 
 NOT_REGISTERED_MESSAGE = "Please register before participating in CGL. You can register by using the \"!register *username*\" command."
+
+REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
 
 @bot.command()
 async def register(ctx, username):
@@ -47,6 +50,14 @@ async def elo(ctx):
 async def rep(ctx):
     if database.user_registered(ctx):
         await ctx.send("Your current rep is %s." % database.player_rep(ctx.author.id))
+    else:
+        await ctx.send(NOT_REGISTERED_MESSAGE)
+
+@bot.command()
+async def report(ctx, target: discord.User, *, reason):
+    if database.user_registered(ctx):
+        await ctx.send("Report submitted for %s. Reason: %s" % (target.mention, reason))
+        await ctx.send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
     else:
         await ctx.send(NOT_REGISTERED_MESSAGE)
 
