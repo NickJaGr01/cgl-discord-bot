@@ -56,8 +56,8 @@ async def rep(ctx):
 @bot.command()
 async def report(ctx, target: discord.User, *, reason):
     if database.user_registered(ctx):
-        await ctx.send("Report submitted for %s. Reason: %s" % (target.mention, reason))
-        await ctx.send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
+        await ctx.send("Report submitted for %s." % target.mention)
+        await bot.get_guild(CGL_server).get_channel(REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
     else:
         await ctx.send(NOT_REGISTERED_MESSAGE)
 
