@@ -71,7 +71,7 @@ async def createteam(ctx, *, teamname):
     if database.user_registered(ctx.author.id):
         #check that the user is not already on a team
         database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % ctx.author.id)
-        if database.cur.fetchone()[0] == None:
+        if database.cur.fetchone()[0] != None:
             await ctx.send("You cannot be on more than one team at a time. Please leave your current team before creating another one.")
             return
         if teamname == None:
