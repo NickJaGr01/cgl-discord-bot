@@ -79,9 +79,8 @@ async def createteam(ctx, *, teamname):
             return
         #create the team
         guild = bot.get_guild(CGL_server)
-        #teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, position=guild.get_role(FREE_AGENT_ROLE).position+1)
         teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True)
-        await teamrole.edit(position = 1)
+        await teamrole.edit(position=guild.get_role(FREE_AGENT_ROLE).position+1)
         await guild.get_member(ctx.author.id).add_roles(teamrole)
         database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID, teamRoleID) VALUES ('%s', '%s', %s, %s);" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id, teamrole.id))
         database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
@@ -105,9 +104,9 @@ async def invite(ctx, player: discord.User):
         if targetteam == None:
             await ctx.send("That player is not a member of the league.")
             return
-        #if targetteam[0] != None:
-        #    await ctx.send("That player is already on a team.")
-        #    return
+        if targetteam[0] != None:
+            await ctx.send("That player is already on a team.")
+            return
         invite = await player.send("You have been invited to join %s.\n:thumbsup: accept\n:thumbsdown: decline" % team)
         await invite.add_reaction(u"\U0001F44D") #thumbsup
         await invite.add_reaction(u"\U0001F44E") #thumbsdown
