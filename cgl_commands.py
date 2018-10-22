@@ -40,11 +40,11 @@ TEAM_STATS_DICT = {
 }
 
 @bot.command()
-async def test(ctx):
-    await ctx.send(json.dumps(PLAYER_STATS_DICT))
-
-@bot.command()
 async def register(ctx, username):
+    """register as a member in the league
+    Before players can participate in league activities, they must register for the league.
+    Upon registration, the player's server nickname will be changed to the one given.
+    The player will also be given the Member and Free Agent roles."""
     if not database.user_registered(ctx.author.id):
         #check that the desired username is available (not case sensitive)
         database.cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
@@ -65,15 +65,24 @@ async def register(ctx, username):
 
 @bot.command()
 async def createteam(ctx, *, teamname):
+    """create a team
+    Creates a new team with the given name and makes the user the captain of that team.
+    Players may not create a team if they are already a member of another team."""
     if database.user_registered(ctx.author.id):
+        #check that the user is not already on a team
+        database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % ctx.author.id)
+        if database.cur.fetchone()[0] != None:
+            await ctx.send("You cannot be on more than one team at a time. Please leave your current team before creating another one.")
+            return
         if teamname == None:
             await ctx.send("Please provide a team name.")
             return
         #create the team
         guild = bot.get_guild(CGL_server)
-        teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, position=guild.get_role(FREE_AGENT_ROLE).position+1)
+        teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True)
+        await teamrole.edit(position=guild.get_role(FREE_AGENT_ROLE).position+1)
         await guild.get_member(ctx.author.id).add_roles(teamrole)
-        database.cur.execute("INSERT INTO teamTable (teamname, stats) VALUES ('%s', '%s');" % (teamname, json.dumps(TEAM_STATS_DICT)))
+        database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID, teamRoleID) VALUES ('%s', '%s', %s, %s);" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id, teamrole.id))
         database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
         database.conn.commit()
         await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
@@ -81,7 +90,35 @@ async def createteam(ctx, *, teamname):
         await ctx.author.send(NOT_REGISTERED_MESSAGE)
 
 @bot.command()
+async def invite(ctx, player: discord.User):
+    if database.user_registered(ctx.author.id):
+        #make sure the user is the captain of a team
+        database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
+        team = database.cur.fetchone()[0]
+        if team == None:
+            await ctx.send("You are not a captain of a team.")
+            return
+        #make sure the target player isn't already on a team
+        database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
+        targetteam = database.cur.fetchone()
+        if targetteam == None:
+            await ctx.send("That player is not a member of the league.")
+            return
+        if targetteam[0] != None:
+            await ctx.send("That player is already on a team.")
+            return
+        invite = await player.send("You have been invited to join %s.\n:thumbsup: accept\n:thumbsdown: decline" % team)
+        await invite.add_reaction(u"\U0001F44D") #thumbsup
+        await invite.add_reaction(u"\U0001F44E") #thumbsdown
+        await ctx.send("%s has been invited to %s." % (bot.get_guild(CGL_server).get_member(player.id).nick, team))
+    else:
+        await ctx.author.send(NOT_REGISTERED_MESSAGE)
+
+@bot.command()
 async def accept(ctx):
+    """confirm a match
+    Once a match is found for a player in the matchmaking queue, the player will be prompted to confirm the match.
+    Use this command within 30 seconds in order to confirm a match."""
     if database.user_registered(ctx.author.id):
         #find the user in the queue
         if ctx.author.id in mmqueue.queue:
@@ -94,6 +131,7 @@ async def accept(ctx):
 
 @bot.command()
 async def elo(ctx):
+    """displays the player's elo."""
     if database.user_registered(ctx.author.id):
         await ctx.send("Your current elo is %s." % database.player_elo(ctx.author.id))
     else:
@@ -101,6 +139,7 @@ async def elo(ctx):
 
 @bot.command()
 async def rep(ctx):
+    """displays the player's rep."""
     if database.user_registered(ctx.author.id):
         await ctx.send("Your current rep is %s." % database.player_rep(ctx.author.id))
     else:
@@ -108,7 +147,14 @@ async def rep(ctx):
 
 @bot.command()
 async def report(ctx, target: discord.User, *, reason):
+    """reports another player's behaviour
+    Reports another player's behavior. The player can be specified by one of two methods:
+        mentioning the player or
+        giving the player's full Discord tag.
+    A reason must be provided after the player who is being reported."""
     if database.user_registered(ctx.author.id):
+        if reason == None:
+            await ctx.send("Please provide a reason for reporting the player.")
         await ctx.send("Report submitted for %s." % target.mention)
         await bot.get_guild(CGL_server).get_channel(REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
     else:
@@ -116,6 +162,11 @@ async def report(ctx, target: discord.User, *, reason):
 
 @bot.command()
 async def commend(ctx, target: discord.User):
+    """commends a player
+    Gives the specified player +1 rep. The player can be specified by one of two methods:
+        mentioning the player or
+        giving the player's full Discord tag.
+    This can be done once per match and must be done before reporting the match result."""
     if database.user_registered(ctx.author.id):
         if target == None:
             await ctx.send("That is not a valid player.")

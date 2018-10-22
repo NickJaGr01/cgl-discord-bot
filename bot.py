@@ -21,6 +21,7 @@ lobby_category = int(os.environ['LOBBY_CATEGORY'])
 AFK_CHANNEL_ID = int(os.environ['AFK_CHANNEL'])
 
 import matchmaking
+import teams
 
 task = None
 
@@ -39,6 +40,11 @@ async def on_ready() :
 async def on_message(msg):
     await matchmaking.process_match_commands(msg)
     await bot.process_commands(msg)
+
+@bot.event
+async def on_reaction_add(reaction, user):
+    if user.id != bot.appinfo.id:
+        await teams.process_invite(reaction, user)
 
 #MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
 #MM_CHANNEL_ID = 498928703091507220
