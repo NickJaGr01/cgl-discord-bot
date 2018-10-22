@@ -44,7 +44,7 @@ async def on_message(msg):
 @bot.event
 async def on_reaction_add(reaction, user):
     if user.id != bot.appinfo.id:
-        teams.process_invite(reaction, user)
+        await teams.process_invite(reaction, user)
 
 #MM_CHANNEL_ID = os.environ['MM_CHANNEL_ID']
 #MM_CHANNEL_ID = 498928703091507220
