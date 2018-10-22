@@ -81,10 +81,35 @@ async def createteam(ctx, *, teamname):
         guild = bot.get_guild(CGL_server)
         teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, position=guild.get_role(FREE_AGENT_ROLE).position+1)
         await guild.get_member(ctx.author.id).add_roles(teamrole)
-        database.cur.execute("INSERT INTO teamTable (teamname, stats) VALUES ('%s', '%s');" % (teamname, json.dumps(TEAM_STATS_DICT)))
+        database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID) VALUES ('%s', '%s', %s);" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id))
         database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
         database.conn.commit()
         await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
+    else:
+        await ctx.author.send(NOT_REGISTERED_MESSAGE)
+
+@bot.command()
+async def invite(ctx, player: discord.User):
+    if database.user_registered(ctx.author.id):
+        #make sure the user is the captain of a team
+        database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
+        team = database.cur.fetchone()[0]
+        if team == None:
+            await ctx.send("You are not a captain of a team.")
+            return
+        #make sure the target player isn't already on a team
+        database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
+        targetteam = database.cur.fetchone()
+        if targetteam == None:
+            await ctx.send("That player is not a member of the league.")
+            return
+        if targetteam[0] != None:
+            await ctx.send("That player is already on a team.")
+            return
+        invite = await player.send("You have been invited to join %s.\n:thumbsup: accept\n:thumbsdown: decline")
+        await invite.add_reaction(":thumbsup:")
+        await invite.add_reaction(":thumbsdown:")
+        await ctx.send("%s has been invited to %s." % (bot.get_guild(CGL_server).get_member(player.id).nick, team))
     else:
         await ctx.author.send(NOT_REGISTERED_MESSAGE)
 
