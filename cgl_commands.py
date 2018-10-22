@@ -40,10 +40,6 @@ TEAM_STATS_DICT = {
 }
 
 @bot.command()
-async def test(ctx):
-    await ctx.send(json.dumps(PLAYER_STATS_DICT))
-
-@bot.command()
 async def register(ctx, username):
     if not database.user_registered(ctx.author.id):
         #check that the desired username is available (not case sensitive)
@@ -65,6 +61,7 @@ async def register(ctx, username):
 
 @bot.command()
 async def createteam(ctx, *, teamname):
+    """create a team"""
     if database.user_registered(ctx.author.id):
         if teamname == None:
             await ctx.send("Please provide a team name.")
