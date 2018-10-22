@@ -19,7 +19,7 @@ async def process_invite(reaction, user):
                 teamrole = guild.get_role(roleid)
                 member = guild.get_member(user.id)
                 await member.add_roles(teamrole)
-                await member.remove_roles(guild.get_role(FREE_AGENT_ROLE))
+                #await member.remove_roles(guild.get_role(FREE_AGENT_ROLE))
                 await user.send("You have joined team '%s'." % team)
                 database.cur.execute("SELECT captainID FROM teamTable WHERE teamname='%s';" % team)
                 captainID = database.cur.fetchone()[0]
