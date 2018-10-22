@@ -41,6 +41,10 @@ TEAM_STATS_DICT = {
 
 @bot.command()
 async def register(ctx, username):
+    """register as a member in the league
+    Before players can participate in league activities, they must register for the league.
+    Upon registration, the player's server nickname will be changed to the one given.
+    The player will also be given the Member and Free Agent roles."""
     if not database.user_registered(ctx.author.id):
         #check that the desired username is available (not case sensitive)
         database.cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
@@ -62,8 +66,14 @@ async def register(ctx, username):
 @bot.command()
 async def createteam(ctx, *, teamname):
     """create a team
-    test"""
+    Creates a new team with the given name and makes the user the captain of that team.
+    Players may not create a team if they are already a member of another team."""
     if database.user_registered(ctx.author.id):
+        #check that the user is not already on a team
+        database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % ctx.author.id)
+        if database.cur.fetchone()[0] == None:
+            await ctx.send("You cannot be on more than one team at a time. Please leave your current team before creating another one.")
+            return
         if teamname == None:
             await ctx.send("Please provide a team name.")
             return
@@ -80,6 +90,9 @@ async def createteam(ctx, *, teamname):
 
 @bot.command()
 async def accept(ctx):
+    """confirm a match
+    Once a match is found for a player in the matchmaking queue, the player will be prompted to confirm the match.
+    Use this command within 30 seconds in order to confirm a match."""
     if database.user_registered(ctx.author.id):
         #find the user in the queue
         if ctx.author.id in mmqueue.queue:
@@ -92,6 +105,7 @@ async def accept(ctx):
 
 @bot.command()
 async def elo(ctx):
+    """displays the player's elo."""
     if database.user_registered(ctx.author.id):
         await ctx.send("Your current elo is %s." % database.player_elo(ctx.author.id))
     else:
@@ -99,6 +113,7 @@ async def elo(ctx):
 
 @bot.command()
 async def rep(ctx):
+    """displays the player's rep."""
     if database.user_registered(ctx.author.id):
         await ctx.send("Your current rep is %s." % database.player_rep(ctx.author.id))
     else:
@@ -106,7 +121,14 @@ async def rep(ctx):
 
 @bot.command()
 async def report(ctx, target: discord.User, *, reason):
+    """reports another player's behaviour
+    Reports another player's behavior. The player can be specified by one of two methods:
+        mentioning the player or
+        giving the player's full Discord tag.
+    A reason must be provided after the player who is being reported."""
     if database.user_registered(ctx.author.id):
+        if reason == None:
+            await ctx.send("Please provide a reason for reporting the player.")
         await ctx.send("Report submitted for %s." % target.mention)
         await bot.get_guild(CGL_server).get_channel(REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
     else:
@@ -114,6 +136,11 @@ async def report(ctx, target: discord.User, *, reason):
 
 @bot.command()
 async def commend(ctx, target: discord.User):
+    """commends a player
+    Gives the specified player +1 rep. The player can be specified by one of two methods:
+        mentioning the player or
+        giving the player's full Discord tag.
+    This can be done once per match and must be done before reporting the match result."""
     if database.user_registered(ctx.author.id):
         if target == None:
             await ctx.send("That is not a valid player.")

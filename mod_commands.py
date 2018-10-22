@@ -21,6 +21,7 @@ MAJOR_OFFENSE_TABLE = {
 
 @bot.command()
 async def majoroffense(ctx, target: discord.User):
+    """mod command"""
     modrole = bot.get_guild(CGL_server).get_role(MOD_ROLE_ID)
     if ctx.message.author.top_role >= modrole:
         now = datetime.now()

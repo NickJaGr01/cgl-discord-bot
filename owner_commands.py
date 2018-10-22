@@ -8,6 +8,7 @@ NOT_OWNER_MESSAGE = "This command is only for use by the owner."
 
 @bot.command()
 async def giveelo(ctx, target: discord.User, delo: int):
+    """owner command"""
     if ctx.message.author.id == bot.appinfo.owner.id:
         elo = database.player_elo(target.id)
         elo += delo
@@ -19,6 +20,7 @@ async def giveelo(ctx, target: discord.User, delo: int):
 
 @bot.command()
 async def giverep(ctx, target: discord.User, drep: int):
+    """owner command"""
     if ctx.message.author.id == bot.appinfo.owner.id:
         rep = database.player_rep(target.id)
         rep += drep
