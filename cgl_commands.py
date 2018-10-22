@@ -79,7 +79,8 @@ async def createteam(ctx, *, teamname):
             return
         #create the team
         guild = bot.get_guild(CGL_server)
-        teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, position=guild.get_role(FREE_AGENT_ROLE).position+1)
+        #teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, position=guild.get_role(FREE_AGENT_ROLE).position+1)
+        teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, position=1)
         await guild.get_member(ctx.author.id).add_roles(teamrole)
         database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID) VALUES ('%s', '%s', %s);" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id))
         database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
