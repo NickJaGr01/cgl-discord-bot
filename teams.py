@@ -4,5 +4,5 @@ async def process_invite(reaction, user):
     print("process")
     if reaction.message.author.id == bot.appinfo.id:
         if reaction.message.content.startswith("You have been invited to join"):
-            team = reaction.message.content[30:-25]
+            team = reaction.message.content[15:-35]
             print(team)
