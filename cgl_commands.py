@@ -105,9 +105,9 @@ async def invite(ctx, player: discord.User):
         if targetteam == None:
             await ctx.send("That player is not a member of the league.")
             return
-        if targetteam[0] != None:
-            await ctx.send("That player is already on a team.")
-            return
+        #if targetteam[0] != None:
+        #    await ctx.send("That player is already on a team.")
+        #    return
         invite = await player.send("You have been invited to join %s.\n:thumbsup: accept\n:thumbsdown: decline")
         await invite.add_reaction(":thumbsup:")
         await invite.add_reaction(":thumbsdown:")
