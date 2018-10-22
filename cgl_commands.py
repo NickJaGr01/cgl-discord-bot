@@ -108,7 +108,7 @@ async def invite(ctx, player: discord.User):
         #if targetteam[0] != None:
         #    await ctx.send("That player is already on a team.")
         #    return
-        invite = await player.send("You have been invited to join %s.\n:thumbsup: accept\n:thumbsdown: decline" % teamname)
+        invite = await player.send("You have been invited to join %s.\n:thumbsup: accept\n:thumbsdown: decline" % team)
         await invite.add_reaction(u"\U0001F44D") #thumbsup
         await invite.add_reaction(u"\U0001F44E") #thumbsdown
         await ctx.send("%s has been invited to %s." % (bot.get_guild(CGL_server).get_member(player.id).nick, team))
