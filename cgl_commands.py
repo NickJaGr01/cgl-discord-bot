@@ -61,8 +61,8 @@ async def register(ctx, username):
 
 @bot.command()
 async def createteam(ctx, *, teamname):
-    """create a team"""
-    """test"""
+    """create a team
+    test"""
     if database.user_registered(ctx.author.id):
         if teamname == None:
             await ctx.send("Please provide a team name.")
