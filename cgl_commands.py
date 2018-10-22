@@ -11,17 +11,24 @@ NOT_REGISTERED_MESSAGE = "Please register before participating in CGL. You can r
 
 REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
 
+MEMBER_ROLE = 499276055585226773
+FREE_AGENT_ROLE = 503654821644206093
+
 @bot.command()
 async def register(ctx, username):
     if not database.user_registered(ctx):
         #check that the desired username is available (not case sensitive)
         database.cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
         if database.cur.fetchone() == None:
+            if username == None:
+                await ctx.send("Please provide a username.")
+                return
             database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep) VALUES (%s, '%s', %s, %s);" % (ctx.author.id, username, 1300, 100))
             database.conn.commit()
             await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
             await ctx.author.edit(nick=username)
-            await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(499276055585226773))
+            await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(MEMBER_ROLE))
+            await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(FREE_AGENT_ROLE))
         else:
             await ctx.author.send("The username %s is not available. Please choose another one to register for CGL." % username)
     else:
