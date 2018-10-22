@@ -6,30 +6,83 @@ from bot import bot
 from bot import CGL_server
 from matchmaking import mmqueue
 from matchmaking import matches
+import json
 
 NOT_REGISTERED_MESSAGE = "Please register before participating in CGL. You can register by using the \"!register *username*\" command."
 
 REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
 
+MEMBER_ROLE = 499276055585226773
+FREE_AGENT_ROLE = 503654821644206093
+
+PLAYER_STATS_DICT = {
+    "maps": {
+        "dust2": {"wins": 0, "total": 0},
+        "mirage": {"wins": 0, "total": 0},
+        "cache": {"wins": 0, "total": 0},
+        "inferno": {"wins": 0, "total": 0},
+        "nuke": {"wins": 0, "total": 0},
+        "overpass": {"wins": 0, "total": 0},
+        "inferno": {"wins": 0, "total": 0}
+    }
+}
+
+TEAM_STATS_DICT = {
+    "maps": {
+        "dust2": {"wins": 0, "total": 0},
+        "mirage": {"wins": 0, "total": 0},
+        "cache": {"wins": 0, "total": 0},
+        "inferno": {"wins": 0, "total": 0},
+        "nuke": {"wins": 0, "total": 0},
+        "overpass": {"wins": 0, "total": 0},
+        "inferno": {"wins": 0, "total": 0}
+    }
+}
+
+@bot.command()
+async def test(ctx):
+    await ctx.send(json.dumps(PLAYER_STATS_DICT))
+
 @bot.command()
 async def register(ctx, username):
-    if not database.user_registered(ctx):
+    if not database.user_registered(ctx.author.id):
         #check that the desired username is available (not case sensitive)
         database.cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
         if database.cur.fetchone() == None:
-            database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep) VALUES (%s, '%s', %s, %s);" % (ctx.author.id, username, 1300, 100))
+            if username == None:
+                await ctx.send("Please provide a username.")
+                return
+            database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep, stats) VALUES (%s, '%s', %s, %s, '%s');" % (ctx.author.id, username, 1300, 100, json.dumps(PLAYER_STATS_DICT)))
             database.conn.commit()
             await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
             await ctx.author.edit(nick=username)
-            await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(499276055585226773))
+            await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(MEMBER_ROLE))
+            await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(FREE_AGENT_ROLE))
         else:
             await ctx.author.send("The username %s is not available. Please choose another one to register for CGL." % username)
     else:
         await ctx.author.send("You have already registered for CGL.")
 
 @bot.command()
+async def createteam(ctx, *, teamname):
+    if database.user_registered(ctx.author.id):
+        if teamname == None:
+            await ctx.send("Please provide a team name.")
+            return
+        #create the team
+        guild = bot.get_guild(CGL_server)
+        teamrole = await guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, position=guild.get_role(FREE_AGENT_ROLE).position+1)
+        await guild.get_member(ctx.author.id).add_roles(teamrole)
+        database.cur.execute("INSERT INTO teamTable (teamname, stats) VALUES ('%s', '%s');" % (teamname, json.dumps(TEAM_STATS_DICT)))
+        database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
+        database.conn.commit()
+        await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
+    else:
+        await ctx.author.send(NOT_REGISTERED_MESSAGE)
+
+@bot.command()
 async def accept(ctx):
-    if database.user_registered(ctx):
+    if database.user_registered(ctx.author.id):
         #find the user in the queue
         if ctx.author.id in mmqueue.queue:
             mmqueue.queue[ctx.author.id]["confirmed"] = True
@@ -41,21 +94,21 @@ async def accept(ctx):
 
 @bot.command()
 async def elo(ctx):
-    if database.user_registered(ctx):
+    if database.user_registered(ctx.author.id):
         await ctx.send("Your current elo is %s." % database.player_elo(ctx.author.id))
     else:
         await ctx.send(NOT_REGISTERED_MESSAGE)
 
 @bot.command()
 async def rep(ctx):
-    if database.user_registered(ctx):
+    if database.user_registered(ctx.author.id):
         await ctx.send("Your current rep is %s." % database.player_rep(ctx.author.id))
     else:
         await ctx.send(NOT_REGISTERED_MESSAGE)
 
 @bot.command()
 async def report(ctx, target: discord.User, *, reason):
-    if database.user_registered(ctx):
+    if database.user_registered(ctx.author.id):
         await ctx.send("Report submitted for %s." % target.mention)
         await bot.get_guild(CGL_server).get_channel(REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
     else:
@@ -63,7 +116,7 @@ async def report(ctx, target: discord.User, *, reason):
 
 @bot.command()
 async def commend(ctx, target: discord.User):
-    if database.user_registered(ctx):
+    if database.user_registered(ctx.author.id):
         if target == None:
             await ctx.send("That is not a valid player.")
             return

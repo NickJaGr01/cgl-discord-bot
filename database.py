@@ -5,8 +5,8 @@ DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 
-def user_registered(ctx):
-    cur.execute("SELECT * FROM playerTable WHERE discordID=%s;" % ctx.author.id)
+def user_registered(discordID):
+    cur.execute("SELECT * FROM playerTable WHERE discordID=%s;" % discordID)
     return (cur.fetchone() != None)
 
 def player_elo(discordID):
