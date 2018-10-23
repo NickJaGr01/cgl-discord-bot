@@ -75,7 +75,7 @@ class Teams:
     async def leaveteam(self, ctx):
         """leaves your current team
         The captain of a team is not allowed to leave a team if there are other players on it.
-        If the user is the last remaining player on the team, the team will be disbanded.""""
+        If the user is the last remaining player on the team, the team will be disbanded."""
         if database.user_registered(ctx.author.id):
             #check that the user is on a team
             database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % ctx.author.id)
