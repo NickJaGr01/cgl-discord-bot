@@ -59,7 +59,7 @@ async def cycle_queue():
             if len(bot.available_lobbies) == 0:
                 break
             lobby = bot.available_lobbies[0]
-            available_lobbies.pop(0)
+            bot.available_lobbies.pop(0)
         id = inq[i]
         team = 1
         if i%10/5 >= 1:
@@ -82,7 +82,7 @@ async def cycle_queue():
         #begin the game if all players have confirmed the match
         if ready:
             #create the lobbies for the teams
-            cat = bot.guild.get_channel(lobby_category)
+            cat = bot.guild.get_channel(bot.lobby_category)
             textchat = await bot.guild.create_text_channel("Game Chat", category=cat)
             teamchat = [None, None]
             teamchat[0] = await bot.guild.create_voice_channel("Your Team", category=cat)
