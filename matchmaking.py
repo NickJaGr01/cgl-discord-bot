@@ -3,9 +3,6 @@ import asyncio
 import random
 
 from bot import bot
-from bot import CGL_server
-from bot import lobby_category
-from bot import AFK_CHANNEL_ID
 import database
 
 class MMQueue:
@@ -30,7 +27,7 @@ class MMQueue:
 
     def step_time(self):
         for id in self.queue:
-            self.queue[id]["time"] -= delta_time
+            self.queue[id]["time"] -= bot.delta_time
 
     def push(self, discordID):
         self.queue[discordID] = {"lobby": -1, "confirmed": False, "time": 0, "team": 0}
@@ -45,67 +42,51 @@ class MMQueue:
         self.queue[discordID]["last message time"] = 30
         self.queue[discordID]["team"] = team
 
-available_lobbies = [i for i in range(20)]
-
-mmqueue = MMQueue()
-matches = {}
-
 MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblestone"]
 
 MESSAGE_TIME_DIFFERENCE = 5
 
-delta_time = 0
-
 async def mm_thread():
-    global delta_time
-    loop = asyncio.get_event_loop()
-    last_time = loop.time()
-    while True:
-        now = loop.time()
-        delta_time = now - last_time
-        last_time = now
-        await cycle_queue()
-        await cycle_matches()
-        await asyncio.sleep(.1)
+    await cycle_queue()
+    await cycle_matches()
 
 async def cycle_queue():
-    inq = mmqueue.in_queue()
+    inq = bot.mmqueue.in_queue()
     lobby = 0
     for i in range(math.floor(len(inq)/10)*10):
         if i%10 == 0:
-            if len(available_lobbies) == 0:
+            if len(bot.available_lobbies) == 0:
                 break
-            lobby = available_lobbies[0]
-            available_lobbies.pop(0)
+            lobby = bot.available_lobbies[0]
+            bot.available_lobbies.pop(0)
         id = inq[i]
         team = 1
         if i%10/5 >= 1:
             team = 2
-        mmqueue.move(id, lobby, team)
+        bot.mmqueue.move(id, lobby, team)
         user = bot.get_user(id)
         await user.send("A match has been found. Type \"!accept\" to confirm.")
         await user.send("30 seconds remaining")
-    mmqueue.step_time()
-    lobbies = mmqueue.lobbies()
+    bot.mmqueue.step_time()
+    lobbies = bot.mmqueue.lobbies()
     for l in lobbies.keys():
         ready = True
         for id in lobbies[l]["players"]:
             if lobbies[l]["last message time"] - lobbies[l]["time"] >= MESSAGE_TIME_DIFFERENCE:
                 user = bot.get_user(id)
-                mmqueue.queue[id]["last message time"] = lobbies[l]["last message time"] - MESSAGE_TIME_DIFFERENCE
-                await user.send("%s seconds remaining" % mmqueue.queue[id]["last message time"])
+                bot.mmqueue.queue[id]["last message time"] = lobbies[l]["last message time"] - MESSAGE_TIME_DIFFERENCE
+                await user.send("%s seconds remaining" % bot.mmqueue.queue[id]["last message time"])
             if not lobbies[l]["players"][id]["confirmed"]:
                 ready = False
         #begin the game if all players have confirmed the match
         if ready:
             #create the lobbies for the teams
-            guild = bot.get_guild(CGL_server)
-            cat = guild.get_channel(lobby_category)
-            textchat = await guild.create_text_channel("Game Chat", category=cat)
+            cat = bot.guild.get_channel(bot.lobby_category)
+            textchat = await bot.guild.create_text_channel("Game Chat", category=cat)
             teamchat = [None, None]
-            teamchat[0] = await guild.create_voice_channel("Your Team", category=cat)
-            teamchat[1] = await guild.create_voice_channel("Your Team", category=cat)
-            matches[l] = {"map": MAP_LIST.copy(), "votes": {}, "time": 30, "commendations": [], "last message time": 30+MESSAGE_TIME_DIFFERENCE, "channels": {0: textchat, 1: teamchat[0], 2: teamchat[1]}, "players": {}}
+            teamchat[0] = await bot.guild.create_voice_channel("Lobby %s: Team 1" % l, category=cat)
+            teamchat[1] = await bot.guild.create_voice_channel("Lobby %s: Team 2" % l, category=cat)
+            bot.matches[l] = {"map": MAP_LIST.copy(), "votes": {}, "time": 30, "commendations": [], "last message time": 30+MESSAGE_TIME_DIFFERENCE, "channels": {0: textchat, 1: teamchat[0], 2: teamchat[1]}, "players": {}}
             host = list(lobbies[l]["players"].keys())[0]
             host_rep = database.player_rep(host)
             for id in lobbies[l]["players"]:
@@ -113,50 +94,49 @@ async def cycle_queue():
                 if this_rep > host_rep:
                     host = id
                     host_rep = this_rep
-                team = mmqueue.queue[id]["team"]
-                matches[l]["players"][id] = {"team": team}
-                user = guild.get_member(id)
+                team = bot.mmqueue.queue[id]["team"]
+                bot.matches[l]["players"][id] = {"team": team}
+                user = bot.guild.get_member(id)
                 await textchat.set_permissions(user, read_messages=True)
                 await teamchat[team-1].set_permissions(user, connect=True)
                 await user.edit(voice_channel=teamchat[team-1])
                 await user.send("Your match is ready. Please return to the CGL Dicord server to vote for the map.")
-            matches[l]["host"] = host
+            bot.matches[l]["host"] = host
             mapliststring = "maps remaining:"
-            for mv in matches[l]["map"]:
+            for mv in bot.matches[l]["map"]:
                 mapliststring += "\n    %s" % mv
-            await matches[l]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
+            await bot.matches[l]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
             continue
         if lobbies[l]["time"] <= 0:
             for id in lobbies[l]["players"]:
                 if lobbies[l]["players"][id]["confirmed"]:
-                    mmqueue.move(id, -1)
+                    bot.mmqueue.move(id, -1)
                     user = bot.get_user(id)
                     user.send("One or more players in your lobby failed to confirm the match. You have been added back to the queue.")
                 else:
-                    mmqueue.pop(id)
-                    guild = bot.get_guild(CGL_server)
-                    user = guild.get_member(id)
-                    await user.edit(voice_channel=bot.get_channel(AFK_CHANNEL_ID))
+                    bot.mmqueue.pop(id)
+                    user = bot.guild.get_member(id)
+                    await user.edit(voice_channel=bot.get_channel(bot.AFK_CHANNEL_ID))
                     await user.send("You failed to confirm your match. You have been removed from the queue.")
-            available_lobbies.append(l)
+            bot.available_lobbies.append(l)
 
 ELO_K_FACTOR = 16
 
 async def cycle_matches():
     finished_matches = []
-    for m in matches:
-        if type(matches[m]["map"]) is list:
-            if matches[m]["last message time"] - matches[m]["time"] >= MESSAGE_TIME_DIFFERENCE:
-                matches[m]["last message time"] = matches[m]["last message time"] - MESSAGE_TIME_DIFFERENCE
-                await matches[m]["channels"][0].send("%s seconds remaining" % matches[m]["last message time"])
-            matches[m]["time"] -= delta_time
-            if len(matches[m]["votes"]) == 10 or matches[m]["time"] <= 0:
+    for m in bot.matches:
+        if type(bot.matches[m]["map"]) is list:
+            if bot.matches[m]["last message time"] - bot.matches[m]["time"] >= MESSAGE_TIME_DIFFERENCE:
+                bot.matches[m]["last message time"] = bot.matches[m]["last message time"] - MESSAGE_TIME_DIFFERENCE
+                await bot.matches[m]["channels"][0].send("%s seconds remaining" % bot.matches[m]["last message time"])
+            bot.matches[m]["time"] -= bot.delta_time
+            if len(bot.matches[m]["votes"]) == 10 or bot.matches[m]["time"] <= 0:
                 #determine most popular vote
                 track = {}
                 maxvote = 0
                 map = ""
-                for vote in matches[m]["votes"]:
-                    value = matches[m]["votes"][vote]
+                for vote in bot.matches[m]["votes"]:
+                    value = bot.matches[m]["votes"][vote]
                     if value not in track:
                         track[value] = 1
                     else:
@@ -165,49 +145,49 @@ async def cycle_matches():
                         maxvote = track[value]
                         map = value
                 if maxvote == 0:
-                    map = matches[m]["map"][random.randint(0, len(matches[m]["map"])-1)]
-                matches[m]["votes"] = {}
-                matches[m]["map"].remove(map)
-                matches[m]["time"] = 30
-                matches[m]["last message time"] = 30+MESSAGE_TIME_DIFFERENCE
-                if len(matches[m]["map"]) == 1:
-                    matches[m]["time"] = 300
-                    matches[m]["map"] = matches[m]["map"][0]
-                    await matches[m]["channels"][0].send("The match will be played on %s.\nThe match host is %s.\nPlease create a lobby on popflash.site and paste the link in this channel.\nWhen the game has finished, all players must report the result by typing \"result win\" or \"result loss\".\n You can commend up to one other player before reporting the match result by using the \"!commend user\" command." % (matches[m]["map"], bot.get_user(matches[m]["host"]).mention))
+                    map = bot.matches[m]["map"][random.randint(0, len(bot.matches[m]["map"])-1)]
+                bot.matches[m]["votes"] = {}
+                bot.matches[m]["map"].remove(map)
+                bot.matches[m]["time"] = 30
+                bot.matches[m]["last message time"] = 30+MESSAGE_TIME_DIFFERENCE
+                if len(bot.matches[m]["map"]) == 1:
+                    bot.matches[m]["time"] = 300
+                    bot.matches[m]["map"] = bot.matches[m]["map"][0]
+                    await bot.matches[m]["channels"][0].send("The match will be played on %s.\nThe match host is %s.\nPlease create a lobby on popflash.site and paste the link in this channel.\nWhen the game has finished, all players must report the result by typing \"result win\" or \"result loss\".\n You can commend up to one other player before reporting the match result by using the \"!commend user\" command." % (bot.matches[m]["map"], bot.get_user(bot.matches[m]["host"]).mention))
                 else:
                     mapliststring = "maps remaining:"
-                    for mv in matches[m]["map"]:
+                    for mv in bot.matches[m]["map"]:
                         mapliststring += "\n    %s" % mv
-                    await matches[m]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
+                    await bot.matches[m]["channels"][0].send("%s\nType \"vote map_name\" to vote to eliminate a map." % mapliststring)
         else:
-            if len(matches[m]["votes"]) > 0:
-                matches[m]["time"] -= delta_time
-                if matches[m]["time"] == 0 or len(matches[m]["votes"]) == 10:
+            if len(bot.matches[m]["votes"]) > 0:
+                bot.matches[m]["time"] -= bot.delta_time
+                if bot.matches[m]["time"] == 0 or len(bot.matches[m]["votes"]) == 10:
                     finished_matches.append(m)
     for m in finished_matches:
-        for channel in matches[m]["channels"]:
-            await matches[m]["channels"][channel].delete()
-        available_lobbies.append(m)
+        for channel in bot.matches[m]["channels"]:
+            await bot.matches[m]["channels"][channel].delete()
+        bot.available_lobbies.append(m)
         result = 0 #positive - team 1 wins; negative - team 2 wins
-        for id in matches[m]["votes"]:
+        for id in bot.matches[m]["votes"]:
             vote = 0
-            if matches[m]["votes"][id] == "win":
+            if bot.matches[m]["votes"][id] == "win":
                 vote = 1
-            elif matches[m]["votes"][id] == "loss":
+            elif bot.matches[m]["votes"][id] == "loss":
                 vote = -1
-            if matches[m]["players"][id]["team"] == 2:
+            if bot.matches[m]["players"][id]["team"] == 2:
                 vote *= -1
             result += vote
         winners = {}
         winner_average = 0
         losers = {}
         loser_average = 0
-        for id in matches[m]["players"]:
+        for id in bot.matches[m]["players"]:
             elo = database.player_elo(id)
             team = 0
-            if matches[m]["players"][id]["team"] == 1:
+            if bot.matches[m]["players"][id]["team"] == 1:
                 team = 1
-            elif matches[m]["players"][id]["team"] == 2:
+            elif bot.matches[m]["players"][id]["team"] == 2:
                 team = -1
             if result < 0:
                 team *= -1
@@ -227,10 +207,10 @@ async def cycle_matches():
             await user.send("Your last match has been recorded as a win.")
             #update rep
             penalize = False
-            if id not in matches[m]["votes"]:
+            if id not in bot.matches[m]["votes"]:
                 penalize = True
                 await user.send("You failed to report the result of your match and have received a penalty of -20 rep.")
-            elif matches[m]["votes"][id] == "loss":
+            elif bot.matches[m]["votes"][id] == "loss":
                 penalize = True
                 await user.send("You reported a match result which conflicted with the rest of the players. You have received a penalty of -20 rep.")
             if penalize:
@@ -245,10 +225,10 @@ async def cycle_matches():
             await user.send("Your last match has been recorded as a loss.")
             #update rep
             penalize = False
-            if id not in matches[m]["votes"]:
+            if id not in bot.matches[m]["votes"]:
                 penalize = True
                 await user.send("You failed to report the result of your match and have received a penalty of -20 rep.")
-            elif matches[m]["votes"][id] == "win":
+            elif bot.matches[m]["votes"][id] == "win":
                 penalize = True
                 await user.send("You reported a match result which conflicted with the rest of the players. You have received a penalty of -20 rep.")
             if penalize:
@@ -256,29 +236,29 @@ async def cycle_matches():
                 rep -= 20
                 database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, id))
         database.conn.commit()
-        del matches[m]
+        del bot.matches[m]
 
 
 async def process_match_commands(msg):
     is_game_chat = False
     lobby = None
-    for l in matches:
-        if matches[l]["channels"][0].id == msg.channel.id:
+    for l in bot.matches:
+        if bot.matches[l]["channels"][0].id == msg.channel.id:
             is_game_chat = True
             lobby = l
             break
     if is_game_chat:
         if msg.content.startswith("vote "):
-            if msg.author.id not in matches[lobby]["votes"]:
+            if msg.author.id not in bot.matches[lobby]["votes"]:
                 map = msg.content[5:]
-                if map in matches[lobby]["map"]:
-                    matches[lobby]["votes"][msg.author.id] = map
+                if map in bot.matches[lobby]["map"]:
+                    bot.matches[lobby]["votes"][msg.author.id] = map
                 else:
                     await msg.channel.send("%s is not a valid map." % map)
         elif msg.content.startswith("result "):
-            if msg.author.id not in matches[lobby]["votes"]:
+            if msg.author.id not in bot.matches[lobby]["votes"]:
                 result = msg.content[7:]
                 if result == "win" or result == "loss":
-                    matches[lobby]["votes"][msg.author.id] = result
+                    bot.matches[lobby]["votes"][msg.author.id] = result
                 else:
                     await msg.channel.send("%s is not a valid match result." % result)
