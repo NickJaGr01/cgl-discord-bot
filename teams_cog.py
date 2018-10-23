@@ -71,4 +71,69 @@ class Teams:
         else:
             await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
+    @commands.command(pass_context=True)
+    async def leaveteam(self, ctx):
+        """leaves your current team
+        The captain of a team is not allowed to leave a team if there are other players on it.
+        If the user is the last remaining player on the team, the team will be disbanded.""""
+        if database.user_registered(ctx.author.id):
+            #check that the user is on a team
+            database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % ctx.author.id)
+            team = databse.cur.fetchone()[0]
+            if team == None:
+                await ctx.send("You are not on a team.")
+                return
+            #check if there are other members on the team
+            database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team)
+            othermembers = (len(database.cur.fetchall()) > 1)
+            if not othermembers:
+                database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
+                roleid = database.cur.fetchone()[0]
+                teamrole = bot.guild.get_role(roleid)
+                database.cur.execute("DELETE FROM teamTable WHERE teamname='%s';" % team)
+                database.cur.execute("UPDATE playerTable SET team=NULL WHERE team='%s';" % team)
+                database.conn.commit()
+                member = bot.guild.get_member(ctx.author.id)
+                await member.remove_roles(teamrole)
+                await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+                await ctx.send("Team '%s' has been disbanded." % team)
+                return
+            #check if the user is the captain of the team
+            database.cur.execute("SELECT * FROM teamTable WHERE captainID=%s;" % ctx.author.id)
+            if database.cur.fetchone() != None:
+                await ctx.send("You cannot leave your team as the captain.\nPlease make another player the captain of the team before leaving.")
+                return
+            database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % ctx.author.id)
+            database.conn.commit()
+            await ctx.send("You have left team '%s'." % team)
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
+    @commands.command(pass_context=True)
+    async def disbandteam(self, ctx):
+        """disbands the user's team if they are the captain"""
+        if database.user_registered(ctx.author.id):
+            #check that the user is on a team
+            database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
+            team = databse.cur.fetchone()[0]
+            if team == None:
+                await ctx.send("You are not the captain of a team.")
+                return
+            database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
+            roleid = database.cur.fetchone()[0]
+            teamrole = bot.guild.get_role(roleid)
+            database.cur.execute("DELETE FROM teamTable WHERE teamname='%s';" % team)
+            database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" %s)
+            playerids = databsae.cur.fetchall()
+            database.cur.execute("UPDATE playerTable SET team=NULL WHERE team='%s';" % team)
+            database.conn.commit()
+            for entry in playerids:
+                member = bot.guild.get_member(entry[0])
+                await member.remove_roles(teamrole)
+                await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+                await bot.get_user(entry[0]).send("Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
+            await ctx.send("Team '%s' has been disbanded ." % team)
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
 bot.add_cog(Teams())

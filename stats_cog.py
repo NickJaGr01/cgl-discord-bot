@@ -20,8 +20,4 @@ class Stats:
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
-    @commands.command(pass_context=True)
-    async def info(self, ctx, target):
-        pass
-
 bot.add_cog(Stats())
