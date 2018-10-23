@@ -53,10 +53,8 @@ async def mm_thread():
 async def cycle_queue():
     inq = bot.mmqueue.in_queue()
     lobby = 0
-    #for i in range(math.floor(len(inq)/10)*10):
-    for i in range(math.floor(len(inq)/1)*1):
-        #if i%10 == 0:
-        if i%1 == 0:
+    for i in range(math.floor(len(inq)/10)*10):
+        if i%10 == 0:
             if len(bot.available_lobbies) == 0:
                 break
             lobby = bot.available_lobbies[0]
@@ -132,8 +130,7 @@ async def cycle_matches():
                 bot.matches[m]["last message time"] = bot.matches[m]["last message time"] - MESSAGE_TIME_DIFFERENCE
                 await bot.matches[m]["channels"][0].send("%s seconds remaining" % bot.matches[m]["last message time"])
             bot.matches[m]["time"] -= bot.delta_time
-            #if len(bot.matches[m]["votes"]) == 10 or bot.matches[m]["time"] <= 0:
-            if len(bot.matches[m]["votes"]) == 1 or bot.matches[m]["time"] <= 0:
+            if len(bot.matches[m]["votes"]) == 10 or bot.matches[m]["time"] <= 0:
                 #determine most popular vote
                 track = {}
                 maxvote = 0
