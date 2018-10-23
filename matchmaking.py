@@ -226,10 +226,10 @@ async def cycle_matches():
             await user.send("Your last match has been recorded as a loss.")
             #update rep
             penalize = False
-            if id not in matches[m]["votes"]:
+            if id not in bot.matches[m]["votes"]:
                 penalize = True
                 await user.send("You failed to report the result of your match and have received a penalty of -20 rep.")
-            elif matches[m]["votes"][id] == "win":
+            elif bot.matches[m]["votes"][id] == "win":
                 penalize = True
                 await user.send("You reported a match result which conflicted with the rest of the players. You have received a penalty of -20 rep.")
             if penalize:
