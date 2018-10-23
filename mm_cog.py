@@ -11,7 +11,7 @@ class Matchmaking:
         Use this command within 30 seconds in order to confirm a match."""
         if database.user_registered(ctx.author.id):
             #find the user in the queue
-            if ctx.author.id in mmqueue.queue:
+            if ctx.author.id in bot.mmqueue.queue:
                 bot.mmqueue.queue[ctx.author.id]["confirmed"] = True
                 await ctx.author.send("You have accepted your game.\nWaiting for remaining players...")
             else:
