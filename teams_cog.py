@@ -38,8 +38,7 @@ class Teams:
                 return
             #create the team
             teamrole = await bot.guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True)
-            #await teamrole.edit(position=bot.guild.get_role(bot.FREE_AGENT_ROLE).position+1)
-            await teamrole.edit(position=1)
+            await teamrole.edit(position=bot.guild.get_role(bot.FREE_AGENT_ROLE).position+1)
             await bot.guild.get_member(ctx.author.id).add_roles(teamrole)
             database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID, teamRoleID) VALUES ('%s', '%s', %s, %s);" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id, teamrole.id))
             database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
@@ -101,7 +100,7 @@ class Teams:
                 database.conn.commit()
                 member = bot.guild.get_member(ctx.author.id)
                 await member.remove_roles(teamrole)
-                #await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+                await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await ctx.send("Team '%s' has been disbanded." % team)
                 return
             #check if the user is the captain of the team
@@ -137,7 +136,7 @@ class Teams:
             for entry in playerids:
                 member = bot.guild.get_member(entry[0])
                 await member.remove_roles(teamrole)
-                #await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+                await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await bot.get_user(entry[0]).send("Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
             await ctx.send("Team '%s' has been disbanded ." % team)
         else:
