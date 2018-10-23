@@ -3,9 +3,6 @@ import asyncio
 import random
 
 from bot import bot
-from bot import CGL_server
-from bot import lobby_category
-from bot import AFK_CHANNEL_ID
 import database
 
 class MMQueue:
