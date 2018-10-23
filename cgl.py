@@ -3,7 +3,7 @@ import os
 from discord.ext import commands
 
 import matchmaking
-#import cgl_commands
+import general_cog
 import owner_cog
 import mod_cog
 import mm_cog

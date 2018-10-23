@@ -39,7 +39,7 @@ class Teams:
             database.conn.commit()
             await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
         else:
-            await ctx.author.send(NOT_REGISTERED_MESSAGE)
+            await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
     async def invite(self, ctx, player: discord.User):
@@ -68,6 +68,6 @@ class Teams:
             await invite.add_reaction(u"\U0001F44E") #thumbsdown
             await ctx.send("%s has been invited to %s." % (bot.guild.get_member(player.id).nick, team))
         else:
-            await ctx.author.send(NOT_REGISTERED_MESSAGE)
+            await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
 bot.add_cog(Teams())

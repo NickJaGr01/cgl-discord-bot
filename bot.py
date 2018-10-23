@@ -34,6 +34,7 @@ async def on_ready() :
     print(bot.user.id)
     print('------')
 
+    bot.NOT_REGISTERED_MESSAGE = "Please register before participating in CGL. You can register by using the \"!register *username*\" command."
     bot.appinfo = await bot.application_info()
     bot.CGL_server = int(os.environ['CGL_SERVER'])
     bot.guild = bot.get_guild(bot.CGL_server)
@@ -45,7 +46,7 @@ async def on_ready() :
     bot.matches = {}
     bot.available_lobbies = [i for i in range(20)]
 
-    #bot.task = asyncio.create_task(background_thread())
+    bot.task = asyncio.create_task(background_thread())
 
 @bot.event
 async def on_message(msg):

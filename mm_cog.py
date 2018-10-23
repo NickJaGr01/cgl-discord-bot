@@ -17,7 +17,7 @@ class Matchmaking:
             else:
                 await ctx.author.send("You are not in the queue. You can join it by connecting to the matchmaking channel.")
         else:
-            await ctx.author.send(NOT_REGISTERED_MESSAGE)
+            await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
     async def commend(self, ctx, target: discord.User):
@@ -61,6 +61,6 @@ class Matchmaking:
             else:
                 await ctx.send("You are not currently in a match. You cannot commend anyone.")
         else:
-            await ctx.author.send(NOT_REGISTERED_MESSAGE)
+            await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
 bot.add_cog(Matchmaking())
