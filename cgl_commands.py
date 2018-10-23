@@ -91,6 +91,10 @@ async def createteam(ctx, *, teamname):
 
 @bot.command()
 async def invite(ctx, player: discord.User):
+    """invite a player to your team
+    Invites another player to your team. The player can be specified by one of two methods:
+        mentioning the player or
+        giving the player's full Discord tag."""
     if database.user_registered(ctx.author.id):
         #make sure the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
@@ -113,6 +117,10 @@ async def invite(ctx, player: discord.User):
         await ctx.send("%s has been invited to %s." % (bot.get_guild(CGL_server).get_member(player.id).nick, team))
     else:
         await ctx.author.send(NOT_REGISTERED_MESSAGE)
+
+@bot.command()
+async def info(ctx, target):
+    pass
 
 @bot.command()
 async def accept(ctx):
