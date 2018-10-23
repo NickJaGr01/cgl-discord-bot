@@ -124,7 +124,7 @@ class Teams:
             roleid = database.cur.fetchone()[0]
             teamrole = bot.guild.get_role(roleid)
             database.cur.execute("DELETE FROM teamTable WHERE teamname='%s';" % team)
-            database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" team)
+            database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" % team)
             playerids = databsae.cur.fetchall()
             database.cur.execute("UPDATE playerTable SET team=NULL WHERE team='%s';" % team)
             database.conn.commit()
