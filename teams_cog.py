@@ -31,6 +31,11 @@ class Teams:
             if teamname == None:
                 await ctx.send("Please provide a team name.")
                 return
+            #check that the team name is not already taken
+            database.cur.execute("SELECT * FROM teamTable WHERE teamname='%s';" % teamname)
+            if database.cur.fetchone() != None:
+                await ctx.send("The team name '%s' is already taken. Please choose another name." % teamname)
+                return
             #create the team
             teamrole = await bot.guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True)
             #await teamrole.edit(position=bot.guild.get_role(bot.FREE_AGENT_ROLE).position+1)
