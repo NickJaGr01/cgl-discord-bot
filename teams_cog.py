@@ -2,6 +2,7 @@ from bot import bot
 from discord.ext import commands
 import discord
 import database
+import json
 
 TEAM_STATS_DICT = {
     "maps": {
