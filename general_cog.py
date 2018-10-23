@@ -37,8 +37,8 @@ class General:
                 database.conn.commit()
                 await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
                 await ctx.author.edit(nick=username)
-                await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(MEMBER_ROLE))
-                await ctx.author.add_roles(bot.get_guild(CGL_server).get_role(FREE_AGENT_ROLE))
+                await ctx.author.add_roles(bot.guild.get_role(bot.MEMBER_ROLE))
+                await ctx.author.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
             else:
                 await ctx.author.send("The username %s is not available. Please choose another one to register for CGL." % username)
         else:
