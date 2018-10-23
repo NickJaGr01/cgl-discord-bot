@@ -47,9 +47,8 @@ MAP_LIST = ["dust2", "mirage", "cache", "inferno", "nuke", "overpass", "cobblest
 MESSAGE_TIME_DIFFERENCE = 5
 
 async def mm_thread():
-    while True:
-        await cycle_queue()
-        await cycle_matches()
+    await cycle_queue()
+    await cycle_matches()
 
 async def cycle_queue():
     inq = bot.mmqueue.in_queue()
