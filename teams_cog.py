@@ -80,7 +80,7 @@ class Teams:
         if database.user_registered(ctx.author.id):
             #check that the user is on a team
             database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % ctx.author.id)
-            team = databse.cur.fetchone()[0]
+            team = database.cur.fetchone()[0]
             if team == None:
                 await ctx.send("You are not on a team.")
                 return
@@ -116,7 +116,7 @@ class Teams:
         if database.user_registered(ctx.author.id):
             #check that the user is on a team
             database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-            team = databse.cur.fetchone()[0]
+            team = database.cur.fetchone()[0]
             if team == None:
                 await ctx.send("You are not the captain of a team.")
                 return
