@@ -84,8 +84,8 @@ async def cycle_queue():
             cat = bot.guild.get_channel(bot.lobby_category)
             textchat = await bot.guild.create_text_channel("Game Chat", category=cat)
             teamchat = [None, None]
-            teamchat[0] = await bot.guild.create_voice_channel("Your Team", category=cat)
-            teamchat[1] = await bot.guild.create_voice_channel("Your Team", category=cat)
+            teamchat[0] = await bot.guild.create_voice_channel("Lobby %s: Team 1" % l, category=cat)
+            teamchat[1] = await bot.guild.create_voice_channel("Lobby %s: Team 2" % l, category=cat)
             bot.matches[l] = {"map": MAP_LIST.copy(), "votes": {}, "time": 30, "commendations": [], "last message time": 30+MESSAGE_TIME_DIFFERENCE, "channels": {0: textchat, 1: teamchat[0], 2: teamchat[1]}, "players": {}}
             host = list(lobbies[l]["players"].keys())[0]
             host_rep = database.player_rep(host)

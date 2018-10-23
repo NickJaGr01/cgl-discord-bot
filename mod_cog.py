@@ -18,7 +18,7 @@ MAJOR_OFFENSE_TABLE = {
 class Moderation:
     @commands.command(pass_context=True)
     async def majoroffense(self, ctx, target: discord.User):
-        """mod command"""
+        """administer a major offense penalty"""
         modrole = bot.guild.get_role(MOD_ROLE_ID)
         if ctx.message.author.top_role >= modrole:
             now = datetime.now()
