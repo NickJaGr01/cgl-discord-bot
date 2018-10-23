@@ -45,7 +45,7 @@ async def on_ready() :
     bot.matches = {}
     bot.available_lobbies = [i for i in range(20)]
 
-    bot.task = asyncio.create_task(matchmaking.mm_thread())
+    bot.task = asyncio.create_task(background_thread())
 
 @bot.event
 async def on_message(msg):
