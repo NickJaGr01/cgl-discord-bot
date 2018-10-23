@@ -131,7 +131,7 @@ class Teams:
             for entry in playerids:
                 member = bot.guild.get_member(entry[0])
                 await member.remove_roles(teamrole)
-                await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+                #await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await bot.get_user(entry[0]).send("Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
             await ctx.send("Team '%s' has been disbanded ." % team)
         else:
