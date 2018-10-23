@@ -5,7 +5,7 @@ import database
 
 class Matchmaking:
     @commands.command(pass_context=True)
-    async def accept(ctx):
+    async def accept(self, ctx):
         """confirm a match
         Once a match is found for a player in the matchmaking queue, the player will be prompted to confirm the match.
         Use this command within 30 seconds in order to confirm a match."""
@@ -20,7 +20,7 @@ class Matchmaking:
             await ctx.author.send(NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def commend(ctx, target: discord.User):
+    async def commend(self, ctx, target: discord.User):
         """commends a player
         Gives the specified player +1 rep. The player can be specified by one of two methods:
             mentioning the player or

@@ -17,7 +17,7 @@ TEAM_STATS_DICT = {
 
 class Teams:
     @commands.command(pass_context=True)
-    async def createteam(ctx, *, teamname):
+    async def createteam(self, ctx, *, teamname):
         """create a team
         Creates a new team with the given name and makes the user the captain of that team.
         Players may not create a team if they are already a member of another team."""
@@ -42,7 +42,7 @@ class Teams:
             await ctx.author.send(NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def invite(ctx, player: discord.User):
+    async def invite(self, ctx, player: discord.User):
         """invite a player to your team
         Invites another player to your team. The player can be specified by one of two methods:
             mentioning the player or
