@@ -13,17 +13,19 @@ import database
 
 bot = commands.Bot(command_prefix='!')
 
-#CGL_server = 495761319639646208
-CGL_server = int(os.environ['CGL_SERVER'])
-#lobby_category = 497054873678774288
-lobby_category = int(os.environ['LOBBY_CATEGORY'])
-#AFK_CHANNEL_ID = 500376383818825733
-AFK_CHANNEL_ID = int(os.environ['AFK_CHANNEL'])
-
 import matchmaking
 import teams
 
-task = None
+async def background_thread():
+    bot.delta_time = 0
+    loop = asyncio.get_event_loop()
+    last_time = loop.time()
+    while True:
+        now = loop.time()
+        bot.delta_time = now - last_time
+        last_time = now
+        await matchmaking.mm_thread()
+        await asyncio.sleep(.1)
 
 @bot.event
 async def on_ready() :
@@ -33,8 +35,17 @@ async def on_ready() :
     print('------')
 
     bot.appinfo = await bot.application_info()
+    bot.CGL_server = int(os.environ['CGL_SERVER'])
+    bot.guild = bot.get_guild(bot.CGL_server)
+    bot.lobby_category = int(os.environ['LOBBY_CATEGORY'])
+    bot.AFK_CHANNEL_ID = int(os.environ['AFK_CHANNEL'])
+    bot.MEMBER_ROLE = 499276055585226773
+    bot.FREE_AGENT_ROLE = 503654821644206093
+    bot.mmqueue = matchmaking.MMQueue()
+    bot.matches = {}
+    bot.available_lobbies = [i for i in range(20)]
 
-    task = asyncio.create_task(matchmaking.mm_thread())
+    bot.task = asyncio.create_task(matchmaking.mm_thread())
 
 @bot.event
 async def on_message(msg):
