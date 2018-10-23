@@ -120,6 +120,7 @@ class Teams:
             if team == None:
                 await ctx.send("You are not the captain of a team.")
                 return
+            team = team[0]
             database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
             roleid = database.cur.fetchone()[0]
             teamrole = bot.guild.get_role(roleid)
