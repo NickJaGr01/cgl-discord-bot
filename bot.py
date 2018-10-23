@@ -74,10 +74,10 @@ async def on_voice_state_update(member, before, after):
                     database.cur.execute("UPDATE playerTable SET end_of_suspension=NULL WHERE discordID=%s;" % member.id)
                     database.conn.commit()
             #make sure that the player is not currently participating in a match
-            queued = (member.id in matchmaking.mmqueue.queue)
+            queued = (member.id in bot.mmqueue.queue)
             if not queued:
-                for m in matchmaking.matches:
-                    for id in matchmaking.matches[m]["players"]:
+                for m in bot.matches:
+                    for id in bot.matches[m]["players"]:
                         if id == member.id:
                             queued = True
                             break
@@ -91,9 +91,9 @@ async def on_voice_state_update(member, before, after):
                 await member.send("You are already participating in a match. Please complete your current match before entering matchmaking again.")
                 await member.edit(voice_channel=bot.get_channel(AFK_CHANNEL_ID))
             else:
-                matchmaking.mmqueue.push(member.id)
+                bot.mmqueue.push(member.id)
                 await member.edit(deafen=True)
     if before.channel != None:
         if before.channel.id == MM_CHANNEL_ID and before.channel != after.channel:
-            matchmaking.mmqueue.pop(member.id)
+            bot.mmqueue.pop(member.id)
             await member.edit(deafen=False)
