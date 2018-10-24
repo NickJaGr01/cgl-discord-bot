@@ -40,8 +40,8 @@ async def on_ready() :
     bot.guild = bot.get_guild(bot.CGL_server)
     bot.lobby_category = int(os.environ['LOBBY_CATEGORY'])
     bot.AFK_CHANNEL_ID = int(os.environ['AFK_CHANNEL'])
-    bot.MEMBER_ROLE = 499276055585226773
-    bot.FREE_AGENT_ROLE = 503654821644206093
+    bot.MEMBER_ROLE = int(os.environ['MEMBER_ROLE'])
+    bot.FREE_AGENT_ROLE = int(os.environ['FREE_AGENT_ROLE'])
     bot.MM_CHANNEL_ID = int(os.environ['MM_CHANNEL'])
     bot.mmqueue = matchmaking.MMQueue()
     bot.matches = {}
