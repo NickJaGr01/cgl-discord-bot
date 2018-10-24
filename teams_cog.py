@@ -3,6 +3,7 @@ from discord.ext import commands
 import discord
 import database
 import json
+from cgl_converters import *
 
 TEAM_STATS_DICT = {
     "maps": {
@@ -51,7 +52,7 @@ class Teams:
             await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def invite(self, ctx, player: discord.User):
+    async def invite(self, ctx, player: CGLUser):
         """invite a player to your team
         Invites another player to your team. The player can be specified by one of two methods:
             mentioning the player or
@@ -148,7 +149,7 @@ class Teams:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def kickteammate(self, ctx, player: discord.User):
+    async def kickteammate(self, ctx, player: CGLUser):
         """kicks the player from the user's team"""
         if database.user_registered(ctx.author.id):
             if player == None:

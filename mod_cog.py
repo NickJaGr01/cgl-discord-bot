@@ -3,9 +3,9 @@ import discord
 from datetime import datetime
 from datetime import timedelta
 import os
-
 import database
 from bot import bot
+from cgl_converters import *
 
 MOD_ROLE_ID = int(os.environ['MOD_ROLE'])
 NOT_MOD_MESSAGE = "That command is only for use by CGL moderators."
@@ -17,7 +17,7 @@ MAJOR_OFFENSE_TABLE = {
 
 class Moderation:
     @commands.command(pass_context=True)
-    async def majoroffense(self, ctx, target: discord.User):
+    async def majoroffense(self, ctx, target: CGLUser):
         """administer a major offense penalty"""
         modrole = bot.guild.get_role(MOD_ROLE_ID)
         if ctx.message.author.top_role >= modrole:

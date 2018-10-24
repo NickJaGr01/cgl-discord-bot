@@ -2,6 +2,7 @@ from bot import bot
 from discord.ext import commands
 import discord
 import database
+from cgl_converters import *
 
 class Matchmaking:
     @commands.command(pass_context=True)
@@ -20,7 +21,7 @@ class Matchmaking:
             await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def commend(self, ctx, target: discord.User):
+    async def commend(self, ctx, target: CGLUser):
         """commends a player
         Gives the specified player +1 rep. The player can be specified by one of two methods:
             mentioning the player or

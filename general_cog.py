@@ -4,8 +4,7 @@ import discord
 import database
 from bot import bot
 import json
-
-REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
+from cgl_converters import *
 
 PLAYER_STATS_DICT = {
     "maps": {
@@ -64,7 +63,7 @@ class General:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def report(self, ctx, target: discord.User, *, reason):
+    async def report(self, ctx, target: CGLUser, *, reason):
         """reports another player's behaviour
         Reports another player's behavior. The player can be specified by one of two methods:
             mentioning the player or
@@ -74,7 +73,7 @@ class General:
             if reason == None:
                 await ctx.send("Please provide a reason for reporting the player.")
             await ctx.send("Report submitted for %s." % target.mention)
-            await bot.get_guild(CGL_server).get_channel(REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
+            await bot.guild.get_channel(bot.REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
