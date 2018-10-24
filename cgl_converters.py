@@ -9,7 +9,6 @@ class CGLUser(commands.UserConverter):
         if user == None:
             database.cur.execute("SELECT discordID FROM playerTable WHERE username='%s';" % argument)
             discordid = database.cur.fetchone()
-            if discordid == None:
-                break
-            user = bot.get_user(discordid[0])
+            if discordid != None:
+                user = bot.get_user(discordid[0])
         return user
