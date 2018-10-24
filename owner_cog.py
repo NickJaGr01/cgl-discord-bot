@@ -2,12 +2,13 @@ from discord.ext import commands
 import discord
 from bot import bot
 import database
+from cgl_converters import *
 
 NOT_OWNER_MESSAGE = "This command is only for use by the owner."
 
 class Owner:
     @commands.command(pass_context=True)
-    async def giveelo(self, ctx, target: discord.User, delo: int):
+    async def giveelo(self, ctx, target: CGLUser, delo: int):
         """change a player's elo"""
         if ctx.message.author.id == bot.appinfo.owner.id:
             elo = database.player_elo(target.id)
@@ -19,7 +20,7 @@ class Owner:
             await ctx.send(NOT_OWNER_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def giverep(self, ctx, target: discord.User, drep: int):
+    async def giverep(self, ctx, target: CGLUser, drep: int):
         """change a player's rep"""
         if ctx.message.author.id == bot.appinfo.owner.id:
             rep = database.player_rep(target.id)
