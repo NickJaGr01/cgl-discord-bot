@@ -103,6 +103,7 @@ class Teams:
                 database.conn.commit()
                 member = bot.guild.get_member(ctx.author.id)
                 await member.remove_roles(teamrole)
+                await teamrole.delete()
                 await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await ctx.send("Team '%s' has been disbanded." % team)
                 return
@@ -141,7 +142,42 @@ class Teams:
                 await member.remove_roles(teamrole)
                 await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await bot.get_user(entry[0]).send("Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
+            await teamrole.delete()
             await ctx.send("Team '%s' has been disbanded ." % team)
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
+    @commands.command(pass_context=True)
+    async def kickteammate(self, ctx, player: discord.User):
+        """kicks the player from the user's team"""
+        if database.user_registered(ctx.author.id):
+            if player == None:
+                await ctx.send("Please provide a player to kick from your team.")
+                return
+            #check that the user is the captain of a team
+            database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
+            team = database.cur.fetchone()
+            if team == None:
+                await ctx.send("You are not the captain of a team.")
+                return
+            team = team[0]
+            #check that the target player is also on the team
+            database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
+            targetteam = database.cur.fetchone()
+            if targetteam == None:
+                await ctx.send("That player does not exist.")
+                return
+            if targetteam[0] == team:
+                database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
+                roleid = database.cur.fetchone()[0]
+                teamrole = bot.guild.get_role(roleid)
+                database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % player.id)
+                database.conn.commit()
+                member = bot.guild.get_member(player.id)
+                await member.remove_roles(teamrole)
+                await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+                await player.send("You have been kicked from team '%s' by the team captain. You are now a free agent." % team)
+                await ctx.send("%s has been kicked from team '%s'." % (member.nick, team))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
