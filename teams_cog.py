@@ -76,7 +76,7 @@ class Teams:
             invite = await player.send("You have been invited to join %s.\n:thumbsup: accept\n:thumbsdown: decline" % team)
             await invite.add_reaction(u"\U0001F44D") #thumbsup
             await invite.add_reaction(u"\U0001F44E") #thumbsdown
-            await ctx.send("%s has been invited to %s." % (bot.guild.get_member(player.id).nick, team))
+            await ctx.send("%s has been invited to %s." % (player.CGL_name, team))
         else:
             await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
