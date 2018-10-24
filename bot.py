@@ -42,6 +42,7 @@ async def on_ready() :
     bot.MEMBER_ROLE = int(os.environ['MEMBER_ROLE'])
     bot.FREE_AGENT_ROLE = int(os.environ['FREE_AGENT_ROLE'])
     bot.MM_CHANNEL_ID = int(os.environ['MM_CHANNEL'])
+    bot.REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
     bot.mmqueue = matchmaking.MMQueue()
     bot.matches = {}
     bot.available_lobbies = [i for i in range(20)]

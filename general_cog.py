@@ -6,8 +6,6 @@ from bot import bot
 import json
 from cgl_converters import *
 
-REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
-
 PLAYER_STATS_DICT = {
     "maps": {
         "dust2": {"wins": 0, "total": 0},
@@ -63,7 +61,7 @@ class General:
                 await ctx.author.send("The username %s is not available. Please choose another one to register for CGL." % username)
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
-            
+
     @commands.command(pass_context=True)
     async def report(self, ctx, target: CGLUser, *, reason):
         """reports another player's behaviour
@@ -75,7 +73,7 @@ class General:
             if reason == None:
                 await ctx.send("Please provide a reason for reporting the player.")
             await ctx.send("Report submitted for %s." % target.mention)
-            await bot.get_guild(CGL_server).get_channel(REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
+            await bot.guild.get_channel(bot.REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
