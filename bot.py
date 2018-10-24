@@ -3,7 +3,6 @@ import threading
 import time
 import discord
 from discord.ext import commands
-import discord
 import os
 import psycopg2
 import math

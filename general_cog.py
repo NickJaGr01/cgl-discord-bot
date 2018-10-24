@@ -4,6 +4,7 @@ import discord
 import database
 from bot import bot
 import json
+from cgl_converters import *
 
 REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
 
@@ -62,9 +63,9 @@ class General:
                 await ctx.author.send("The username %s is not available. Please choose another one to register for CGL." % username)
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
-
+            
     @commands.command(pass_context=True)
-    async def report(self, ctx, target: discord.User, *, reason):
+    async def report(self, ctx, target: CGLUser, *, reason):
         """reports another player's behaviour
         Reports another player's behavior. The player can be specified by one of two methods:
             mentioning the player or
