@@ -63,6 +63,29 @@ class General:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
+    async def setregion(self, ctx, region):
+        """set your region"""
+        if database.user_registered(ctx.author.id):
+            if region == None:
+                await ctx.send("Please specify either NA or EU.")
+                return
+            member = bot.guild.get_member(ctx.author.id)
+            if region.lower() == "na":
+                if bot.guild.get_role(bot.EU_ROLE) in member.roles:
+                    await member.remove_roles(bot.guild.get_role(bot.EU_ROLE))
+                await member.add_roles(bot.guild.get_role(bot.NA_ROLE))
+            elif region.lower() == "eu":
+                if bot.guild.get_role(bot.NA_ROLE) in member.roles:
+                    await member.remove_roles(bot.guild.get_role(bot.NA_ROLE))
+                await member.add_roles(bot.guild.get_role(bot.EU_ROLE))
+            else:
+                await ctx.send("That is not a valid region.")
+                return
+            await ctx.send("Your region has been set to %s." % region.upper())
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
+    @commands.command(pass_context=True)
     async def report(self, ctx, target: CGLUser, *, reason):
         """reports another player's behaviour
         Reports another player's behavior. The player can be specified by one of two methods:
