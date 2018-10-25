@@ -42,7 +42,7 @@ class Teams:
             await teamrole.edit(position=bot.guild.get_role(bot.FREE_AGENT_ROLE).position+1)
             await teamrole.edit(permissions=bot.guild.get_role(bot.MEMBER_ROLE).permissions)
             member = bot.guild.get_member(ctx.author.id)
-            await member.add_roles(teamrole)
+            await member.add_roles(teamrole, bot.guild.get_role(bot.CAPTAIN_ROLE))
             await member.remove_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
             database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID, teamRoleID) VALUES ('%s', '%s', %s, %s);" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id, teamrole.id))
             database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
@@ -144,6 +144,7 @@ class Teams:
                 await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await bot.get_user(entry[0]).send("Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
             await teamrole.delete()
+            await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
             await ctx.send("Team '%s' has been disbanded ." % team)
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
@@ -179,6 +180,35 @@ class Teams:
                 await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await player.send("You have been kicked from team '%s' by the team captain. You are now a free agent." % team)
                 await ctx.send("%s has been kicked from team '%s'." % (member.nick, team))
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
+    @commands.command(pass_context=True)
+    async def makecaptain(self, ctx, player: CGLUser):
+        """makes the player the new captain of the user's team"""
+        if database.user_registered(ctx.author.id):
+            if player == None:
+                await ctx.send("Please provide a player to make the captain of your team.")
+                return
+            #check that the user is the captain of a team
+            database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
+            team = database.cur.fetchone()
+            if team == None:
+                await ctx.send("You are not the captain of a team.")
+                return
+            team = team[0]
+            #check that the target player is also on the team
+            database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
+            targetteam = database.cur.fetchone()
+            if targetteam == None:
+                await ctx.send("That player does not exist.")
+                return
+            database.cur.execute("UPDATE teamTable SET captainID=%s WHERE teamname='%s';" % (team, player.id))
+            database.conn.commit()
+            await target.add_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
+            await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
+            await target.send("You have been made the new captain of your team.")
+            await ctx.send("%s has been made the new captain of %s." % (database.username(target.id), team))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 

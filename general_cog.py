@@ -86,6 +86,28 @@ class General:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
+    async def setroles(self, ctx, *roles):
+        """set your player roles"""
+        if database.user_registered(ctx.author.id):
+            if roles == None:
+                await ctx.send("Please specify your roles.")
+                return
+            member = bot.guild.get_member(ctx.author.id)
+            badroles = ""
+            for r in bot.PLAYER_ROLE_ROLES.values():
+                await member.remove_roles(bot.get_role(r))
+            for r in roles:
+                if r.lower() not in bot.PLAYER_ROLE_ROLES:
+                    badroles += "%s, " % r
+                else:
+                    await member.add_roles(bot.guild.get_role(bot.PLAYER_ROLE_ROLES[r.lower()]))
+            await ctx.send("Your roles have been updated.")
+            if len(badroles) > 0:
+                await ctx.send("The roles %s were not granted because they do not exist." % badroles[:-2])
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
+    @commands.command(pass_context=True)
     async def report(self, ctx, target: CGLUser, *, reason):
         """reports another player's behaviour
         Reports another player's behavior. The player can be specified by one of two methods:
