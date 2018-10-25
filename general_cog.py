@@ -95,7 +95,7 @@ class General:
             member = bot.guild.get_member(ctx.author.id)
             badroles = ""
             for r in bot.PLAYER_ROLE_ROLES.values():
-                await member.remove_roles(bot.get_role(r))
+                await member.remove_roles(bot.guild.get_role(r))
             for r in roles:
                 if r.lower() not in bot.PLAYER_ROLE_ROLES:
                     badroles += "%s, " % r
