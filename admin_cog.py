@@ -15,7 +15,29 @@ MAJOR_OFFENSE_TABLE = {
     "rep penalty": [15, 30, 50, 80, 120]
 }
 
-class Moderation:
+class Admin:
+    @commands.command(pass_context=True)
+    async def reppenalty(self, ctx, target: CGLUser, penalty: int):
+        """administer a rep penalty to a player"""
+        modrole = bot.guild.get_role(MOD_ROLE_ID)
+        if ctx.message.author.top_role >= modrole:
+            if target == None:
+                await ctx.send("There was an error identifying that player.")
+                return
+            if penalty == None:
+                await ctx.send("Please provide a penalty amount.")
+                return
+            if penalty < 0:
+                await ctx.send("You can't give a negative rep penalty.")
+                return
+            rep = database.player_rep(target.id)
+            rep -= penalty
+            database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
+            database.conn.commit()
+            await ctx.send("%s has been penalized for %s rep." % (target.mention, drep))
+        else:
+            await ctx.send(NOT_MOD_MESSAGE)
+
     @commands.command(pass_context=True)
     async def majoroffense(self, ctx, target: CGLUser):
         """administer a major offense penalty"""
