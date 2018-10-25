@@ -93,8 +93,12 @@ class General:
             giving the player's full Discord tag.
         A reason must be provided after the player who is being reported."""
         if database.user_registered(ctx.author.id):
+            if target == None:
+                await ctx.send("There was a problem identifying that player.")
+                return
             if reason == None:
                 await ctx.send("Please provide a reason for reporting the player.")
+                return
             await ctx.send("Report submitted for %s." % target.mention)
             await bot.guild.get_channel(bot.REPORTS_CHANNEL).send("%s reported %s for: %s" % (ctx.author.mention, target.mention, reason))
         else:

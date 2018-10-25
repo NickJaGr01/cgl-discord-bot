@@ -9,8 +9,6 @@ class CGLUser(commands.UserConverter):
         try:
             user = await super().convert(ctx, argument)
         except:
-            pass
-        if user == None:
             database.cur.execute("SELECT discordID FROM playerTable WHERE username='%s';" % argument)
             discordid = database.cur.fetchone()
             if discordid != None:
