@@ -59,4 +59,4 @@ class Admin:
         else:
             await ctx.send(NOT_MOD_MESSAGE)
 
-bot.add_cog(Moderation())
+bot.add_cog(Admin())
