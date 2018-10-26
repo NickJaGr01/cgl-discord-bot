@@ -1,6 +1,15 @@
 import database
 from bot import bot
 
+class Team:
+    def __init__(self, teamname):
+        self.teamname = teamname
+        self.players = []
+        self.region = None
+
+    def add_player(self, player):
+        self.players.append(player)
+
 async def process_invite(reaction, user):
     if reaction.message.author.id == bot.appinfo.id:
         if reaction.message.content.startswith("You have been invited to join"):

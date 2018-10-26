@@ -212,4 +212,15 @@ class Teams:
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
+    @commands.command(pass_context=True)
+    async def teaminfo(self, ctx, *, team: CGLTeam):
+        if team == None:
+            await ctx.send("That team does not exist.")
+            return
+        info = "**%s**\nPlayers:\n" % team.teamname
+        for p in team.players:
+            info += "*%s*\n" % database.username(p.id)
+        info += "Region: %s" % team.region
+        await ctx.send(info)
+
 bot.add_cog(Teams())
