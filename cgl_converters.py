@@ -31,7 +31,6 @@ class CGLTeam(commands.Converter):
         for id in members:
             team.add_player(bot.guild.get_member(id[0]))
         captain = bot.guild.get_member(captainID)
-        print("captanid = %s" % captainID)
         if bot.guild.get_role(bot.NA_ROLE) in captain.roles:
             team.region = "NA"
         if bot.guild.get_role(bot.EU_ROLE) in captain.roles:
