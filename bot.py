@@ -43,6 +43,17 @@ async def on_ready() :
     bot.FREE_AGENT_ROLE = int(os.environ['FREE_AGENT_ROLE'])
     bot.MM_CHANNEL_ID = int(os.environ['MM_CHANNEL'])
     bot.REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
+    bot.NA_ROLE = int(os.environ['NA_ROLE'])
+    bot.EU_ROLE = int(os.environ['EU_ROLE'])
+    bot.CAPTAIN_ROLE = int(os.environ['CAPTAIN_ROLE'])
+    bot.PLAYER_ROLE_ROLES = {
+        "awper": int(os.environ['AWPER_ROLE']),
+        "rifler": int(os.environ['RIFLER_ROLE']),
+        "igl": int(os.environ['IGL_ROLE']),
+        "entry": int(os.environ['ENTRY_ROLE']),
+        "lurker": int(os.environ['LURKER_ROLE']),
+        "support": int(os.environ['SUPPORT_ROLE'])
+    }
     bot.mmqueue = matchmaking.MMQueue()
     bot.matches = {}
     bot.available_lobbies = [i for i in range(20)]
