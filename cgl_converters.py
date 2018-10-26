@@ -28,8 +28,8 @@ class CGLTeam(commands.Converter):
         captainID = data[1]
         database.cur.execute("SELECT username FROM playerTable WHERE team='%s';" % teamname)
         members = database.cur.fetchall()
-        for id in members:
-            team.add_player(bot.guild.get_member(id[0]))
+        for p in members:
+            team.add_player(bot.guild.get_member(p.id))
         captain = bot.guild.get_member(captainID)
         if bot.guild.get_role(bot.NA_ROLE) in captain.roles:
             team.region = "NA"
