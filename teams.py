@@ -18,6 +18,7 @@ async def process_invite(reaction, user):
             if reaction.emoji == u"\U0001F44D": #thumbsup
                 validreaction = True
                 database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (team, user.id))
+                database.conn.commit()
                 database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
                 roleid = database.cur.fetchone()[0]
                 teamrole = bot.guild.get_role(roleid)
@@ -29,7 +30,6 @@ async def process_invite(reaction, user):
                 captainID = database.cur.fetchone()[0]
                 captain = bot.get_user(captainID)
                 await captain.send("%s has accepted your team invite." % user.mention)
-                database.conn.commit()
             elif reaction.emoji == u"\U0001F44E": #thumbsdown
                 validreaction = True
                 await user.send("You have declined the team invite.")

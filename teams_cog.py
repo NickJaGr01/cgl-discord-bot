@@ -203,7 +203,7 @@ class Teams:
             if targetteam == None:
                 await ctx.send("That player does not exist.")
                 return
-            database.cur.execute("UPDATE teamTable SET captainID=%s WHERE teamname='%s';" % (team, player.id))
+            database.cur.execute("UPDATE teamTable SET captainID=%s WHERE teamname='%s';" % (player.id, team))
             database.conn.commit()
             await target.add_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
             await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
