@@ -17,24 +17,21 @@ MAJOR_OFFENSE_TABLE = {
 
 class Admin:
     @commands.command(pass_context=True)
-    async def reppenalty(self, ctx, target: CGLUser, penalty: int):
-        """administer a rep penalty to a player"""
+    async def giverep(self, ctx, target: CGLUser, drep: int):
+        """modify a player's rep"""
         modrole = bot.guild.get_role(MOD_ROLE_ID)
         if ctx.message.author.top_role >= modrole:
             if target == None:
                 await ctx.send("There was an error identifying that player.")
                 return
             if penalty == None:
-                await ctx.send("Please provide a penalty amount.")
-                return
-            if penalty < 0:
-                await ctx.send("You can't give a negative rep penalty.")
+                await ctx.send("Please provide an amount of rep to give.")
                 return
             rep = database.player_rep(target.id)
-            rep -= penalty
+            rep += drep
             database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
             database.conn.commit()
-            await ctx.send("%s has been penalized for %s rep." % (target.mention, drep))
+            await ctx.send("%s has been given %s rep." % (database.username(target.id), drep))
         else:
             await ctx.send(NOT_MOD_MESSAGE)
 
