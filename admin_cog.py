@@ -24,7 +24,7 @@ class Admin:
             if target == None:
                 await ctx.send("There was an error identifying that player.")
                 return
-            if penalty == None:
+            if drep == None:
                 await ctx.send("Please provide an amount of rep to give.")
                 return
             rep = database.player_rep(target.id)
