@@ -87,7 +87,7 @@ class General:
 
     @commands.command(pass_context=True)
     async def setfaceitname(self, ctx, name):
-        """set your region"""
+        """set your FACEIT name and get the invite link for your region's FACEIT hub"""
         if database.user_registered(ctx.author.id):
             if bot.guild.get_role(bot.EU_ROLE) not in member.roles and bot.guild.get_role(bot.NA_ROLE) not in member.roles:
                 await ctx.send("Please set your region first with !setregion NA/EU.")
@@ -97,6 +97,7 @@ class General:
                 return
             database.cur.execute("UPDATE playerTable SET faceitname='%s' WHERE discordID=%s;" % (name, ctx.author.id))
             database.conn.commit()
+            member = bot.guild.get_member(ctx.author.id)
             invitelink = ""
             if bot.guild.get_role(bot.NA_ROLE) in member.roles:
                 invitelink = bot.NA_HUB
