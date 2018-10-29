@@ -86,7 +86,7 @@ class General:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def setfaceitname(self, ctx, name):
+    async def setfaceitname(self, ctx, *, name):
         """set your FACEIT name and get the invite link for your region's FACEIT hub"""
         if database.user_registered(ctx.author.id):
             member = bot.guild.get_member(ctx.author.id)
