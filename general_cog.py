@@ -103,7 +103,7 @@ class General:
                 invitelink = bot.NA_HUB
             if bot.guild.get_role(bot.EU_ROLE) in member.roles:
                 invitelink = bot.EU_HUB
-            await ctx.author.send("Your FACEIT name has been set to %s.\n Use this link to join the FACEIT hub:\n%s\nDO NOT share this link." % (name, invitelink))
+            await ctx.author.send("Your FACEIT name has been set to %s.\n Use this link to join the FACEIT hub:\n%s\nDO NOT share this link under ANY circumstances." % (name, invitelink))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
