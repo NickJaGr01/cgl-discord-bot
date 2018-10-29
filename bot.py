@@ -45,6 +45,8 @@ async def on_ready() :
     bot.REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
     bot.NA_ROLE = int(os.environ['NA_ROLE'])
     bot.EU_ROLE = int(os.environ['EU_ROLE'])
+    bot.NA_HUB = os.environ['NA_HUB']
+    bot.EU_HUB = os.environ['EU_HUB']
     bot.CAPTAIN_ROLE = int(os.environ['CAPTAIN_ROLE'])
     bot.PLAYER_ROLE_ROLES = {
         "awper": int(os.environ['AWPER_ROLE']),

@@ -86,6 +86,27 @@ class General:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
+    async def setfaceitname(self, ctx, name):
+        """set your region"""
+        if database.user_registered(ctx.author.id):
+            if bot.guild.get_role(bot.EU_ROLE) not in member.roles and bot.guild.get_role(bot.NA_ROLE) not in member.roles:
+                await ctx.send("Please set your region first with !setregion NA/EU.")
+                return
+            if name == None:
+                await ctx.send("Please specify your FACEIT name.")
+                return
+            database.cur.execute("UPDATE playerTable SET faceitname='%s' WHERE discordID=%s;" % (name, ctx.author.id))
+            database.conn.commit()
+            invitelink = ""
+            if bot.guild.get_role(bot.NA_ROLE) in member.roles:
+                invitelink = bot.NA_HUB
+            if bot.guild.get_role(bot.EU_ROLE) in member.roles:
+                invitelink = bot.EU_HUB
+            await ctx.author.send("Your FACEIT name has been set to %s.\n Use this link to join the FACEIT hub:\n%s" % (name, invitelink))
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
+    @commands.command(pass_context=True)
     async def setroles(self, ctx, *roles):
         """set your player roles"""
         if database.user_registered(ctx.author.id):
