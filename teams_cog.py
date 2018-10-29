@@ -58,6 +58,9 @@ class Teams:
             mentioning the player or
             giving the player's full Discord tag."""
         if database.user_registered(ctx.author.id):
+            if player == None:
+                await ctx.send("Either you didn't suppy a player or the one you gave was not valid. Please make sure the player is registered in the league.")
+                return
             #make sure the user is the captain of a team
             database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
             team = database.cur.fetchone()[0]
