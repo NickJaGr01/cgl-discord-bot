@@ -71,7 +71,7 @@ class Teams:
             database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
             targetteam = database.cur.fetchone()
             if targetteam == None:
-                await ctx.send("That player is not a member of the league.")
+                await ctx.send("That player is not a member of the league. Please make sure they register with !register <username>.")
                 return
             if targetteam[0] != None:
                 await ctx.send("That player is already on a team.")
