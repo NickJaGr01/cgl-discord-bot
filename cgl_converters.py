@@ -18,7 +18,7 @@ class CGLUser(commands.MemberConverter):
 
 class CGLTeam(commands.Converter):
     async def convert(cls, ctx, argument):
-        database.cur.execute("SELECT teamname, captainID FROM teamTable WHERE teamname='%s';" % argument)
+        database.cur.execute("SELECT teamname, captainID FROM teamTable WHERE lower(teamname)='%s';" % argument.lower())
         data = database.cur.fetchone()
         if data == None:
             #could not find team
