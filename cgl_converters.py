@@ -10,7 +10,7 @@ class CGLUser(commands.MemberConverter):
             member = await super().convert(ctx, argument)
             return member
         except:
-            database.cur.execute("SELECT discordID FROM playerTable WHERE username='%s';" % argument)
+            database.cur.execute("SELECT discordID FROM playerTable WHERE lower(username)='%s';" % argument.lower())
             discordid = database.cur.fetchone()
             if discordid != None:
                 return bot.guild.get_member(discordid[0])

@@ -35,7 +35,7 @@ class Teams:
                 await ctx.send("Please provide a team name.")
                 return
             #check that the team name is not already taken
-            database.cur.execute("SELECT * FROM teamTable WHERE teamname='%s';" % teamname)
+            database.cur.execute("SELECT * FROM teamTable WHERE lower(teamname)='%s';" % teamname.lower())
             if database.cur.fetchone() != None:
                 await ctx.send("The team name '%s' is already taken. Please choose another name." % teamname)
                 return
