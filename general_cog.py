@@ -51,7 +51,7 @@ class General:
                 await ctx.send("Please provide a new username.")
                 return
             #check that the desired username is available (not case sensitive)
-            database.cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
+            database.cur.execute("SELECT * FROM playerTable WHERE lower(username)='%s';" % username.lower())
             if database.cur.fetchone() == None:
                 database.cur.execute("UPDATE playerTable SET username='%s' WHERE discordID=%s;" % (username, ctx.author.id))
                 database.conn.commit()
