@@ -2,11 +2,9 @@ import bot
 import os
 from discord.ext import commands
 
-import matchmaking
 import general_cog
 import owner_cog
 import admin_cog
-import mm_cog
 import teams_cog
 import stats_cog
 

@@ -12,7 +12,6 @@ import database
 
 bot = commands.Bot(command_prefix='!')
 
-import matchmaking
 import teams
 
 async def background_thread():
@@ -23,7 +22,7 @@ async def background_thread():
         now = loop.time()
         bot.delta_time = now - last_time
         last_time = now
-        await matchmaking.mm_thread()
+
         await asyncio.sleep(.1)
 
 @bot.event
@@ -37,11 +36,8 @@ async def on_ready() :
     bot.appinfo = await bot.application_info()
     bot.CGL_server = int(os.environ['CGL_SERVER'])
     bot.guild = bot.get_guild(bot.CGL_server)
-    bot.lobby_category = int(os.environ['LOBBY_CATEGORY'])
-    bot.AFK_CHANNEL_ID = int(os.environ['AFK_CHANNEL'])
     bot.MEMBER_ROLE = int(os.environ['MEMBER_ROLE'])
     bot.FREE_AGENT_ROLE = int(os.environ['FREE_AGENT_ROLE'])
-    bot.MM_CHANNEL_ID = int(os.environ['MM_CHANNEL'])
     bot.REPORTS_CHANNEL = int(os.environ['REPORTS_CHANNEL'])
     bot.NA_ROLE = int(os.environ['NA_ROLE'])
     bot.EU_ROLE = int(os.environ['EU_ROLE'])
@@ -56,11 +52,8 @@ async def on_ready() :
         "lurker": int(os.environ['LURKER_ROLE']),
         "support": int(os.environ['SUPPORT_ROLE'])
     }
-    bot.mmqueue = matchmaking.MMQueue()
-    bot.matches = {}
-    bot.available_lobbies = [i for i in range(20)]
 
-    bot.task = asyncio.create_task(background_thread())
+    #bot.task = asyncio.create_task(background_thread())
 
 @bot.event
 async def on_message(msg):
