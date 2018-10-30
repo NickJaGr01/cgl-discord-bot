@@ -63,9 +63,15 @@ class Teams:
                 return
             #make sure the user is the captain of a team
             database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-            team = database.cur.fetchone()[0]
+            team = database.cur.fetchone()
             if team == None:
                 await ctx.send("You are not a captain of a team.")
+                return
+            team = team[0]
+            #make sure there aren't too many players on the team
+            database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team)
+            if len(database.cur.fetchall()) >= 7:
+                await user.send("Your team has already reached the maximum of 7 players.")
                 return
             #make sure the target player isn't already on a team
             database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
