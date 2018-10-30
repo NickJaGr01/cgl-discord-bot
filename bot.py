@@ -72,6 +72,16 @@ async def on_reaction_add(reaction, user):
     if user.id != bot.appinfo.id:
         await teams.process_invite(reaction, user)
 
+@bot.event
+async def on_member_remove(member):
+    database.cur.execute("DELETE FROM playerTable WHERE discordID=%s;" % member.id)
+    #check if the member is the captain of a team
+    database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % member.id)
+    team = database.cur.fetchone()
+    if team != None:
+        team = team[0]
+        await teams.disband_team(team, "Your team has been disbanded because your captain has left the server.")
+
 
 @bot.event
 async def on_voice_state_update(member, before, after):

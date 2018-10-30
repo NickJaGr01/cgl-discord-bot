@@ -44,3 +44,19 @@ async def process_invite(reaction, user):
                 await captain.send("%s declined your team invite." % user.mention)
             if validreaction:
                 await reaction.message.delete()
+
+async def disband_team(team, message):
+    database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
+    roleid = database.cur.fetchone()[0]
+    teamrole = bot.guild.get_role(roleid)
+    database.cur.execute("DELETE FROM teamTable WHERE teamname='%s';" % team)
+    database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" % team)
+    playerids = database.cur.fetchall()
+    database.cur.execute("UPDATE playerTable SET team=NULL WHERE team='%s';" % team)
+    database.conn.commit()
+    for entry in playerids:
+        member = bot.guild.get_member(entry[0])
+        await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+        if message != None:
+            await member.send(message)
+    await teamrole.delete()

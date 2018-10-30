@@ -5,6 +5,8 @@ import database
 import json
 from cgl_converters import *
 
+import teams
+
 TEAM_STATS_DICT = {
     "maps": {
         "dust2": {"wins": 0, "total": 0},
@@ -105,16 +107,7 @@ class Teams:
             database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team)
             othermembers = (len(database.cur.fetchall()) > 1)
             if not othermembers:
-                database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
-                roleid = database.cur.fetchone()[0]
-                teamrole = bot.guild.get_role(roleid)
-                database.cur.execute("DELETE FROM teamTable WHERE teamname='%s';" % team)
-                database.cur.execute("UPDATE playerTable SET team=NULL WHERE team='%s';" % team)
-                database.conn.commit()
-                member = bot.guild.get_member(ctx.author.id)
-                await member.remove_roles(teamrole)
-                await teamrole.delete()
-                await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+                await teams.disband_team(team, None)
                 await ctx.send("Team '%s' has been disbanded." % team)
                 return
             #check if the user is the captain of the team
@@ -139,20 +132,7 @@ class Teams:
                 await ctx.send("You are not the captain of a team.")
                 return
             team = team[0]
-            database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
-            roleid = database.cur.fetchone()[0]
-            teamrole = bot.guild.get_role(roleid)
-            database.cur.execute("DELETE FROM teamTable WHERE teamname='%s';" % team)
-            database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" % team)
-            playerids = database.cur.fetchall()
-            database.cur.execute("UPDATE playerTable SET team=NULL WHERE team='%s';" % team)
-            database.conn.commit()
-            for entry in playerids:
-                member = bot.guild.get_member(entry[0])
-                await member.remove_roles(teamrole)
-                await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
-                await bot.get_user(entry[0]).send("Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
-            await teamrole.delete()
+            await teams.disband_team(team, "Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
             await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
             await ctx.send("Team '%s' has been disbanded ." % team)
         else:
