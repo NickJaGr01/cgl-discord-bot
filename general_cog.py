@@ -30,7 +30,7 @@ class General:
                 await ctx.send("Please provide a username.")
                 return
             #check that the desired username is available (not case sensitive)
-            database.cur.execute("SELECT * FROM playerTable WHERE username='%s';" % username)
+            database.cur.execute("SELECT * FROM playerTable WHERE lower(username)='%s';" % username.lower())
             if database.cur.fetchone() == None:
                 database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep, stats) VALUES (%s, '%s', %s, %s, '%s');" % (ctx.author.id, username, 1300, 100, json.dumps(PLAYER_STATS_DICT)))
                 database.conn.commit()
@@ -58,7 +58,7 @@ class General:
                 await bot.guild.get_member(ctx.author.id).edit(nick=username)
                 await ctx.send("Username successfully changed.")
             else:
-                await ctx.author.send("The username %s is not available. Please choose another one to register for CGL." % username)
+                await ctx.send("The username %s is not available. Please choose another one to register for CGL." % username)
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
