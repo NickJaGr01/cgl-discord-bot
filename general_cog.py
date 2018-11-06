@@ -158,7 +158,7 @@ class General:
                 team = database.cur.fetchone()[0]
                 if team != None:
                     database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
-                    if team == database.cur.fethcone()[0]:
+                    if team == database.cur.fetchcone()[0]:
                         await ctx.send("You cannot commend one of your own teammates.")
                         return
                 rep = database.player_rep(player.id)
