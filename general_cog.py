@@ -136,7 +136,7 @@ class General:
     async def commend(self, ctx, player: CGLUser):
         if database.user_registered(ctx.author.id):
             now = datetime.now()
-            database.cur.execute("SELECT lastCommendTime FROM playerTable WHERE discordID=%s;" % ctx.user.id)
+            database.cur.execute("SELECT lastCommendTime FROM playerTable WHERE discordID=%s;" % ctx.author.id)
             lastcommend = database.cur.fetchone()[0]
             cancommend = False
             if lastcommend == None:
