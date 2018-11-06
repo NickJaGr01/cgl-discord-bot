@@ -138,6 +138,7 @@ class General:
             now = datetime.now()
             database.cur.execute("SELECT lastCommendTime FROM playerTable WHERE discordID=%s;" % player.id)
             lastcommend = database.cur.fetchone()[0]
+            print(lastcommend)
             cancommend = False
             if lastcommend == None:
                 cancommend = True
