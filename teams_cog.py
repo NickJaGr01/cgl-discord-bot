@@ -117,6 +117,11 @@ class Teams:
                 return
             database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % ctx.author.id)
             database.conn.commit()
+            database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
+            teamrole = database.cur.fetchone()[0]
+            member = bot.guild.get_member(ctx.author.id)
+            await member.remove_roles(bot.guild.get_role(teamrole))
+            await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
             await ctx.send("You have left team '%s'." % team)
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
