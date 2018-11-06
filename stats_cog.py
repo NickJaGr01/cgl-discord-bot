@@ -56,7 +56,10 @@ class Stats:
         info = "__%s__\n**Players**:\n" % team.teamname
         for p in team.players:
             info += "    %s\n" % database.username(p.id)
-        info += "**Region**: %s" % team.region
+        info += "**Region**: %s\n" % team.region
+        info += "**Awards**:"
+        for award in team.awards:
+            info += "\n    %s" % award
         await ctx.send(info)
 
 

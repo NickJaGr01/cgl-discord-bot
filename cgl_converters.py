@@ -35,4 +35,6 @@ class CGLTeam(commands.Converter):
             team.region = "NA"
         if bot.guild.get_role(bot.EU_ROLE) in captain.roles:
             team.region = "EU"
+        database.cur.execute("SELECT awards FROM teamTable WHERE teamname='%s';" % teamname)
+        team.awards = database.cur.fetchone()[0]
         return team
