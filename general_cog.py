@@ -154,6 +154,13 @@ class General:
                 if player.id == ctx.author.id:
                     await ctx.send("You cannot commend yourself.")
                     return
+                database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % ctx.author.id)
+                team = database.cur.fetchone()[0]
+                if team != None:
+                    database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
+                    if team == database.cur.fethcone()[0]:
+                        await ctx.send("You cannot commend one of your own teammates.")
+                        return
                 rep = database.player_rep(player.id)
                 rep += 1
                 database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, player.id))
