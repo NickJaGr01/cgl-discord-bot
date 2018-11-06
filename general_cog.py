@@ -143,7 +143,7 @@ class General:
                 cancommend = True
             else:
                 duration = now - lastcommend
-                if duration.total_seconds() <= 0:
+                if duration.total_seconds() >= 86400:
                     cancommend = True
                 else:
                     await ctx.send("You have already commended someone within the last 24 hours.\nPlease wait %s before trying again." % duration)
