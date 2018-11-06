@@ -146,7 +146,7 @@ class General:
                 if duration.total_seconds() >= 86400:
                     cancommend = True
                 else:
-                    await ctx.send("You have already commended someone within the last 24 hours.\nPlease wait %s before trying again." % timedelta(hours=24)-duration)
+                    await ctx.send("You have already commended someone within the last 24 hours.\nPlease try again later.")
             if cancommend:
                 if player == None:
                     await ctx.send("That player does not exist.")
