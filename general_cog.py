@@ -5,6 +5,8 @@ import database
 from bot import bot
 import json
 from cgl_converters import *
+from datetime import datetime
+from datetime import timedelta
 
 PLAYER_STATS_DICT = {
     "maps": {
@@ -130,16 +132,44 @@ class General:
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
-    #@commands.command(pass_context=True)
-    #async def commend(self, ctx, player: CGLUser):
-
+    @commands.command(pass_context=True)
+    async def commend(self, ctx, player: CGLUser):
+        if database.user_registered(ctx.author.id):
+            now = datetime.now()
+            database.cur.execute("SELECT lastCommendTime FROM playerTable WHERE discordID=%s;" % player.id)
+            lastcommend = database.cur.fetchone()[0]
+            cancommend = False
+            if lastcommend == None:
+                cancommend = True
+            else:
+                duration = now - lastcommend
+                if duration.total_seconds() <= 0:
+                    cancommend = True
+                else:
+                    await ctx.send("You have already commended someone within the last 24 hours.\nPlease wait %s before trying again." % duration)
+            if cancommend:
+                if player == None:
+                    await ctx.send("That player does not exist.")
+                    return
+                if player.id == ctx.author.id:
+                    await ctx.send("You cannot commend yourself.")
+                    return
+                rep = database.player_rep(player.id)
+                rep += 1
+                database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, player.id))
+                database.cur.execute("UPDATE playerTable SET lastCommendTime='%s' WHERE discordID=%s;" % (now, ctx.author.id))
+                database.conn.commit()
+                await ctx.send("You have commended %s." % database.username(player.id))
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
     async def report(self, ctx, target: CGLUser, *, reason):
         """reports another player's behaviour
-        Reports another player's behavior. The player can be specified by one of two methods:
-            mentioning the player or
-            giving the player's full Discord tag.
+        Reports another player's behavior. The player can be specified by one of three methods:
+            mentioning the player,
+            giving the player's full Discord tag,
+            the player's CGL username (or server specific nickname)
         A reason must be provided after the player who is being reported."""
         if database.user_registered(ctx.author.id):
             if target == None:
