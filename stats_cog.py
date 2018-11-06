@@ -59,8 +59,14 @@ class Stats:
             await ctx.send("That team does not exist.")
             return
         info = "__%s__\n**Players**:\n" % team.teamname
+        elo = 0
+        teamsize = 0
         for p in team.players:
             info += "    %s\n" % database.username(p.id)
+            elo += database.player_elo(p.id)
+            ++teamsize
+        elo /= teamsize
+        info += "**Team Elo**: %s\n" % elo
         info += "**Region**: %s\n" % team.region
         info += "**Awards**:"
         for award in team.awards:
