@@ -23,6 +23,8 @@ class Stats:
 
     @commands.command(pass_context=True)
     async def playerinfo(self, ctx, *, player: CGLUser):
+        """display info about a player
+        """
         if player == None:
             await ctx.send("That player does not exist.")
             return
@@ -41,13 +43,15 @@ class Stats:
 
     @commands.command(pass_context=True)
     async def teaminfo(self, ctx, *, team: CGLTeam):
+        """display info about a team
+        """
         if team == None:
             await ctx.send("That team does not exist.")
             return
-        info = "**%s**\nPlayers:\n" % team.teamname
+        info = "__%s__\n**Players**:\n" % team.teamname
         for p in team.players:
-            info += "*%s*\n" % database.username(p.id)
-        info += "Region: %s" % team.region
+            info += "%s\n" % database.username(p.id)
+        info += "**Region**: %s" % team.region
         await ctx.send(info)
 
 
