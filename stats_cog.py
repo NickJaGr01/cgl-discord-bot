@@ -29,6 +29,9 @@ class Stats:
             await ctx.send("That player does not exist.")
             return
         info = "__%s__\n" % database.username(player.id)
+        database.cur.execute("SELECT faceitname FROM playerTable WHERE discordID=%s;" % player.id)
+        faceitname = database.cur.fetchone()[0]
+        info += "**FACEIT**: %s\n" % faceitname
         info += "**Elo**: %s\n" % database.player_elo(player.id)
         info += "**Rep**: %s\n" % database.player_rep(player.id)
         info += "**Team**: %s\n" % database.player_team(player.id)
