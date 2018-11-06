@@ -38,7 +38,11 @@ class Stats:
             region = "NA"
         if bot.guild.get_role(bot.EU_ROLE) in member.roles:
             region = "EU"
-        info += "**Region**: %s" % region
+        info += "**Region**: %s\n" % region
+        info += "**Roles**:"
+        for role in member.roles:
+            if role.id in bot.PLAYER_ROLE_ROLES.values():
+                info += "\n    %s" % role.name
         await ctx.send(info)
 
     @commands.command(pass_context=True)
@@ -50,7 +54,7 @@ class Stats:
             return
         info = "__%s__\n**Players**:\n" % team.teamname
         for p in team.players:
-            info += "%s\n" % database.username(p.id)
+            info += "    %s\n" % database.username(p.id)
         info += "**Region**: %s" % team.region
         await ctx.send(info)
 
