@@ -109,7 +109,8 @@ class General:
 
     @commands.command(pass_context=True)
     async def setroles(self, ctx, *roles):
-        """set your player roles"""
+        """set your player roles
+        valid roles are AWPer, Rifler, IGL, Entry, Lurker, Support"""
         if database.user_registered(ctx.author.id):
             if roles == None:
                 await ctx.send("Please specify your roles.")
@@ -128,6 +129,10 @@ class General:
                 await ctx.send("The roles %s were not granted because they do not exist." % badroles[:-2])
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
+    #@commands.command(pass_context=True)
+    #async def commend(self, ctx, player: CGLUser):
+
 
     @commands.command(pass_context=True)
     async def report(self, ctx, target: CGLUser, *, reason):
