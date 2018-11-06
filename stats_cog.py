@@ -43,7 +43,12 @@ class Stats:
         for role in member.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
                 info += " %s" % role.name
-        info = info[0:-1] #remove the last comma
+        info += "**Awards**:"
+        database.cur.execute("SELECT awards FROM playerTable WHERE discordID=%s;" % player.id)
+        awards = database.cur.fetchone()[0]
+        for award in awards:
+            info += "\n    %s" % award
+
         await ctx.send(info)
 
     @commands.command(pass_context=True)
