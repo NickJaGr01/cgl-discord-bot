@@ -22,7 +22,7 @@ class Stats:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def playerinfo(self, player: CGLUser):
+    async def playerinfo(self, ctx, *, player: CGLUser):
         if player == None:
             await ctx.send("That player does not exist.")
             return
