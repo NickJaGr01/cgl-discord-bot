@@ -143,7 +143,7 @@ class General:
                 cancommend = True
             else:
                 duration = now - lastcommend
-                print duration.total_seconds()
+                print(duration.total_seconds())
                 if duration.total_seconds() >= 86400:
                     cancommend = True
                 else:
