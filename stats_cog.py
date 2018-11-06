@@ -39,10 +39,10 @@ class Stats:
         if bot.guild.get_role(bot.EU_ROLE) in member.roles:
             region = "EU"
         info += "**Region**: %s\n" % region
-        info += "**Roles**: "
+        info += "**Roles**:"
         for role in member.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
-                info += "%s " % role.name
+                info += " %s" % role.name
         info = info[0:-1] #remove the last comma
         await ctx.send(info)
 
