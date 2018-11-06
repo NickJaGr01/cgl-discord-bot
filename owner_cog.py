@@ -19,4 +19,15 @@ class Owner:
         else:
             await ctx.send(NOT_OWNER_MESSAGE)
 
+    @commands.command(pass_context=True)
+    async def awardteam(self, ctx, team: CGLTeam, *, award):
+        """give a team an award"""
+        if ctx.message.author.id == bot.appinfo.owner.id:
+            database.cur.execute("UPDATE teamTable SET awards=array_append(awards, '%s') WHERE teamname='%s';" % (award, team.teamname))
+            database.cur.execute("UPDATE playerTable SET awards=array_append(awards, '%s') WHERE team='%s';" % (award, team.teamname))
+            database.conn.commit()
+            await ctx.send("%s and all its players have been awarded %s." % (team.teamname, award))
+        else:
+            await ctx.send(NOT_OWNER_MESSAGE)
+
 bot.add_cog(Owner())

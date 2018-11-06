@@ -43,7 +43,7 @@ class Stats:
         for role in member.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
                 info += " %s" % role.name
-        info += "**Awards**:"
+        info += "\n**Awards**:"
         database.cur.execute("SELECT awards FROM playerTable WHERE discordID=%s;" % player.id)
         awards = database.cur.fetchone()[0]
         for award in awards:
