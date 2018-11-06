@@ -65,7 +65,7 @@ class Stats:
             info += "    %s\n" % database.username(p.id)
             elo += database.player_elo(p.id)
             teamsize += 1
-        elo /= teamsize
+        elo = int(elo/teamsize)
         info += "**Team Elo**: %s\n" % elo
         info += "**Region**: %s\n" % team.region
         info += "**Awards**:"
