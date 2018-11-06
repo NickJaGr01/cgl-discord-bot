@@ -136,15 +136,13 @@ class General:
     async def commend(self, ctx, player: CGLUser):
         if database.user_registered(ctx.author.id):
             now = datetime.now()
-            database.cur.execute("SELECT lastCommendTime FROM playerTable WHERE discordID=%s;" % player.id)
+            database.cur.execute("SELECT lastCommendTime FROM playerTable WHERE discordID=%s;" % ctx.user.id)
             lastcommend = database.cur.fetchone()[0]
-            print(lastcommend)
             cancommend = False
             if lastcommend == None:
                 cancommend = True
             else:
                 duration = now - lastcommend
-                print(duration.total_seconds())
                 if duration.total_seconds() >= 86400:
                     cancommend = True
                 else:
