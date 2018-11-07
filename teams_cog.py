@@ -218,7 +218,7 @@ class Teams:
             if team == None:
                 await ctx.send("You are not the captain of a team.")
                 #return
-            team = team[0]
+            #team = team[0]
             database.cur.execute("SELECT username FROM playerTable WHERE team='%s';" % team)
             players = database.cur.fetchall()
             message = await ctx.user.send(u"\u0031\uFE0F\u20E3")
