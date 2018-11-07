@@ -61,13 +61,21 @@ class Stats:
         if team == None:
             await ctx.send("That team does not exist.")
             return
-        info = "__%s__\n**Players**:\n" % team.teamname
+        info = "__%s__\n" % team.teamname
+        info += "**Primary**:\n"
         elo = 0
         teamsize = 0
-        for p in team.players:
-            info += "    %s\n" % database.username(p.id)
-            elo += database.player_elo(p.id)
+        database.cur.execute("SELECT username, elo FROM playerTable WHERE team='%s' AND isPrimary=true;" % team.teamname)
+        primary = database.cur.fetchall()
+        for p in primary:
+            info += "    %s\n" % p[0]
+            elo += database.player_elo(p[1])
             teamsize += 1
+        info += "**Subs**:\n"
+        database.cur.execute("SELECT username FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
+        primary = database.cur.fetchall()
+        for p in subs:
+            info += "    %s\n" % p[0]
         elo = int(elo/teamsize)
         info += "**Team Elo**: %s\n" % elo
         info += "**Region**: %s\n" % team.region

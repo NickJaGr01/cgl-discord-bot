@@ -62,6 +62,7 @@ async def process_roster_edit(reaction, user):
                     subs.remove(players[index][0])
             for s in subs:
                 database.cur.execute("UPDATE playerTable SET isPrimary=false WHERE discordID=%s;" % s)
+            database.conn.commit()
             await reaction.message.delete()
             await user.send("Your team's roster has been modified.")
 
