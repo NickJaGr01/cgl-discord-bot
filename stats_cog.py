@@ -76,6 +76,8 @@ class Stats:
         subs = database.cur.fetchall()
         for p in subs:
             info += "    %s\n" % p[0]
+        if teamsize == 0:
+            teamsize = 1
         elo = int(elo/teamsize)
         info += "**Team Elo**: %s\n" % elo
         info += "**Region**: %s\n" % team.region
