@@ -207,7 +207,7 @@ class Teams:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
 
-    emojis = []
+    emojis = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣"]
     @commands.command(pass_context=True)
     async def editroster(self, ctx):
         """set primary and substitute team members"""
@@ -217,13 +217,20 @@ class Teams:
             team = database.cur.fetchone()
             if team == None:
                 await ctx.send("You are not the captain of a team.")
-                #return
-            #team = team[0]
+                return
+            team = team[0]
             database.cur.execute("SELECT username FROM playerTable WHERE team='%s';" % team)
             players = database.cur.fetchall()
             #message = await ctx.author.send(u"\u0031\uFE0F\u20E3")
-            message = await ctx.author.send(":one:")
-            await message.add_reaction("1⃣")
+            msg = "Please select your team's primary players.\nThen select ✅ ."
+            index = 0
+            for p in players:
+                msg += "\n%s  %s" % (emojis[index], p[0])
+                index += 1
+            message = await ctx.author.send(msg)
+            for i in range(index):
+                await message.add_reaction(emojis[i])
+            await message.add_reaction("✅")
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
