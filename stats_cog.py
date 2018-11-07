@@ -73,7 +73,7 @@ class Stats:
             teamsize += 1
         info += "**Subs**:\n"
         database.cur.execute("SELECT username FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
-        primary = database.cur.fetchall()
+        subs = database.cur.fetchall()
         for p in subs:
             info += "    %s\n" % p[0]
         elo = int(elo/teamsize)
