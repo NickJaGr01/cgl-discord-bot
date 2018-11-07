@@ -53,9 +53,9 @@ async def process_roster_edit(reaction, user):
             team = database.cur.fetchone()
             database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" % team)
             players = database.cur.fetchall()
-            reacts = reactions.message.reactions
+            reactions = reaction.message.reactions
             subs = [p[0] for p in players]
-            for r in reacts:
+            for r in reactions:
                 if r.emoji in emojis:
                     index = emojis.index(r.emoji)
                     database.cur.execute("UPDATE playerTable SET isPrimary=true WHERE discordID=%s;" % players[index][0])
