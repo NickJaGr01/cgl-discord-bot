@@ -210,7 +210,7 @@ class Teams:
     emojis = []
     @commands.command(pass_context=True)
     async def editroster(self, ctx):
-        """makes the player the new captain of the user's team"""
+        """set primary and substitute team members"""
         if database.user_registered(ctx.author.id):
             #check that the user is the captain of a team
             database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
@@ -223,7 +223,7 @@ class Teams:
             players = database.cur.fetchall()
             #message = await ctx.author.send(u"\u0031\uFE0F\u20E3")
             message = await ctx.author.send(":one:")
-            await message.add_reaction(":one:")
+            await message.add_reaction(u"\u0031")
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
