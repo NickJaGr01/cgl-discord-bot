@@ -221,7 +221,9 @@ class Teams:
             #team = team[0]
             database.cur.execute("SELECT username FROM playerTable WHERE team='%s';" % team)
             players = database.cur.fetchall()
-            message = await ctx.author.send(u"\u0031\uFE0F\u20E3")
+            #message = await ctx.author.send(u"\u0031\uFE0F\u20E3")
+            message = await ctx.author.send(":one:")
+            await message.add_reaction(u"\u0031\uFE0F\u20E3")
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
