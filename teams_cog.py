@@ -61,7 +61,7 @@ class Teams:
             giving the player's full Discord tag."""
         if database.user_registered(ctx.author.id):
             if player == None:
-                await ctx.send("Either you didn't suppy a player or the one you gave was not valid. Please make sure the player is registered in the league.")
+                await ctx.send("Either you didn't supply a player or the one you gave was not valid. Please make sure the player is registered in the league.")
                 return
             #make sure the user is the captain of a team
             database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
@@ -206,6 +206,23 @@ class Teams:
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
-    
+
+    emojis = []
+    @commands.command(pass_context=True)
+    async def editroster(self, ctx):
+        """makes the player the new captain of the user's team"""
+        if database.user_registered(ctx.author.id):
+            #check that the user is the captain of a team
+            database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
+            team = database.cur.fetchone()
+            if team == None:
+                await ctx.send("You are not the captain of a team.")
+                #return
+            team = team[0]
+            database.cur.execute("SELECT username FROM playerTable WHERE team='%s';" % team)
+            players = database.cur.fetchall()
+            message = await ctx.user.send(u"\u0031\uFE0F\u20E3")
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
 bot.add_cog(Teams())
