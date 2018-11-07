@@ -54,12 +54,20 @@ async def process_roster_edit(reaction, user):
             database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" % team)
             players = database.cur.fetchall()
             reactions = reaction.message.reactions
+            primary = []
             subs = [p[0] for p in players]
             for r in reactions:
                 if r.emoji in emojis:
-                    index = emojis.index(r.emoji)
-                    database.cur.execute("UPDATE playerTable SET isPrimary=true WHERE discordID=%s;" % players[index][0])
-                    subs.remove(players[index][0])
+                    if r.count == 2:
+                        index = emojis.index(r.emoji)
+                        primary.append(players[index][0])
+                        subs.remove(players[index][0])
+            if len(primary) > 5:
+                await user.send("You cannot have more than 5 primary players on a team. Please try again.")
+                await reaction.message.delete()
+                return
+            for p in primary:
+                database.cur.execute("UPDATE playerTable SET isPrimary=true WHERE discordID=%s;" % p)
             for s in subs:
                 database.cur.execute("UPDATE playerTable SET isPrimary=false WHERE discordID=%s;" % s)
             database.conn.commit()
