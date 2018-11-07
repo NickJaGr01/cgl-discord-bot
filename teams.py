@@ -45,8 +45,8 @@ async def process_invite(reaction, user):
         if validreaction:
             await reaction.message.delete()
 
-emojis = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣"]
 async def process_roster_edit(reaction, user):
+    emojis = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣"]
     if reaction.message.content.startswith("Please select your team's primary players"):
         if reaction.emoji == "✅":
             database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % user.id)
