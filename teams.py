@@ -1,5 +1,6 @@
 import database
 from bot import bot
+from bot import log
 
 class Team:
     def __init__(self, teamname):
@@ -17,11 +18,13 @@ async def process_invite(reaction, user):
         validreaction = False
         if reaction.emoji == u"\U0001F44D": #thumbsup
             validreaction = True
+            targetusername = database.username(user.id)
             #check that there aren't too many players on the team
             database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team)
             teamsize = len(database.cur.fetchall())
             if teamsize >= 7:
                 await user.send("You can no longer join that team because it has reached the maximum of 7 players.")
+                await log("%s could not join %s. There are too many players." % (targetusername, team))
             else:
                 isPrimary = 'false'
                 if teamsize < 5:
@@ -38,14 +41,16 @@ async def process_invite(reaction, user):
                 database.cur.execute("SELECT captainID FROM teamTable WHERE teamname='%s';" % team)
                 captainID = database.cur.fetchone()[0]
                 captain = bot.get_user(captainID)
-                await captain.send("%s has accepted your team invite." % user.mention)
+                await captain.send("%s has accepted your team invite." % targetusername)
+                await log("%s joined %s." % (targetusername, team))
         elif reaction.emoji == u"\U0001F44E": #thumbsdown
             validreaction = True
             await user.send("You have declined the team invite.")
             database.cur.execute("SELECT captainID FROM teamTable WHERE teamname='%s';" % team)
             captainID = database.cur.fetchone()[0]
             captain = bot.get_user(captainID)
-            await captain.send("%s declined your team invite." % user.mention)
+            await captain.send("%s declined your team invite." % targetusername)
+            await log("%s declined an invite to %s." % (targetusername, team))
         if validreaction:
             await reaction.message.delete()
 
@@ -54,7 +59,7 @@ async def process_roster_edit(reaction, user):
     if reaction.message.content.startswith("Please select your team's primary players"):
         if reaction.emoji == "✅":
             database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % user.id)
-            team = database.cur.fetchone()
+            team = database.cur.fetchone()[0]
             database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" % team)
             players = database.cur.fetchall()
             reactions = reaction.message.reactions
@@ -77,6 +82,7 @@ async def process_roster_edit(reaction, user):
             database.conn.commit()
             await reaction.message.delete()
             await user.send("Your team's roster has been modified.")
+            await log("%s modified %s's roster." % (database.username(user.id), team))
 
 async def disband_team(team, message):
     database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
@@ -93,3 +99,4 @@ async def disband_team(team, message):
         if message != None:
             await member.send(message)
     await teamrole.delete()
+    await log("%s has been disbanded." % team)

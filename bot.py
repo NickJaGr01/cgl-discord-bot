@@ -52,8 +52,12 @@ async def on_ready() :
         "lurker": int(os.environ['LURKER_ROLE']),
         "support": int(os.environ['SUPPORT_ROLE'])
     }
+    bot.LOG_CHANNEL = os.environ['LOG_CHANNEL']
 
     #bot.task = asyncio.create_task(background_thread())
+
+async def log(msg):
+    await bot.guild.get_channel(bot.LOG_CHANNEL).send(msg)
 
 @bot.event
 async def on_message(msg):

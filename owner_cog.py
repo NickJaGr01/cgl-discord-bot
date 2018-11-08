@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 from bot import bot
+from bot import log
 import database
 from cgl_converters import *
 
@@ -15,7 +16,9 @@ class Owner:
             elo += delo
             database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, target.id))
             database.conn.commit()
-            await ctx.send("%s has been given %s elo." % (target.mention, delo))
+            targetusername = database.username(target.id)
+            await ctx.send("%s has been given %s elo." % (targetusername, delo))
+            await log("OWNER: %s gave %s rep to %s." % (database.username(ctx.author.id), drep, targetusername))
         else:
             await ctx.send(NOT_OWNER_MESSAGE)
 
@@ -27,6 +30,7 @@ class Owner:
             database.cur.execute("UPDATE playerTable SET awards=array_append(awards, '%s') WHERE team='%s';" % (award, team.teamname))
             database.conn.commit()
             await ctx.send("%s and all its players have been awarded %s." % (team.teamname, award))
+            await log("OWNER: %s gave the award %s to %s." % (database.username(ctx.author.id), award, team.teamname))
         else:
             await ctx.send(NOT_OWNER_MESSAGE)
 
@@ -36,7 +40,9 @@ class Owner:
         if ctx.message.author.id == bot.appinfo.owner.id:
             database.cur.execute("UPDATE playerTable SET awards=array_append(awards, '%s') WHERE discordID=%s;" % (award, player.id))
             database.conn.commit()
-            await ctx.send("%s has been awarded %s." % (database.username(player.id), award))
+            targetusername = database.username(player.id)
+            await ctx.send("%s has been awarded %s." % (targetusername, award))
+            await log("OWNER: %s gave the award %s to %s." % (database.username(ctx.author.id), award, targetusername))
         else:
             await ctx.send(NOT_OWNER_MESSAGE)
 

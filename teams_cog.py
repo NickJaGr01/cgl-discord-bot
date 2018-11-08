@@ -1,4 +1,5 @@
 from bot import bot
+from bot import log
 from discord.ext import commands
 import discord
 import database
@@ -50,6 +51,7 @@ class Teams:
             database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
             database.conn.commit()
             await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
+            await log("%s created %s." % (database.username(ctx.author.id), teamname))
         else:
             await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
@@ -74,6 +76,7 @@ class Teams:
             database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team)
             if len(database.cur.fetchall()) >= 7:
                 await ctx.send("Your team has already reached the maximum of 7 players.")
+                await log("%s could not invite %s to %s. There are too many players." % (database.username(ctx.author.id), targetusername, team))
                 return
             #make sure the target player isn't already on a team
             database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
@@ -87,7 +90,9 @@ class Teams:
             invite = await player.send("You have been invited to join %s.\n:thumbsup: accept\n:thumbsdown: decline" % team)
             await invite.add_reaction(u"\U0001F44D") #thumbsup
             await invite.add_reaction(u"\U0001F44E") #thumbsdown
-            await ctx.send("%s has been invited to %s." % (database.username(player.id), team))
+            targetusername = database.username(player.id)
+            await ctx.send("%s has been invited to %s." % (targetusername, team))
+            await log("%s invited %s to %s." % (database.username(ctx.author.id), targetusername, team))
         else:
             await ctx.author.send(bot.NOT_REGISTERED_MESSAGE)
 
@@ -109,6 +114,7 @@ class Teams:
             if not othermembers:
                 await teams.disband_team(team, None)
                 await ctx.send("Team '%s' has been disbanded." % team)
+                await log("%s left %s and disbanded it." % (database.username(ctx.author.id), team))
                 return
             #check if the user is the captain of the team
             database.cur.execute("SELECT * FROM teamTable WHERE captainID=%s;" % ctx.author.id)
@@ -123,6 +129,7 @@ class Teams:
             await member.remove_roles(bot.guild.get_role(teamrole))
             await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
             await ctx.send("You have left team '%s'." % team)
+            await log("%s left %s." % (database.username(ctx.author.id), team))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
@@ -140,6 +147,7 @@ class Teams:
             await teams.disband_team(team, "Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
             await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
             await ctx.send("Team '%s' has been disbanded ." % team)
+            await log("%s disbanded %s." % (database.username(ctx.author.id), team))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
@@ -173,7 +181,9 @@ class Teams:
                 await member.remove_roles(teamrole)
                 await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await player.send("You have been kicked from team '%s' by the team captain. You are now a free agent." % team)
-                await ctx.send("%s has been kicked from team '%s'." % (member.nick, team))
+                targetusername = database.username(player.id)
+                await ctx.send("%s has been kicked from team '%s'." % (targetusername, team))
+                await log("%s kicked %s from %s." % (database.username(ctx.author.id), targetusername, team))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
@@ -202,7 +212,9 @@ class Teams:
             await target.add_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
             await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
             await target.send("You have been made the new captain of your team.")
-            await ctx.send("%s has been made the new captain of %s." % (database.username(target.id), team))
+            targetusername = database.username(target.id)
+            await ctx.send("%s has been made the new captain of %s." % (targetusername, team))
+            await log("%s made %s the captain of %s." % (database.username(ctx.author.id), targetusername, team))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 

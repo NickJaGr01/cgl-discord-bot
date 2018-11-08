@@ -5,6 +5,7 @@ from datetime import timedelta
 import os
 import database
 from bot import bot
+from bot import log
 from cgl_converters import *
 
 MOD_ROLE_ID = int(os.environ['MOD_ROLE'])
@@ -31,7 +32,9 @@ class Admin:
             rep += drep
             database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
             database.conn.commit()
-            await ctx.send("%s has been given %s rep." % (database.username(target.id), drep))
+            targetusername = database.username(target.id)
+            await ctx.send("%s has been given %s rep." % (targetusername, drep))
+            await log("ADMIN: %s gave %s rep to %s." % (database.username(ctx.author.id), drep, targetusername))
         else:
             await ctx.send(NOT_MOD_MESSAGE)
 
@@ -53,6 +56,7 @@ class Admin:
             database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
             database.conn.commit()
             await target.send("Due to a major offense, you have received a penalty of -%s rep and have been suspended from CGL matchmaking for %s." % (reppen, suspension))
+            await log("ADMIN: %s gave a major offense to %s." % (database.username(ctx.author.id), database.username(target.id)))
         else:
             await ctx.send(NOT_MOD_MESSAGE)
 
