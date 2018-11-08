@@ -19,10 +19,14 @@ async def process_invite(reaction, user):
             validreaction = True
             #check that there aren't too many players on the team
             database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team)
-            if len(database.cur.fetchall()) >= 7:
+            teamsize = len(database.cur.fetchall())
+            if teamsize >= 7:
                 await user.send("You can no longer join that team because it has reached the maximum of 7 players.")
             else:
-                database.cur.execute("UPDATE playerTable SET team='%s', isPrimary=false WHERE discordID=%s;" % (team, user.id))
+                isPrimary = 'false'
+                if teamsize < 5:
+                    isPrimary = 'true'
+                database.cur.execute("UPDATE playerTable SET team='%s', isPrimary=f%s WHERE discordID=%s;" % (team, isPrimary, user.id))
                 database.conn.commit()
                 database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
                 roleid = database.cur.fetchone()[0]
