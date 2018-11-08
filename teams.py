@@ -26,7 +26,7 @@ async def process_invite(reaction, user):
                 isPrimary = 'false'
                 if teamsize < 5:
                     isPrimary = 'true'
-                database.cur.execute("UPDATE playerTable SET team='%s', isPrimary=f%s WHERE discordID=%s;" % (team, isPrimary, user.id))
+                database.cur.execute("UPDATE playerTable SET team='%s', isPrimary=%s WHERE discordID=%s;" % (team, isPrimary, user.id))
                 database.conn.commit()
                 database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
                 roleid = database.cur.fetchone()[0]
