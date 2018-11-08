@@ -1,6 +1,6 @@
 import database
 from bot import bot
-from bot import log
+from utils import *
 
 class Team:
     def __init__(self, teamname):

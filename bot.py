@@ -56,9 +56,6 @@ async def on_ready() :
 
     #bot.task = asyncio.create_task(background_thread())
 
-async def log(msg):
-    await bot.guild.get_channel(bot.LOG_CHANNEL).send(msg)
-
 @bot.event
 async def on_message(msg):
     await bot.process_commands(msg)

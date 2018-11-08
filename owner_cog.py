@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
 from bot import bot
-from bot import log
+from utils import *
 import database
 from cgl_converters import *
 

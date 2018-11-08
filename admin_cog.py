@@ -5,7 +5,7 @@ from datetime import timedelta
 import os
 import database
 from bot import bot
-from bot import log
+from utils import *
 from cgl_converters import *
 
 MOD_ROLE_ID = int(os.environ['MOD_ROLE'])

@@ -3,7 +3,7 @@ import os
 import discord
 import database
 from bot import bot
-from bot import log
+from utils import *
 import json
 from cgl_converters import *
 from datetime import datetime

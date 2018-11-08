@@ -1,5 +1,5 @@
 from bot import bot
-from bot import log
+from utils import *
 from discord.ext import commands
 import discord
 import database
