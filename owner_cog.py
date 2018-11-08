@@ -41,7 +41,7 @@ class Owner:
             await ctx.send(NOT_OWNER_MESSAGE)
 
     @commands.command(pass_context=True)
-    async def dostuff(self, ctx, player: CGLUser, *, award):
+    async def dostuff(self, ctx):
         """do stuff"""
         if ctx.message.author.id == bot.appinfo.owner.id:
             database.cur.execute("SELECT teamname FROM teamTable;")
