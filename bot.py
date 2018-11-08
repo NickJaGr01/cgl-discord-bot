@@ -52,7 +52,7 @@ async def on_ready() :
         "lurker": int(os.environ['LURKER_ROLE']),
         "support": int(os.environ['SUPPORT_ROLE'])
     }
-    bot.LOG_CHANNEL = os.environ['LOG_CHANNEL']
+    bot.LOG_CHANNEL = int(os.environ['LOG_CHANNEL'])
 
     #bot.task = asyncio.create_task(background_thread())
 
