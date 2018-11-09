@@ -9,7 +9,6 @@ import math
 import asyncio
 from datetime import datetime
 import database
-from utils import *
 
 bot = commands.Bot(command_prefix='!')
 
