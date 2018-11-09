@@ -77,7 +77,7 @@ async def on_member_join(member):
         await member.add_roles(bot.guild.get_role(bot.MEMBER_ROLE))
         await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
         await member.send("Welcome back to CGL! We're glad you came back.")
-        await log("%s rejoined the server." % (member.mention)
+        await log("%s rejoined the server." % (member.mention))
 
 @bot.event
 async def on_member_remove(member):
