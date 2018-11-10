@@ -13,7 +13,15 @@ from bot import bot
 
 @bot.event
 async def on_message(msg):
-    await bot.process_commands(msg)
+    if msg.channel.id == bot.ANNOUNCEMENTS_CHANNEL:
+        database.cur.execute("SELECT value FROM settings WHERE key='sponsor_ad';")
+        ad = database.cur.fetchone()[0]
+        if len(ad) > 0:
+            database.cur.execute("SELECT value FROM settings WHERE key='last_ad_id';")
+            lastad = database.cur.fetchone()[0]
+            announcements = bot.guild.get_channel(bot.ANNOUNCEMENTS_CHANNEL)
+            await announcements.get_message(lastad).delete()
+            await announcements.send(ad)
 
 @bot.event
 async def on_reaction_add(reaction, user):

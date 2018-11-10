@@ -53,6 +53,7 @@ async def on_ready() :
         "support": int(os.environ['SUPPORT_ROLE'])
     }
     bot.LOG_CHANNEL = int(os.environ['LOG_CHANNEL'])
+    bot.ANNOUNCEMENTS_CHANNEL = int(os.environ['ANNOUNCEMENTS_CHANNEL'])
 
     #bot.task = asyncio.create_task(background_thread())
 
