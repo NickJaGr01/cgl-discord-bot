@@ -14,14 +14,16 @@ from bot import bot
 @bot.event
 async def on_message(msg):
     if msg.channel.id == bot.ANNOUNCEMENTS_CHANNEL:
-        database.cur.execute("SELECT value FROM settings WHERE key='sponsor_ad';")
+        database.cur.execute("SELECT string FROM settings WHERE key='sponsor_ad';")
         ad = database.cur.fetchone()[0]
         if len(ad) > 0:
-            database.cur.execute("SELECT value FROM settings WHERE key='last_ad_id';")
+            database.cur.execute("SELECT int FROM settings WHERE key='last_ad_id';")
             lastad = database.cur.fetchone()[0]
-            announcements = bot.guild.get_channel(bot.ANNOUNCEMENTS_CHANNEL)
-            await announcements.get_message(lastad).delete()
-            await announcements.send(ad)
+            if lastad != None:
+                announcements = bot.guild.get_channel(bot.ANNOUNCEMENTS_CHANNEL)
+                await announcements.get_message(lastad).delete()
+                newmsg = await announcements.send(ad)
+                database.cur.execute("UPDATE settings SET int=%s WHERE key='last_sponsor_id';" % newmsg.id)
 
 @bot.event
 async def on_reaction_add(reaction, user):

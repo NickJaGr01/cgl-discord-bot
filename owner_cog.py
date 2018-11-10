@@ -50,16 +50,18 @@ class Owner:
     async def setsponsorad(self, ctx, *, ad):
         """set the sponsor advertisement"""
         if ctx.message.author.id == bot.appinfo.owner.id:
-            database.cur.execute("UPDATE settings SET value='%s' WHERE key='sponsor_ad';" % (award, player.id))
-            database.conn.commit()
+            database.cur.execute("UPDATE settings SET string='%s' WHERE key='sponsor_ad';" % (award, player.id))
             await ctx.send("The sponsor advertisement has been updated.")
             await log("OWNER: the sponsor advertisement has been updated:\n%s" % ad)
-            database.cur.execute("SELECT value FROM settings WHERE key='last_ad_id';")
-            lastad = database.cur.fetchone()[0]
             announcements = bot.guild.get_channel(bot.ANNOUNCEMENTS_CHANNEL)
-            await announcements.get_message(lastad).delete()
+            database.cur.execute("SELECT int FROM settings WHERE key='last_ad_id';")
+            lastad = database.cur.fetchone()[0]
+            if lastad != None:
+                await announcements.get_message(lastad).delete()
             if len(ad) > 0:
-                await announcements.send(ad)
+                newmsg = await announcements.send(ad)
+                database.cur.execute("UPDATE settings SET int=%s WHERE key='last_sponsor_id';" % newmsg.id)
+            database.conn.commit()
         else:
             await ctx.send(NOT_OWNER_MESSAGE)
 
