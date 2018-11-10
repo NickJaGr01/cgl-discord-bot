@@ -10,6 +10,7 @@ from datetime import datetime
 import database
 from utils import *
 from bot import bot
+import teams
 
 @bot.event
 async def on_message(msg):
