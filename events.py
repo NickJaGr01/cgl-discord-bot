@@ -24,6 +24,7 @@ async def on_message(msg):
                 await announcements.get_message(lastad).delete()
                 newmsg = await announcements.send(ad)
                 database.cur.execute("UPDATE settings SET int=%s WHERE key='last_sponsor_id';" % newmsg.id)
+    await bot.process_commands(msg)
 
 @bot.event
 async def on_reaction_add(reaction, user):
