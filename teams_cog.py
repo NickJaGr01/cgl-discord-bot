@@ -108,7 +108,6 @@ class Teams:
                 await ctx.send("You are not a captain of a team.")
                 return
             team = team[0]
-            database.cur.execute("INSERT INTO standinrequests (team) VALUES ('%s');" % team)
             channel = bot.guild.get_channel(bot.STANDIN_CHANNEL)
             username = database.username(ctx.author.id)
             await channel.send("%s has requested a stand-in for %s." % (username, team))
