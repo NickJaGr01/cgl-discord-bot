@@ -22,8 +22,9 @@ async def background_thread():
         now = loop.time()
         bot.delta_time = now - last_time
         last_time = now
+        await teams.process_standins()
 
-        await asyncio.sleep(.1)
+        await asyncio.sleep(1)
 
 @bot.event
 async def on_ready() :
@@ -54,6 +55,7 @@ async def on_ready() :
     }
     bot.LOG_CHANNEL = int(os.environ['LOG_CHANNEL'])
     bot.ANNOUNCEMENTS_CHANNEL = int(os.environ['ANNOUNCEMENTS_CHANNEL'])
+    bot.STANDIN_CHANNEL = int(os.environ['STANDIN_CHANNEL'])
 
     #bot.task = asyncio.create_task(background_thread())
 

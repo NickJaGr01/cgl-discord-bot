@@ -3,7 +3,7 @@ import os
 import discord
 import database
 from bot import bot
-from utils import *
+import utils
 import json
 from cgl_converters import *
 from datetime import datetime
@@ -41,7 +41,7 @@ class General:
                 await ctx.author.add_roles(bot.guild.get_role(bot.MEMBER_ROLE))
                 await ctx.author.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
                 await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
-                await log("%s registered as %s." % (ctx.author.mention, username))
+                await utils.log("%s registered as %s." % (ctx.author.mention, username))
             else:
                 await ctx.send("The username %s is not available. Please choose another one to register for CGL." % username)
         else:
@@ -62,9 +62,21 @@ class General:
                 database.conn.commit()
                 await bot.guild.get_member(ctx.author.id).edit(nick=username)
                 await ctx.send("Username successfully changed.")
-                await log("%s changed their username to %s." % (oldname, username))
+                await utils.log("%s changed their username to %s." % (oldname, username))
             else:
                 await ctx.send("The username %s is not available. Please choose another one to register for CGL." % username)
+        else:
+            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
+
+    @commands.command(pass_context=True)
+    async def enterstandin(self, ctx):
+        """register the user as a stand-in player"""
+        if database.user_registered(ctx.author.id):
+            channel = bot.guild.get_channel(bot.STANDIN_CHANNEL)
+            username = database.username(ctx.author.id)
+            await channel.send("%s wants to be a standin." % username)
+            await ctx.send("You have successfully entered the tournament as a stand-in.\nLeague staff will let you know if a team is found for you.")
+            await utils.log("%s registered as a stand-in player." % username)
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
@@ -85,7 +97,7 @@ class General:
                 if bot.guild.get_role(bot.NA_ROLE) in member.roles:
                     await member.remove_roles(bot.guild.get_role(bot.NA_ROLE))
                 await member.add_roles(bot.guild.get_role(bot.EU_ROLE))
-                await log("%s set their region to EU." % database.username(ctx.author.id))
+                await utils.log("%s set their region to EU." % database.username(ctx.author.id))
             else:
                 await ctx.send("That is not a valid region.")
                 return
@@ -112,7 +124,7 @@ class General:
             if bot.guild.get_role(bot.EU_ROLE) in member.roles:
                 invitelink = bot.EU_HUB
             await ctx.author.send("Your FACEIT name has been set to %s.\n Use this link to join the FACEIT hub:\n%s\nDO NOT share this link under ANY circumstances." % (name, invitelink))
-            await log("%s set their FACEIT name to %s." % (database.username(ctx.author.id), name))
+            await utils.log("%s set their FACEIT name to %s." % (database.username(ctx.author.id), name))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
@@ -139,7 +151,7 @@ class General:
             await ctx.send("Your roles have been updated.")
             if len(badroles) > 0:
                 await ctx.send("The roles %s were not granted because they do not exist." % badroles[:-2])
-            await log("%s set their in-game roles to: %s" % (database.username(ctx.author.id), goodroles[:-2]))
+            await utils.log("%s set their in-game roles to: %s" % (database.username(ctx.author.id), goodroles[:-2]))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 
@@ -181,7 +193,7 @@ class General:
                 database.conn.commit()
                 targetusername = database.username(player.id)
                 await ctx.send("You have commended %s." % targetusername)
-                await log("%s commended %s." % (database.username(ctx.author.id), targetusername))
+                await utils.log("%s commended %s." % (database.username(ctx.author.id), targetusername))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
 

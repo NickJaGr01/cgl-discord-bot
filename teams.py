@@ -1,6 +1,6 @@
 import database
 from bot import bot
-from utils import *
+import utils
 
 class Team:
     def __init__(self, teamname):
@@ -11,6 +11,16 @@ class Team:
 
     def add_player(self, player):
         self.players.append(player)
+
+async def process_standins():
+    database.cur.execute("SELECT team, player, timeinvited FROM standinrequests;")
+    requests = database.cur.fetchall()
+    for team, player, timeinvited in requests:
+        if player == None:
+            pass
+            #find stand-in player
+            #database.cur.execute("SELECT discordID FROM playerTable WHERE ")
+
 
 async def process_invite(reaction, user):
     if reaction.message.content.startswith("You have been invited to join"):
@@ -24,7 +34,7 @@ async def process_invite(reaction, user):
             teamsize = len(database.cur.fetchall())
             if teamsize >= 7:
                 await user.send("You can no longer join that team because it has reached the maximum of 7 players.")
-                await log("%s could not join %s. There are too many players." % (targetusername, team))
+                await utils.log("%s could not join %s. There are too many players." % (targetusername, team))
             else:
                 isPrimary = 'false'
                 if teamsize < 5:
@@ -42,7 +52,7 @@ async def process_invite(reaction, user):
                 captainID = database.cur.fetchone()[0]
                 captain = bot.get_user(captainID)
                 await captain.send("%s has accepted your team invite." % targetusername)
-                await log("%s joined %s." % (targetusername, team))
+                await utils.log("%s joined %s." % (targetusername, team))
         elif reaction.emoji == u"\U0001F44E": #thumbsdown
             validreaction = True
             await user.send("You have declined the team invite.")
@@ -50,7 +60,7 @@ async def process_invite(reaction, user):
             captainID = database.cur.fetchone()[0]
             captain = bot.get_user(captainID)
             await captain.send("%s declined your team invite." % targetusername)
-            await log("%s declined an invite to %s." % (targetusername, team))
+            await utils.log("%s declined an invite to %s." % (targetusername, team))
         if validreaction:
             await reaction.message.delete()
 
@@ -82,7 +92,7 @@ async def process_roster_edit(reaction, user):
             database.conn.commit()
             await reaction.message.delete()
             await user.send("Your team's roster has been modified.")
-            await log("%s modified %s's roster." % (database.username(user.id), team))
+            await utils.log("%s modified %s's roster." % (database.username(user.id), team))
 
 async def disband_team(team, message):
     database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
@@ -99,4 +109,4 @@ async def disband_team(team, message):
         if message != None:
             await member.send(message)
     await teamrole.delete()
-    await log("%s has been disbanded." % team)
+    await utils.log("%s has been disbanded." % team)
