@@ -92,7 +92,7 @@ class General:
                 if bot.guild.get_role(bot.EU_ROLE) in member.roles:
                     await member.remove_roles(bot.guild.get_role(bot.EU_ROLE))
                 await member.add_roles(bot.guild.get_role(bot.NA_ROLE))
-                await log("%s set their region to NA." % database.username(ctx.author.id))
+                await utils.log("%s set their region to NA." % database.username(ctx.author.id))
             elif region.lower() == "eu":
                 if bot.guild.get_role(bot.NA_ROLE) in member.roles:
                     await member.remove_roles(bot.guild.get_role(bot.NA_ROLE))

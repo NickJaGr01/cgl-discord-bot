@@ -4,6 +4,7 @@ from bot import bot
 import utils
 import database
 from cgl_converters import *
+import servers
 
 NOT_OWNER_MESSAGE = "This command is only for use by the owner."
 
@@ -97,6 +98,26 @@ class Owner:
             await ctx.send("Elo has been updated for those players.")
         else:
             await ctx.send(NOT_OWNER_MESSAGE)
+
+    @commands.group(pass_context=True)
+    async def server(self, ctx):
+        if ctx.message.author.id == bot.appinfo.owner.id:
+            if ctx.invoked_subcommand is None:
+                await ctx.send("usage:\n!server <subcommand>\nsubcommands:\ncreate")
+        else:
+            await ctx.send(NOT_OWNER_MESSAGE)
+    @server.command(pass_context=True)
+    async def create(self, ctx, location, map):
+        server = servers.create_server("CGL CSGO", location, map)
+        await ctx.send("Server created.\nid=%s\nConnect to %s:%s" % (server['id'], server['ip'], server['ports']['game']))
+    @server.command(pass_context=True)
+    async def start(self, ctx, id):
+        server = servers.start_server(id)
+        await ctx.send("Server started.\nConnect to %s:%s" % (server['ip'], server['ports']['game']))
+    @server.command(pass_context=True)
+    async def stop(self, ctx, id):
+        servers.stop_server(id)
+        await ctx.send("Server stopped.")
 
     @commands.command(pass_context=True)
     async def dostuff(self, ctx):
