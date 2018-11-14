@@ -1,5 +1,6 @@
 import requests
 import os
+import json
 
 login_email = os.environ['DATHOST_EMAIL']
 login_pass = os.environ['DATHOST_PASSWORD']
@@ -22,7 +23,8 @@ def create_server(name, location, map):
             'tickrate': 128
         }
     }
-    r = requests.post('https://dathost.net/api/0.1/game-servers', auth=(login_email, login_pass), data=p)
+    url =
+    r = requests.post('https://dathost.net/api/0.1/game-servers', auth=(login_email, login_pass), data=json.dumps(p))
     print(r.status_code)
     return r.json()
 
