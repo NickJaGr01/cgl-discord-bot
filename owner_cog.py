@@ -109,7 +109,7 @@ class Owner:
     @server.command(pass_context=True)
     async def create(self, ctx, location, map):
         server = servers.create_server("CGL CSGO", location, map)
-        await ctx.send("Server created.\nid=%s\nConnect to %s:%s" % (server['id'], server['ip'], server['ports']['game']))
+        await ctx.send("Server created.\nid=%s\nConnect to %s:%s" % (server["id"], server['ip'], server['ports']['game']))
     @server.command(pass_context=True)
     async def start(self, ctx, id):
         server = servers.start_server(id)
