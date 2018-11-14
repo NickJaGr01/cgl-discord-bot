@@ -74,7 +74,7 @@ class General:
         if database.user_registered(ctx.author.id):
             channel = bot.guild.get_channel(bot.STANDIN_CHANNEL)
             username = database.username(ctx.author.id)
-            await channel.send("%s wants to be a standin." % username)
+            await channel.send("%s wants to be a standin." % ctx.author.mention)
             await ctx.send("You have successfully entered the tournament as a stand-in.\nLeague staff will let you know if a team is found for you.")
             await utils.log("%s registered as a stand-in player." % username)
         else:

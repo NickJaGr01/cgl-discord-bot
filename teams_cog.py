@@ -110,7 +110,7 @@ class Teams:
             team = team[0]
             channel = bot.guild.get_channel(bot.STANDIN_CHANNEL)
             username = database.username(ctx.author.id)
-            await channel.send("%s has requested a stand-in for %s." % (username, team))
+            await channel.send("%s has requested a stand-in for %s." % (ctx.author.mention, team))
             await ctx.send("a stand-in has been requested for %s." % team)
             await utils.log("%s has requested a stand-in for %s." % (username, team))
         else:
