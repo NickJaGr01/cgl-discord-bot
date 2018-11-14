@@ -23,7 +23,6 @@ def create_server(name, location, map):
             'tickrate': 128
         }
     }
-    url =
     r = requests.post('https://dathost.net/api/0.1/game-servers', auth=(login_email, login_pass), data=json.dumps(p))
     print(r.status_code)
     return r.json()
