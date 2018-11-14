@@ -11,17 +11,15 @@ def create_server(name, location, map):
         'game': 'csgo',
         'location': location,
         'name': name,
-        'csgo_settings': {
-            'enable_gotv': 'true',
-            'game_mode': 'classic_competitive',
-            'maps_source': 'mapgroup',
-            'mapgroup': 'mg_active',
-            'mapgroup_start_map': map,
-            'pure_server': 'true',
-            'rcon': rcon_pass,
-            'slots': 5,
-            'tickrate': 128
-        }
+        'csgo_settings.enable_gotv': 'true',
+        'csgo_settings.game_mode': 'classic_competitive',
+        'csgo_settings.maps_source': 'mapgroup',
+        'csgo_settings.mapgroup': 'mg_active',
+        'csgo_settings.mapgroup_start_map': map,
+        'csgo_settings.pure_server': 'true',
+        'csgo_settings.rcon': rcon_pass,
+        'csgo_settings.slots': 5,
+        'csgo_settings.tickrate': 128
     }
     h = {
         'Content-Type': 'application/x-www-form-urlencoded',
