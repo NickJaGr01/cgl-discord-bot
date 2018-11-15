@@ -100,7 +100,7 @@ class Admin:
             str += "**id:** %s\n" % server['id']
             str += "**slots:** %s\n" % server['csgo_settings']['slots']
             str += "**location:** %s\n" % server['location']
-            str += "**on:** %s\n" % server['on']
+            str += "**up:** %s\n" % server['on']
             str += "**game:** %s:%s\n" % (server['ip'], server['ports']['game'])
             str += "**gotv:** %s:%s\n" % (server['ip'], server['ports']['gotv'])
             str += "**start map:** %s\n" % server['csgo_settings']['mapgroup_start_map']
