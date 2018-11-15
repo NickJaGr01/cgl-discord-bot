@@ -91,11 +91,11 @@ class Owner:
         await ctx.send("Elo has been updated for those players.")
 
     @commands.group(pass_context=True)
+    @commands.is_owner()
     async def server(self, ctx):
         if ctx.invoked_subcommand is None:
             pass
     @server.command(pass_context=True)
-    @commands.is_owner()
     async def list(self, ctx):
         database.cur.execute("SELECT servername, up FROM servertable;")
         serverlist = database.cur.fetchall()
