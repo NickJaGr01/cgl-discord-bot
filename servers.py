@@ -38,11 +38,15 @@ def start_server(id):
         'allow_host_reassignment': 'true'
     }
     r = requests.post('https://dathost.net/api/0.1/game-servers/%s/start' % id, auth=(login_email, login_pass), data=p)
-    r2 = requests.get('https://dathost.net/api/0.1/game-servers/%s' % id, auth=(login_email, login_pass))
-    return r2.json()
+    return r.status_code
 
 def stop_server(id):
     r = requests.post('https://dathost.net/api/0.1/game-servers/%s/stop' % id, auth=(login_email, login_pass))
+    return r.status_code
+
+def server_info(id):
+    r = requests.get('https://dathost.net/api/0.1/game-servers/%s' % id, auth=(login_email, login_pass))
+    return r.json(), r.status_code
 
 def change_map(id, map):
     p = {

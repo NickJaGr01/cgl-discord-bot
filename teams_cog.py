@@ -20,6 +20,12 @@ TEAM_STATS_DICT = {
     }
 }
 
+PROHIBITED_NAMES = [
+    "league admin",
+    "cgl bot",
+    "owner"
+]
+
 class Teams:
     @commands.command(pass_context=True)
     async def createteam(self, ctx, *, teamname):
@@ -34,6 +40,9 @@ class Teams:
                 return
             if teamname == None:
                 await ctx.send("Please provide a team name.")
+                return
+            if teamname.lower() in PROHIBITED_NAMES:
+                await ctx.send("You cannot create a team with that name.")
                 return
             #check that the team name is not already taken
             database.cur.execute("SELECT * FROM teamTable WHERE lower(teamname)='%s';" % teamname.lower())

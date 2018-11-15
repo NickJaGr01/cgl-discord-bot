@@ -90,39 +90,6 @@ class Owner:
         database.conn.commit()
         await ctx.send("Elo has been updated for those players.")
 
-    @commands.group(pass_context=True)
-    @commands.is_owner()
-    async def server(self, ctx):
-        if ctx.invoked_subcommand is None:
-            pass
-    @server.command(pass_context=True)
-    async def list(self, ctx):
-        database.cur.execute("SELECT servername, up FROM servertable;")
-        serverlist = database.cur.fetchall()
-        str = "```\nserver name:        up:\n"
-        for name, up in serverlist:
-            str += name
-            str = str.ljust(len(str)+(20-len(name)))
-            str += "%s\n" % up
-        str += "```"
-        await ctx.send(str)
-    @server.command(pass_context=True)
-    async def create(self, ctx, name, location, map):
-        server, scode = servers.create_server(name, location, map)
-        if scode == 200:
-            database.cur.execute("INSERT INTO servertable (servername, serverid, location, up) VALUES (%s, %s, %s, true);" % (name, server['id'], location))
-            await ctx.send("Server created.")
-        else:
-            await ctx.send("Server creation failed.")
-    @server.command(pass_context=True)
-    async def start(self, ctx, id):
-        server = servers.start_server(id)
-        await ctx.send("Server started.\nConnect to %s:%s" % (server['ip'], server['ports']['game']))
-    @server.command(pass_context=True)
-    async def stop(self, ctx, id):
-        servers.stop_server(id)
-        await ctx.send("Server stopped.")
-
     @commands.command(pass_context=True)
     @commands.is_owner()
     async def dostuff(self, ctx):

@@ -7,6 +7,7 @@ import database
 from bot import bot
 from utils import *
 from cgl_converters import *
+import servers
 
 MOD_ROLE_ID = int(os.environ['MOD_ROLE'])
 NOT_MOD_MESSAGE = "That command is only for use by CGL moderators."
@@ -59,5 +60,69 @@ class Admin:
             await log("ADMIN: %s gave a major offense to %s." % (database.username(ctx.author.id), database.username(target.id)))
         else:
             await ctx.send(NOT_MOD_MESSAGE)
+
+    @commands.group(pass_context=True)
+    async def server(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send("Use !help server for a list of subcommands.")
+    @server.command(pass_context=True)
+    @commands.is_owner()
+    async def create(self, ctx, servername, location, map):
+        database.cur.execute("SELECT * FROM servertable WHERE lower(servername)='%s';" % servername)
+        if database.cur.fetchone() != None:
+            await ctx.send("A server with that name already exists.")
+            return
+        server, scode = servers.create_server(name, location, map)
+        if scode == 200:
+            database.cur.execute("INSERT INTO servertable (servername, serverid, location, up) VALUES (%s, %s, %s, true);" % (servername, server['id'], location))
+            database.conn.commit()
+            await ctx.send("Server created.")
+        else:
+            await ctx.send("Server creation failed.")
+    @server.command(pass_context=True)
+    @commands.has_role('League Admin')
+    async def list(self, ctx):
+        database.cur.execute("SELECT servername, up FROM servertable;")
+        serverlist = database.cur.fetchall()
+        str = "```\nserver name:        up:\n"
+        for name, up in serverlist:
+            str += name
+            str = str.ljust(len(str)+(20-len(name)))
+            str += "%s\n" % up
+        str += "```"
+        await ctx.send(str)
+    @server.command(pass_context=True)
+    @commands.has_role('League Admin')
+    async def info(self, ctx, servername):
+        server, scode = servers.serverinfo(servers.server_id(servername))
+        if scode == 200:
+            str = "__%s__\n" % server['name']
+            str += "**id:** %s\n" % server['id']
+            str += "**slots:** %s\n" % server['csgo_settings']['slots']
+            str += "**location:** %s\n" % server['location']
+            str += "**on:** %s\n" % server['on']
+            str += "**game:** %s:%s\n" % (server['ip'], server['ports']['game'])
+            str += "**gotv:** %s:%s\n" % (server['ip'], server['ports']['gotv'])
+            str += "**start map:** %s\n" % server['csgo_settings']['mapgroup_start_map']
+            await ctx.send(str)
+        else:
+            await ctx.send("Failed to get server info.")
+    @server.command(pass_context=True)
+    @commands.has_role('League Admin')
+    async def start(self, ctx, servername):
+        scode = servers.start_server(servers.server_id(servername))
+        if scode == 200:
+            await ctx.send("Server started.")
+        else:
+            await ctx.send("Failed to start server.")
+    @server.command(pass_context=True)
+    @commands.has_role('League Admin')
+    async def stop(self, ctx, servername):
+        scode = servers.stop_server(servers.server_id(servername))
+        if scode == 200:
+            await ctx.send("Server stopped.")
+        else:
+            await ctx.send("Failed to stop server.")
+
 
 bot.add_cog(Admin())
