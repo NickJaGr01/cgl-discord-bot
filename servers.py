@@ -31,8 +31,7 @@ def create_server(name, location, map):
         'Accept': 'application/json'
     }
     r = requests.post('https://dathost.net/api/0.1/game-servers', auth=(login_email, login_pass), data=p)
-    print(r.status_code)
-    return r.json()
+    return r.json(), r.status_code
 
 def start_server(id):
     p = {
