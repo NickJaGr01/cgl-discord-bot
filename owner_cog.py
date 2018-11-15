@@ -108,7 +108,7 @@ class Owner:
             await ctx.send(NOT_OWNER_MESSAGE)
     @server.command(pass_context=True)
     async def id(self, ctx, name):
-        await ctx.send(servers..server_id(name))
+        await ctx.send(servers.server_id(name))
     @server.command(pass_context=True)
     async def create(self, ctx, location, map):
         server = servers.create_server("CGL CSGO", location, map)
