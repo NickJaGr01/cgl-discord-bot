@@ -107,8 +107,16 @@ class Owner:
         else:
             await ctx.send(NOT_OWNER_MESSAGE)
     @server.command(pass_context=True)
-    async def id(self, ctx, name):
-        await ctx.send(servers.server_id(name))
+    async def list(self, ctx):
+        database.cur.execute("SELECT servername, up FROM servertable;")
+        serverlist = database.cur.fetchall()
+        str = "```\nserver name         up\n"
+        for name, up in serverlist:
+            str += name
+            str += " " for i in range(20-len(name))
+            str += "%s\n" % up
+        str += "```"
+        await ctx.send(str)
     @server.command(pass_context=True)
     async def create(self, ctx, location, map):
         server = servers.create_server("CGL CSGO", location, map)
