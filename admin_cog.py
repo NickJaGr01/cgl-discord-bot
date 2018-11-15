@@ -5,7 +5,7 @@ from datetime import timedelta
 import os
 import database
 from bot import bot
-from utils import *
+import utils
 from cgl_converters import *
 import servers
 
@@ -35,7 +35,7 @@ class Admin:
             database.conn.commit()
             targetusername = database.username(target.id)
             await ctx.send("%s has been given %s rep." % (targetusername, drep))
-            await log("ADMIN: %s gave %s rep to %s." % (database.username(ctx.author.id), drep, targetusername))
+            await utils.log("ADMIN: %s gave %s rep to %s." % (database.username(ctx.author.id), drep, targetusername))
         else:
             await ctx.send(NOT_MOD_MESSAGE)
 
@@ -57,7 +57,7 @@ class Admin:
             database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
             database.conn.commit()
             await target.send("Due to a major offense, you have received a penalty of -%s rep and have been suspended from CGL matchmaking for %s." % (reppen, suspension))
-            await log("ADMIN: %s gave a major offense to %s." % (database.username(ctx.author.id), database.username(target.id)))
+            await utils.log("ADMIN: %s gave a major offense to %s." % (database.username(ctx.author.id), database.username(target.id)))
         else:
             await ctx.send(NOT_MOD_MESSAGE)
 
@@ -101,8 +101,9 @@ class Admin:
             str += "**slots:** %s\n" % server['csgo_settings']['slots']
             str += "**location:** %s\n" % server['location']
             str += "**up:** %s\n" % server['on']
-            str += "**game:** %s:%s\n" % (server['ip'], server['ports']['game'])
-            str += "**gotv:** %s:%s\n" % (server['ip'], server['ports']['gotv'])
+            ip = utils.ip_from_domain(server['ip'])
+            str += "**game:** %s:%s\n" % (ip, server['ports']['game'])
+            str += "**gotv:** %s:%s\n" % (ip, server['ports']['gotv'])
             str += "**start map:** %s\n" % server['csgo_settings']['mapgroup_start_map']
             await ctx.send(str)
         else:
