@@ -94,7 +94,7 @@ class Admin:
     @server.command(pass_context=True)
     @commands.has_role('League Admin')
     async def info(self, ctx, servername):
-        server, scode = servers.serverinfo(servers.server_id(servername))
+        server, scode = servers.server_info(servers.server_id(servername))
         if scode == 200:
             str = "__%s__\n" % server['name']
             str += "**id:** %s\n" % server['id']
