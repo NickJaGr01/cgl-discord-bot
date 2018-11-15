@@ -113,7 +113,7 @@ class Owner:
         str = "```\nserver name         up\n"
         for name, up in serverlist:
             str += name
-            str += " " for i in range(20-len(name))
+            str.ljust(len(str)+(20-len(name)))
             str += "%s\n" % up
         str += "```"
         await ctx.send(str)
