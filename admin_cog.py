@@ -96,7 +96,7 @@ class Admin:
     async def info(self, ctx, servername):
         server, scode = servers.server_info(servers.server_id(servername))
         if scode == 200:
-            str = "__%s__\n" % server['name']
+            str = "__**%s**__\n" % server['name']
             str += "**id:** %s\n" % server['id']
             str += "**slots:** %s\n" % server['csgo_settings']['slots']
             str += "**location:** %s\n" % server['location']
