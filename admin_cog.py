@@ -80,13 +80,31 @@ class Admin:
         else:
             await ctx.send("Server creation failed.")
     @server.command(pass_context=True)
+    @command.is_owner()
+    async def delete(self, ctx, servername):
+        database.cur.execute("SELECT serverid FROM servertable WHERE lower(servername)='%s';" % servername)
+        id = database.cur.fetchone()
+        if id == None:
+            await ctx.send("No server with that name exists.")
+            return
+        id = id[0]
+        scode = servers.delete_server(id)
+        if scode == 200:
+            database.cur.execute("DELETE FROM servertable WHERE serverid='%s';" % id)
+            database.conn.commit()
+            await ctx.send("Server has been deleted.")
+        else:
+            await ctx.send("The server could not be deleted.")
+    @server.command(pass_context=True)
     @commands.has_role('League Admin')
     async def list(self, ctx):
-        database.cur.execute("SELECT servername, up FROM servertable;")
+        database.cur.execute("SELECT servername, location, up FROM servertable;")
         serverlist = database.cur.fetchall()
-        str = "```\nserver name:        up:\n"
-        for name, up in serverlist:
+        str = "```\nserver name:        location:           up:\n"
+        for name, location, up in serverlist:
             str += name
+            str = str.ljust(len(str)+(20-len(name)))
+            str += location
             str = str.ljust(len(str)+(20-len(name)))
             str += "%s\n" % up
         str += "```"
@@ -98,13 +116,13 @@ class Admin:
         if scode == 200:
             str = "__**%s**__\n" % server['name']
             str += "**id:** %s\n" % server['id']
-            str += "**slots:** %s\n" % server['csgo_settings']['slots']
             str += "**location:** %s\n" % server['location']
+            str += "**start map:** %s\n" % server['csgo_settings']['mapgroup_start_map']
+            str += "**slots:** %s\n" % server['csgo_settings']['slots']
             str += "**up:** %s\n" % server['on']
             ip = utils.ip_from_domain(server['ip'])
             str += "**game:** %s:%s\n" % (ip, server['ports']['game'])
-            str += "**gotv:** %s:%s\n" % (ip, server['ports']['gotv'])
-            str += "**start map:** %s\n" % server['csgo_settings']['mapgroup_start_map']
+            str += "**gotv:** %s:%s" % (ip, server['ports']['gotv'])
             await ctx.send(str)
         else:
             await ctx.send("Failed to get server info.")
@@ -113,6 +131,8 @@ class Admin:
     async def start(self, ctx, servername):
         scode = servers.start_server(servers.server_id(servername))
         if scode == 200:
+            database.cur.execute("UPDATE servertable SET up=true WHERE servername='%s';" % servername)
+            database.conn.commit()
             await ctx.send("Server started.")
         else:
             await ctx.send("Failed to start server.")
@@ -121,9 +141,52 @@ class Admin:
     async def stop(self, ctx, servername):
         scode = servers.stop_server(servers.server_id(servername))
         if scode == 200:
+            database.cur.execute("UPDATE servertable SET up=false WHERE servername='%s';" % servername)
+            database.conn.commit()
             await ctx.send("Server stopped.")
         else:
             await ctx.send("Failed to stop server.")
+
+    @server.group(pass_context=True)
+    async def edit(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send("Use !help server edit for a list of subcommands.")
+    @edit.command(pass_context=True)
+    @commands.has_role('League Admin')
+    async def map(self, ctx, servername, map):
+        scode = servers.edit_server(servers.server_id(servername), {'csgo_settings.mapgroup_start_map':map})
+        if scode == 200:
+            await ctx.send("Server start map has been changed.")
+        else:
+            await ctx.send("There was an error editing the server settings.")
+    @edit.command(pass_context=True)
+    @commands.has_role('League Admin')
+    async def location(self, ctx, servername, location):
+        scode = servers.edit_server(servers.server_id(servername), {'location':location})
+        if scode == 200:
+            database.cur.execute("UPDATE servertable SET location='%s' WHERE servername='%s';" % (location, servername))
+            database.conn.commit()
+            await ctx.send("Server location has been changed.")
+        else:
+            await ctx.send("There was an error editing the server settings.")
+    @edit.command(pass_context=True)
+    @commands.has_role('League Admin')
+    async def name(self, ctx, servername, newname):
+        scode = servers.edit_server(servers.server_id(servername), {'name':newname})
+        if scode == 200:
+            database.cur.execute("UPDATE servertable SET servername='%s' WHERE servername='%s';" % (newname, servername))
+            database.conn.commit()
+            await ctx.send("Server name has been changed.")
+        else:
+            await ctx.send("There was an error editing the server settings.")
+    @edit.command(pass_context=True)
+    @commands.has_role('League Admin')
+    async def slots(self, ctx, servername, slots: int):
+        scode = servers.edit_server(servers.server_id(servername), {'csgo_settings.slots':slots})
+        if scode == 200:
+            await ctx.send("Server size has been changed.")
+        else:
+            await ctx.send("There was an error editing the server settings.")
 
 
 bot.add_cog(Admin())

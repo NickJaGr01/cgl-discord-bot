@@ -33,6 +33,10 @@ def create_server(name, location, map):
     r = requests.post('https://dathost.net/api/0.1/game-servers', auth=(login_email, login_pass), data=p)
     return r.json(), r.status_code
 
+def delete_server(id):
+    r = requests.delete('https://dathost.net/api/0.1/game-servers/%s' % id, auth=(login_email, login_pass))
+    return r.status_code
+
 def start_server(id):
     p = {
         'allow_host_reassignment': 'true'
@@ -48,13 +52,9 @@ def server_info(id):
     r = requests.get('https://dathost.net/api/0.1/game-servers/%s' % id, auth=(login_email, login_pass))
     return r.json(), r.status_code
 
-def change_map(id, map):
-    p = {
-        'csgo_settings': {
-            'mapgroup_start_map': map
-        }
-    }
-    r = requests.put('https://dathost.net/api/0.1/game-servers/%s' % id, auth=(login_email, login_pass), data=p)
+def edit_server(id, values):
+    r = requests.put('https://dathost.net/api/0.1/game-servers/%s' % id, auth=(login_email, login_pass), data=values)
+    return r.status_code
 
 def get_console(id, max_lines):
     p = {
