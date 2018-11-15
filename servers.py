@@ -1,10 +1,15 @@
 import requests
 import os
 import json
+import database
 
 login_email = os.environ['DATHOST_EMAIL']
 login_pass = os.environ['DATHOST_PASSWORD']
 rcon_pass = os.environ['RCON_PASSWORD']
+
+def server_id(name):
+    database.cur.execute("SELECT serverID FROM serverTable WHERE serverName='%s';" % name)
+    return database.cur.fetchone()[0]
 
 def create_server(name, location, map):
     p = {

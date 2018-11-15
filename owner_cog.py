@@ -103,9 +103,12 @@ class Owner:
     async def server(self, ctx):
         if ctx.message.author.id == bot.appinfo.owner.id:
             if ctx.invoked_subcommand is None:
-                await ctx.send("usage:\n!server <subcommand>\nsubcommands:\ncreate")
+                pass
         else:
             await ctx.send(NOT_OWNER_MESSAGE)
+    @server.command(pass_context=True)
+    async def id(self, ctx, name):
+        await ctx.send(servers..server_id(name))
     @server.command(pass_context=True)
     async def create(self, ctx, location, map):
         server = servers.create_server("CGL CSGO", location, map)
