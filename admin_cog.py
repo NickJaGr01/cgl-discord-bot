@@ -80,7 +80,7 @@ class Admin:
         else:
             await ctx.send("Server creation failed.")
     @server.command(pass_context=True)
-    @command.is_owner()
+    @commands.is_owner()
     async def delete(self, ctx, servername):
         database.cur.execute("SELECT serverid FROM servertable WHERE lower(servername)='%s';" % servername)
         id = database.cur.fetchone()
