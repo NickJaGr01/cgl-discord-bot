@@ -105,7 +105,7 @@ class Admin:
             str += name
             str = str.ljust(len(str)+(20-len(name)))
             str += location
-            str = str.ljust(len(str)+(20-len(name)))
+            str = str.ljust(len(str)+(20-len(location)))
             str += "%s\n" % up
         str += "```"
         await ctx.send(str)
