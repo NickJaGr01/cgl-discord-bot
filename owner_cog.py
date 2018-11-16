@@ -92,15 +92,9 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def dostuff(self, ctx):
+    async def dostuff(self, ctx, servername, *, line):
         """do stuff"""
-        database.cur.execute("SELECT teamname FROM teamTable;")
-        teams = database.cur.fetchall()
-        for team in teams:
-            database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team[0])
-            if len(database.cur.fetchall()) <= 5:
-                database.cur.execute("UPDATE playerTable SET isPrimary=true WHERE team='%s';" % team[0])
-        database.conn.commit()
+        servers.put_console(servers.server_id(servername), line)
 
 
 bot.add_cog(Owner())
