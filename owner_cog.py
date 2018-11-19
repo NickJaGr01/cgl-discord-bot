@@ -75,10 +75,11 @@ class Owner:
         if fillteam:
             team1avg += 1300 * (5-team1size)
             team2avg += 1300 * (5-team2size)
-            team1size = 5
-            team2size = 5
-        team1avg /= team1size
-        team2avg /= team2size
+            team1avg /= 5
+            team2avg /= 5
+        else:
+            team1avg /= team1size
+            team2avg /= team2size
         team1exp = 1/(1+pow(10, (team2avg-team1avg)/400))
         team2exp = 1/(1+pow(10, (team1avg-team2avg)/400))
         delo1 = k_factor * ((team1score/rounds) - team1exp)
