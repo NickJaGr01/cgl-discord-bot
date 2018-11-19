@@ -69,10 +69,12 @@ class Owner:
         team2avg = 0
         for p in players[:team1size]:
             team1avg += database.player_elo(p.id)
+        team1avg += 1300 * (5-team1size)
         for p in players[team1size:]:
             team2avg += database.player_elo(p.id)
-        team1avg /= team1size
-        team2avg /= team2size
+        team2avg += 1300 * (5-(len(players)-team1size))
+        team1avg /= 5
+        team2avg /= 5
         team1exp = 1/(1+pow(10, (team2avg-team1avg)/400))
         team2exp = 1/(1+pow(10, (team1avg-team2avg)/400))
         delo1 = k_factor * ((team1score/rounds) - team1exp)
