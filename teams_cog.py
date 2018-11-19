@@ -28,13 +28,9 @@ PROHIBITED_NAMES = [
 ]
 
 class Teams:
-    @commands.group(pass_context=True)
-    async def team(self, ctx):
-        if ctx.invoked_subcommand is None:
-            await ctx.send("Use !help team for a list of subcommands.")
-    @team.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_registered()
-    async def create(self, ctx, *, teamname):
+    async def createteam(self, ctx, *, teamname):
         """create a team
         Creates a new team with the given name and makes the user the captain of that team.
         Players may not create a team if they are already a member of another team."""
@@ -67,7 +63,7 @@ class Teams:
         await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
         await utils.log("%s created %s." % (database.username(ctx.author.id), teamname))
 
-    @team.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_captain()
     async def invite(self, ctx, player: CGLUser):
         """invite a player to your team
@@ -102,7 +98,7 @@ class Teams:
         await ctx.send("%s has been invited to %s." % (targetusername, team))
         await utils.log("%s invited %s to %s." % (database.username(ctx.author.id), targetusername, team))
 
-    @team.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_captain()
     async def requeststandin(self, ctx):
         """requests a standin for your team
@@ -116,9 +112,9 @@ class Teams:
         await ctx.send("a stand-in has been requested for %s." % team)
         await utils.log("%s has requested a stand-in for %s." % (username, team))
 
-    @team.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_registered()
-    async def leave(self, ctx):
+    async def leaveteam(self, ctx):
         """leaves your current team
         The captain of a team is not allowed to leave a team if there are other players on it.
         If the user is the last remaining player on the team, the team will be disbanded."""
@@ -151,9 +147,9 @@ class Teams:
         await ctx.send("You have left team '%s'." % team)
         await utils.log("%s left %s." % (database.username(ctx.author.id), team))
 
-    @team.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_captain()
-    async def disband(self, ctx):
+    async def disbandteam(self, ctx):
         """disbands the user's team if they are the captain"""
         #check that the user is on a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
@@ -165,7 +161,7 @@ class Teams:
 
     @commands.command(pass_context=True)
     @checks.is_captain()
-    async def kick(self, ctx, player: CGLUser):
+    async def kickteammate(self, ctx, player: CGLUser):
         """kicks the player from the user's team"""
         if player == None:
             await ctx.send("Please provide a player to kick from your team.")
@@ -193,7 +189,7 @@ class Teams:
             await ctx.send("%s has been kicked from team '%s'." % (targetusername, team))
             await utils.log("%s kicked %s from %s." % (database.username(ctx.author.id), targetusername, team))
 
-    @team.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_captain()
     async def makecaptain(self, ctx, player: CGLUser):
         """makes the player the new captain of the user's team"""
@@ -219,7 +215,7 @@ class Teams:
         await utils.log("%s made %s the captain of %s." % (database.username(ctx.author.id), targetusername, team))
 
 
-    @team.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_captain()
     async def editroster(self, ctx):
         """set primary and substitute team members"""
