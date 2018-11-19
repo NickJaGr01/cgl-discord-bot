@@ -61,7 +61,7 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def adjustelo(self, ctx, team1size: int, team1score: int, team2score: int, *players: CGLUser):
+    async def adjustelo(self, ctx, fillteam: bool, team1size: int, team1score: int, team2score: int, *players: CGLUser):
         """adjust elo after a match"""
         k_factor = 128
         rounds = team1score+team2score
@@ -69,12 +69,16 @@ class Owner:
         team2avg = 0
         for p in players[:team1size]:
             team1avg += database.player_elo(p.id)
-        team1avg += 1300 * (5-team1size)
         for p in players[team1size:]:
             team2avg += database.player_elo(p.id)
-        team2avg += 1300 * (5-(len(players)-team1size))
-        team1avg /= 5
-        team2avg /= 5
+        team2size = len(players)-team1size
+        if fillteam:
+            team1avg += 1300 * (5-team1size)
+            team2avg += 1300 * (5-team2size)
+            team1size = 5
+            team2size = 5
+        team1avg /= team1size
+        team2avg /= team2size
         team1exp = 1/(1+pow(10, (team2avg-team1avg)/400))
         team2exp = 1/(1+pow(10, (team1avg-team2avg)/400))
         delo1 = k_factor * ((team1score/rounds) - team1exp)
