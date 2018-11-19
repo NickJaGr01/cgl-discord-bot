@@ -24,7 +24,8 @@ TEAM_STATS_DICT = {
 PROHIBITED_NAMES = [
     "league admin",
     "cgl bot",
-    "owner"
+    "owner",
+    "caster"
 ]
 
 class Teams:
@@ -62,6 +63,25 @@ class Teams:
         database.conn.commit()
         await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
         await utils.log("%s created %s." % (database.username(ctx.author.id), teamname))
+
+    @commands.command(pass_context=True)
+    @check.is_captain()
+    async def changeteamname(self, ctx, *, teamname):
+        #check that the team name is not already taken
+        database.cur.execute("SELECT * FROM teamTable WHERE lower(teamname)='%s';" % teamname.lower())
+        if database.cur.fetchone() != None:
+            await ctx.send("The team name '%s' is already taken. Please choose another name." % teamname)
+            return
+        database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
+        team = database.cur.fetchone()[0]
+        database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
+        roleid = database.cur.fetchone()[0]
+        teamrole = bot.guild.get_role(roleid)
+        await teamrole.edit(name=teamname)
+        database.cur.execute("UPDATE teamtable SET teamname='%s' WHERE teamname='%s';" % (teamname, team))
+        database.cur.execute("UPDATE teamtable SET team='%s' WHERE team='%s';" % (teamname, team))
+        database.conn.commit()
+        await ctx.send("Your team name has been changed to %s." % teamname)
 
     @commands.command(pass_context=True)
     @checks.is_captain()
