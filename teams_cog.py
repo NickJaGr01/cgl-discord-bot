@@ -65,7 +65,7 @@ class Teams:
         await utils.log("%s created %s." % (database.username(ctx.author.id), teamname))
 
     @commands.command(pass_context=True)
-    @check.is_captain()
+    @checks.is_captain()
     async def changeteamname(self, ctx, *, teamname):
         #check that the team name is not already taken
         database.cur.execute("SELECT * FROM teamTable WHERE lower(teamname)='%s';" % teamname.lower())
