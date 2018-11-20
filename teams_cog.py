@@ -255,4 +255,13 @@ class Teams:
             await message.add_reaction(emojis[i])
         await message.add_reaction("✅")
 
+    @commands.command(pass_context=True)
+    async def teamlist(self, ctx):
+        database.cur.execute("SELECT teamname FROM teamtable;")
+        teams = database.cur.fetchall()
+        str = "__**Teams:**__"
+        for t in teams:
+            str += "\n%s" % t[0]
+        await ctx.send(str)
+
 bot.add_cog(Teams())

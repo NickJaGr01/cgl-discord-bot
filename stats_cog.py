@@ -87,5 +87,4 @@ class Stats:
             info += "\n    %s" % award
         await ctx.send(info)
 
-
 bot.add_cog(Stats())
