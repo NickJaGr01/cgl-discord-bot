@@ -43,7 +43,6 @@ class Teams:
         if teamname == None:
             await ctx.send("Please provide a team name.")
             return
-        teamname.replace("'", "''")
         if teamname.lower() in PROHIBITED_NAMES:
             await ctx.send("You cannot create a team with that name.")
             return
@@ -59,6 +58,7 @@ class Teams:
         member = bot.guild.get_member(ctx.author.id)
         await member.add_roles(teamrole, bot.guild.get_role(bot.CAPTAIN_ROLE))
         await member.remove_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+        utils.escape_string(teamname)
         database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID, teamRoleID, awards) VALUES ('%s', '%s', %s, %s, '{}');" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id, teamrole.id))
         database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
         database.conn.commit()
@@ -79,6 +79,7 @@ class Teams:
         roleid = database.cur.fetchone()[0]
         teamrole = bot.guild.get_role(roleid)
         await teamrole.edit(name=teamname)
+        utils.escape_string(teamname)
         database.cur.execute("UPDATE teamtable SET teamname='%s' WHERE teamname='%s';" % (teamname, team))
         database.cur.execute("UPDATE teamtable SET team='%s' WHERE team='%s';" % (teamname, team))
         database.conn.commit()
@@ -93,6 +94,9 @@ class Teams:
             giving the player's full Discord tag."""
         if player == None:
             await ctx.send("Either you didn't supply a player or the one you gave was not valid. Please make sure the player is registered in the league.")
+            return
+        if teamname.lower() in PROHIBITED_NAMES:
+            await ctx.send("You cannot create a team with that name.")
             return
         #make sure the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)

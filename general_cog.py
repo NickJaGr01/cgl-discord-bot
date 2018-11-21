@@ -35,11 +35,12 @@ class General:
             #check that the desired username is available (not case sensitive)
             database.cur.execute("SELECT * FROM playerTable WHERE lower(username)='%s';" % username.lower())
             if database.cur.fetchone() == None:
-                database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep, stats, awards, isprimary) VALUES (%s, '%s', %s, %s, '%s', '{}', false);" % (ctx.author.id, username, 1300, 100, json.dumps(PLAYER_STATS_DICT)))
-                database.conn.commit()
                 await bot.guild.get_member(ctx.author.id).edit(nick=username)
                 await ctx.author.add_roles(bot.guild.get_role(bot.MEMBER_ROLE))
                 await ctx.author.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+                utils.escape_string(username)
+                database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep, stats, awards, isprimary) VALUES (%s, '%s', %s, %s, '%s', '{}', false);" % (ctx.author.id, username, 1300, 100, json.dumps(PLAYER_STATS_DICT)))
+                database.conn.commit()
                 await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
                 await utils.log("%s registered as %s." % (ctx.author.mention, username))
             else:
@@ -58,9 +59,10 @@ class General:
             #check that the desired username is available (not case sensitive)
             database.cur.execute("SELECT * FROM playerTable WHERE lower(username)='%s';" % username.lower())
             if database.cur.fetchone() == None:
+                await bot.guild.get_member(ctx.author.id).edit(nick=username)
+                utils.escape_string(name)
                 database.cur.execute("UPDATE playerTable SET username='%s' WHERE discordID=%s;" % (username, ctx.author.id))
                 database.conn.commit()
-                await bot.guild.get_member(ctx.author.id).edit(nick=username)
                 await ctx.send("Username successfully changed.")
                 await utils.log("%s changed their username to %s." % (oldname, username))
             else:

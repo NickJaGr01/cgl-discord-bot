@@ -8,3 +8,6 @@ async def log(msg):
 
 def ip_from_domain(domain):
     return socket.gethostbyname(domain)
+
+def escape_string(str):
+    str.replace("'", "\\'")
