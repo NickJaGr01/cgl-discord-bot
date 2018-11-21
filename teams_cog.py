@@ -43,6 +43,7 @@ class Teams:
         if teamname == None:
             await ctx.send("Please provide a team name.")
             return
+        teamname.replace("'", "''")
         if teamname.lower() in PROHIBITED_NAMES:
             await ctx.send("You cannot create a team with that name.")
             return
