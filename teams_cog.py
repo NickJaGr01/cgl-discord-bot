@@ -97,9 +97,6 @@ class Teams:
         if player == None:
             await ctx.send("Either you didn't supply a player or the one you gave was not valid. Please make sure the player is registered in the league.")
             return
-        if teamname.lower() in PROHIBITED_NAMES:
-            await ctx.send("You cannot create a team with that name.")
-            return
         #make sure the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
         team = database.cur.fetchone()
@@ -154,7 +151,7 @@ class Teams:
         If the user is the last remaining player on the team, the team will be disbanded."""
         #check that the user is on a team
         database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % ctx.author.id)
-        team = database.cur.fetchone()[0]
+        team = database.cur.fetchone()
         if team == None:
             await ctx.send("You are not on a team.")
             return
