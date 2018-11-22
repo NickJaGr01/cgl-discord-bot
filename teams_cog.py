@@ -66,7 +66,6 @@ class Teams:
         await utils.log("%s created %s." % (database.username(ctx.author.id), teamname))
 
     @commands.command(pass_context=True)
-    @checks.is_captain()
     async def changeteamname(self, ctx, *, teamname):
         #check that the team name is not already taken
         database.cur.execute("SELECT * FROM teamTable WHERE lower(teamname)='%s';" % teamname.lower())
@@ -74,7 +73,11 @@ class Teams:
             await ctx.send("The team name '%s' is already taken. Please choose another name." % teamname)
             return
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-        team = database.cur.fetchone()[0]
+        team = database.cur.fetchone()
+        if team == None:
+            await ctx.send("You are not the captain of a team.")
+            return
+        team = team[0]
         database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
         roleid = database.cur.fetchone()[0]
         teamrole = bot.guild.get_role(roleid)
@@ -86,7 +89,6 @@ class Teams:
         await ctx.send("Your team name has been changed to %s." % teamname)
 
     @commands.command(pass_context=True)
-    @checks.is_captain()
     async def invite(self, ctx, player: CGLUser):
         """invite a player to your team
         Invites another player to your team. The player can be specified by one of two methods:
@@ -100,7 +102,11 @@ class Teams:
             return
         #make sure the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-        team = database.cur.fetchone()[0]
+        team = database.cur.fetchone()
+        if team == None:
+            await ctx.send("You are not the captain of a team.")
+            return
+        team = team[0]
         #make sure there aren't too many players on the team
         database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team)
         if len(database.cur.fetchall()) >= 7:
@@ -124,13 +130,16 @@ class Teams:
         await utils.log("%s invited %s to %s." % (database.username(ctx.author.id), targetusername, team))
 
     @commands.command(pass_context=True)
-    @checks.is_captain()
     async def requeststandin(self, ctx):
         """requests a standin for your team
         """
         #make sure the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-        team = database.cur.fetchone()[0]
+        team = database.cur.fetchone()
+        if team == None:
+            await ctx.send("You are not the captain of a team.")
+            return
+        team = team[0]
         channel = bot.guild.get_channel(bot.STANDIN_CHANNEL)
         username = database.username(ctx.author.id)
         await channel.send("%s has requested a stand-in for %s." % (ctx.author.mention, team))
@@ -149,6 +158,7 @@ class Teams:
         if team == None:
             await ctx.send("You are not on a team.")
             return
+        team = team[0]
         #check if there are other members on the team
         database.cur.execute("SELECT * FROM playerTable WHERE team='%s';" % team)
         othermembers = (len(database.cur.fetchall()) > 1)
@@ -173,19 +183,21 @@ class Teams:
         await utils.log("%s left %s." % (database.username(ctx.author.id), team))
 
     @commands.command(pass_context=True)
-    @checks.is_captain()
     async def disbandteam(self, ctx):
         """disbands the user's team if they are the captain"""
         #check that the user is on a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-        team = database.cur.fetchone()[0]
+        team = database.cur.fetchone()
+        if team == None:
+            await ctx.send("You are not the captain of a team.")
+            return
+        team = team[0]
         await teams.disband_team(team, "Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
         await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
         await ctx.send("Team '%s' has been disbanded ." % team)
         await utils.log("%s disbanded %s." % (database.username(ctx.author.id), team))
 
     @commands.command(pass_context=True)
-    @checks.is_captain()
     async def kickteammate(self, ctx, player: CGLUser):
         """kicks the player from the user's team"""
         if player == None:
@@ -193,7 +205,11 @@ class Teams:
             return
         #check that the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-        team = database.cur.fetchone()[0]
+        team = database.cur.fetchone()
+        if team == None:
+            await ctx.send("You are not the captain of a team.")
+            return
+        team = team[0]
         #check that the target player is also on the team
         database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
         targetteam = database.cur.fetchone()
@@ -215,7 +231,6 @@ class Teams:
             await utils.log("%s kicked %s from %s." % (database.username(ctx.author.id), targetusername, team))
 
     @commands.command(pass_context=True)
-    @checks.is_captain()
     async def makecaptain(self, ctx, player: CGLUser):
         """makes the player the new captain of the user's team"""
         if player == None:
@@ -223,7 +238,11 @@ class Teams:
             return
         #check that the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-        team = database.cur.fetchone()[0]
+        team = database.cur.fetchone()
+        if team == None:
+            await ctx.send("You are not the captain of a team.")
+            return
+        team = team[0]
         #check that the target player is also on the team
         database.cur.execute("SELECT team FROM playerTable WHERE discordID=%s;" % player.id)
         targetteam = database.cur.fetchone()
@@ -241,13 +260,16 @@ class Teams:
 
 
     @commands.command(pass_context=True)
-    @checks.is_captain()
     async def editroster(self, ctx):
         """set primary and substitute team members"""
         emojis = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣"]
         #check that the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-        team = database.cur.fetchone()[0]
+        team = database.cur.fetchone()
+        if team == None:
+            await ctx.send("You are not the captain of a team.")
+            return
+        team = team[0]
         database.cur.execute("SELECT username FROM playerTable WHERE team='%s';" % team)
         players = database.cur.fetchall()
         msg = "Please select your team's primary players.\nThen select ✅ ."
