@@ -97,10 +97,7 @@ async def process_roster_edit(reaction, user):
             await utils.log("%s modified %s's roster." % (database.username(user.id), team))
 
 async def order_team_roles():
-    allroles = bot.guild.roles
-    toprole = bot.guild.get_role(bot.TEAMS_TOP_END_ROLE)
-    toppos = toprole.position
-    database.cur.execute("SELECT teamroleID FROM teamtable ORDER BY elo ASC;")
+    database.cur.execute("SELECT teamroleID FROM teamtable ORDER BY elo DESC;")
     roles = database.cur.fetchall()
     pos = bot.guild.get_role(bot.TEAMS_BOTTOM_END_ROLE).position + 1
     for r in roles:
@@ -108,12 +105,6 @@ async def order_team_roles():
         if role == None:
             continue
         await role.edit(position=pos)
-        pos += 1
-    await toprole.edit(position=pos)
-    pos += 1
-    for r in allroles[toppos:]:
-        await r.edit(position=pos)
-        pos += 1
     await utils.log("Team role heirarchy has been updated.")
 
 
