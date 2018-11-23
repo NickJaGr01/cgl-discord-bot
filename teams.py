@@ -105,6 +105,8 @@ async def order_team_roles():
     pos = bot.guild.get_role(bot.TEAMS_BOTTOM_END_ROLE).position + 1
     for r in roles:
         role = bot.guild.get_role(r[0])
+        if role == None:
+            continue
         await role.edit(position=pos)
         pos += 1
     await toprole.edit(position=pos)
