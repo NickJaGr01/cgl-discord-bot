@@ -99,7 +99,7 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def dostuff(self, ctx, servername, *, line):
+    async def dostuff(self, ctx):
         """do stuff"""
         database.cur.execute("SELECT teamname FROM teamtable;")
         teams = database.cur.fetchall()
