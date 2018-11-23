@@ -56,6 +56,8 @@ async def on_ready() :
     bot.LOG_CHANNEL = int(os.environ['LOG_CHANNEL'])
     bot.ANNOUNCEMENTS_CHANNEL = int(os.environ['ANNOUNCEMENTS_CHANNEL'])
     bot.STANDIN_CHANNEL = int(os.environ['STANDIN_CHANNEL'])
+    bot.TEAMS_BOTTOM_END_ROLE = int(os.environ['TEAMS_BOTTOM_END_ROLE'])
+    bot.TEAMS_TOP_END_ROLE = int(os.environ['TEAMS_TOP_END_ROLE'])
 
     #bot.task = asyncio.create_task(background_thread())
 

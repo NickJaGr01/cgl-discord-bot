@@ -102,21 +102,7 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        database.cur.execute("SELECT teamname FROM teamtable;")
-        allteams = database.cur.fetchall()
-        for t in allteams:
-            teamname = t[0]
-            database.cur.execute("SELECT elo FROM playertable WHERE team='%s' AND isprimary=true;" % teamname)
-            primaryplayers = database.cur.fetchall()
-            if len(primaryplayers) == 0:
-                await teams.disband_team(teamname, "your team has been disbanded")
-                continue
-            avgelo = 0
-            for p in primaryplayers:
-                avgelo += p[0]
-            avgelo /= len(primaryplayers)
-            database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % (avgelo, teamname))
-        database.conn.commit()
+        await teams.order_team_roles()
 
 
 bot.add_cog(Owner())

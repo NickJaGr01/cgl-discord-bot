@@ -96,6 +96,25 @@ async def process_roster_edit(reaction, user):
             await user.send("Your team's roster has been modified.")
             await utils.log("%s modified %s's roster." % (database.username(user.id), team))
 
+async def order_team_roles():
+    allroles = bot.guild.roles
+    toprole = bot.guild.get_role(bot.TEAMS_TOP_END_ROLE)
+    toppos = toprole.position
+    database.cur.execute("SELECT teamroleID FROM teamtable ORDER BY elo ASC;")
+    roles = database.cur.fetchall()
+    pos = bot.guild.get_role(bot.TEAMS_BOTTOM_END_ROLE).position + 1
+    for r in roles:
+        role = bot.guild.get_role(r[0])
+        await role.edit(position=pos)
+        pos += 1
+    await toprole.edit(position=pos)
+    pos += 1
+    for r in allroles[toppos:]:
+        await r.edit(position=pos)
+        pos += 1
+    await utils.log("Team role heirarchy has been updated.")
+
+
 async def disband_team(team, message):
     database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
     roleid = database.cur.fetchone()[0]

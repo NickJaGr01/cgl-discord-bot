@@ -54,7 +54,7 @@ class Teams:
             return
         #create the team
         teamrole = await bot.guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True)
-        await teamrole.edit(position=bot.guild.get_role(bot.FREE_AGENT_ROLE).position+1)
+        await teamrole.edit(position=bot.guild.get_role(bot.TEAMS_BOTTOM_END_ROLE).position+1)
         await teamrole.edit(permissions=bot.guild.get_role(bot.MEMBER_ROLE).permissions)
         member = bot.guild.get_member(ctx.author.id)
         await member.add_roles(teamrole, bot.guild.get_role(bot.CAPTAIN_ROLE))
