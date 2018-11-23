@@ -11,6 +11,7 @@ import database
 from utils import *
 from bot import bot
 import teams
+import roles
 
 @bot.event
 async def on_message(msg):
@@ -30,9 +31,12 @@ async def on_message(msg):
 @bot.event
 async def on_reaction_add(reaction, user):
     if user.id != bot.appinfo.id:
+        print(reaction.emoji)
         if reaction.message.author.id == bot.appinfo.id:
             await teams.process_invite(reaction, user)
             await teams.process_roster_edit(reaction, user)
+        #if reaction.message.channel.id == x:
+            #await roles.process_roles(reaction, user)
 
 @bot.event
 async def on_member_join(member):
