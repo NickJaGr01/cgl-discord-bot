@@ -6,6 +6,7 @@ import database
 from cgl_converters import *
 import servers
 import checks
+import teams
 
 NOT_OWNER_MESSAGE = "This command is only for use by the owner."
 
@@ -107,6 +108,9 @@ class Owner:
             teamname = t[0]
             database.cur.execute("SELECT elo FROM playertable WHERE team='%s' AND isprimary=true;" % teamname)
             primaryplayers = database.cur.fetchall()
+            if len(primaryplayers) == 0:
+                await teams.disband_team(teamname, "")
+                continue
             avgelo = 0
             for p in primaryplayers:
                 avgelo += p[0]
