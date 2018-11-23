@@ -41,6 +41,7 @@ async def process_invite(reaction, user):
                     isPrimary = 'true'
                 database.cur.execute("UPDATE playerTable SET team='%s', isPrimary=%s WHERE discordID=%s;" % (team, isPrimary, user.id))
                 database.conn.commit()
+                update_elo(team)
                 database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
                 roleid = database.cur.fetchone()[0]
                 teamrole = bot.guild.get_role(roleid)
@@ -90,6 +91,7 @@ async def process_roster_edit(reaction, user):
             for s in subs:
                 database.cur.execute("UPDATE playerTable SET isPrimary=false WHERE discordID=%s;" % s)
             database.conn.commit()
+            update_elo(team)
             await reaction.message.delete()
             await user.send("Your team's roster has been modified.")
             await utils.log("%s modified %s's roster." % (database.username(user.id), team))
@@ -110,3 +112,12 @@ async def disband_team(team, message):
             await member.send(message)
     await teamrole.delete()
     await utils.log("%s has been disbanded." % team)
+
+def update_elo(team):
+    database.cur.execute("SELECT elo FROM playertable WHERE team='%s' AND isprimary=true;" % team)
+    primaryplayers = database.cur.fetchall()
+    avgelo = 0
+    for p in primaryplayers:
+        avgelo += p[0]
+    avgelo /= len(primaryplayers)
+    database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % team)

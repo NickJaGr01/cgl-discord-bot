@@ -101,7 +101,18 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx, servername, *, line):
         """do stuff"""
-        servers.put_console(servers.server_id(servername), line)
+        database.cur.execute("SELECT teamname FROM teamtable;")
+        teams = database.cur.fetchall()
+        for t in teams:
+            teamname = t[0]
+            database.cur.execute("SELECT elo FROM playertable WHERE team='%s' AND isprimary=true;" % teamname)
+            primaryplayers = database.cur.fetchall()
+            avgelo = 0
+            for p in primaryplayers:
+                avgelo += p[0]
+            avgelo /= len(primaryplayers)
+            database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % teamname)
+        database.conn.commit()
 
 
 bot.add_cog(Owner())

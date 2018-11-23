@@ -14,6 +14,5 @@ def is_registered():
 def is_captain():
     async def predicate(ctx):
         database.cur.execute("SELECT * FROM teamTable WHERE captainID=%s;" % ctx.author.id)
-        res = database.cur.fetchone()
-        return not res == None
+        return database.cur.fetchone() != None
     return commands.check(predicate)

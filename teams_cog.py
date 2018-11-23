@@ -25,7 +25,8 @@ PROHIBITED_NAMES = [
     "league admin",
     "cgl bot",
     "owner",
-    "caster"
+    "caster",
+    "staff"
 ]
 
 class Teams:
@@ -59,7 +60,8 @@ class Teams:
         await member.add_roles(teamrole, bot.guild.get_role(bot.CAPTAIN_ROLE))
         await member.remove_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
         utils.escape_string(teamname)
-        database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID, teamRoleID, awards) VALUES ('%s', '%s', %s, %s, '{}');" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id, teamrole.id))
+        captainelo = database.player_elo(ctx.author.id)
+        database.cur.execute("INSERT INTO teamTable (teamname, stats, captainID, teamRoleID, awards, elo) VALUES ('%s', '%s', %s, %s, '{}', %s);" % (teamname, json.dumps(TEAM_STATS_DICT), ctx.author.id, teamrole.id, captainelo))
         database.cur.execute("UPDATE playerTable SET team='%s' WHERE discordID=%s;" % (teamname, ctx.author.id))
         database.conn.commit()
         await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
@@ -171,6 +173,7 @@ class Teams:
             return
         database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % ctx.author.id)
         database.conn.commit()
+        teams.update_elo(team)
         database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
         teamrole = database.cur.fetchone()[0]
         member = bot.guild.get_member(ctx.author.id)
@@ -219,6 +222,7 @@ class Teams:
             teamrole = bot.guild.get_role(roleid)
             database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % player.id)
             database.conn.commit()
+            teams.update_elo(team)
             member = bot.guild.get_member(player.id)
             await member.remove_roles(teamrole)
             await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
