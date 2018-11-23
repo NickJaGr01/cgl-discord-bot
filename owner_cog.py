@@ -109,7 +109,7 @@ class Owner:
             database.cur.execute("SELECT elo FROM playertable WHERE team='%s' AND isprimary=true;" % teamname)
             primaryplayers = database.cur.fetchall()
             if len(primaryplayers) == 0:
-                await teams.disband_team(teamname, "")
+                await teams.disband_team(teamname, "your team has been disbanded")
                 continue
             avgelo = 0
             for p in primaryplayers:
