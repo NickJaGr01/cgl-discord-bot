@@ -103,8 +103,8 @@ class Owner:
     async def dostuff(self, ctx):
         """do stuff"""
         database.cur.execute("SELECT teamname FROM teamtable;")
-        teams = database.cur.fetchall()
-        for t in teams:
+        allteams = database.cur.fetchall()
+        for t in allteams:
             teamname = t[0]
             database.cur.execute("SELECT elo FROM playertable WHERE team='%s' AND isprimary=true;" % teamname)
             primaryplayers = database.cur.fetchall()
