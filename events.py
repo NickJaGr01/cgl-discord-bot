@@ -11,7 +11,7 @@ import database
 from utils import *
 from bot import bot
 import teams
-import roles
+#import roles
 
 @bot.event
 async def on_message(msg):
