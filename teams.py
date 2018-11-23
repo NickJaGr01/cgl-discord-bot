@@ -120,4 +120,4 @@ def update_elo(team):
     for p in primaryplayers:
         avgelo += p[0]
     avgelo /= len(primaryplayers)
-    database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % team)
+    database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % (avgelo, team))
