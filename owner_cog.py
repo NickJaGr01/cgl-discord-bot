@@ -21,7 +21,7 @@ class Owner:
         database.conn.commit()
         targetusername = database.username(target.id)
         await ctx.send("%s has been given %s elo." % (targetusername, delo))
-        await utils.log("OWNER: %s gave %s rep to %s." % (database.username(ctx.author.id), drep, targetusername))
+        await utils.log("OWNER: %s gave %s elo to %s." % (database.username(ctx.author.id), delo, targetusername))
         pteam = database.player_team(target.id)
         if pteam != None:
             await teams.update_elo(team)
