@@ -41,7 +41,7 @@ async def process_invite(reaction, user):
                     isPrimary = 'true'
                 database.cur.execute("UPDATE playerTable SET team='%s', isPrimary=%s WHERE discordID=%s;" % (team, isPrimary, user.id))
                 database.conn.commit()
-                update_elo(team)
+                await update_elo(team)
                 database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
                 roleid = database.cur.fetchone()[0]
                 teamrole = bot.guild.get_role(roleid)
@@ -91,7 +91,7 @@ async def process_roster_edit(reaction, user):
             for s in subs:
                 database.cur.execute("UPDATE playerTable SET isPrimary=false WHERE discordID=%s;" % s)
             database.conn.commit()
-            update_elo(team)
+            await update_elo(team)
             await reaction.message.delete()
             await user.send("Your team's roster has been modified.")
             await utils.log("%s modified %s's roster." % (database.username(user.id), team))
@@ -106,6 +106,20 @@ async def order_team_roles():
             continue
         await role.edit(position=pos)
     await utils.log("Team role heirarchy has been updated.")
+
+async def update_role_position(team):
+    database.cur.execute("SELECT elo, teamroleid FROM teamtable WHERE teamname='%s';" % team)
+    teamelo, trole = database.cur.fetchone()
+    trole = bot.guild.get_role(trole)
+    database.cur.execute("SELECT teamroleid FROM teamtable WHERE elo<%s ORDER BY elo DESC;" % teamelo)
+    rolebelow = database.cur.fetchone()
+    if rolebelow == None:
+        rolebelow = bot.TEAMS_BOTTOM_END_ROLE
+    else:
+        rolebelow = rolebelow[0]
+    rolebelow = bot.guild.get_role(rolebelow)
+    await trole.edit(position=rolebelow.position+1)
+    await utils.log("%s's role position has been updated.")
 
 
 async def disband_team(team, message):
@@ -125,7 +139,7 @@ async def disband_team(team, message):
     await teamrole.delete()
     await utils.log("%s has been disbanded." % team)
 
-def update_elo(team):
+async def update_elo(team):
     database.cur.execute("SELECT elo FROM playertable WHERE team='%s' AND isprimary=true;" % team)
     primaryplayers = database.cur.fetchall()
     avgelo = 0
@@ -133,3 +147,5 @@ def update_elo(team):
         avgelo += p[0]
     avgelo /= len(primaryplayers)
     database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % (avgelo, team))
+    await utils.log("%s's team elo has been updated." % team)
+    await update_role_position(team)

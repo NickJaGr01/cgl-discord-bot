@@ -54,7 +54,6 @@ class Teams:
             return
         #create the team
         teamrole = await bot.guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True)
-        await teamrole.edit(position=bot.guild.get_role(bot.TEAMS_BOTTOM_END_ROLE).position+1)
         await teamrole.edit(permissions=bot.guild.get_role(bot.MEMBER_ROLE).permissions)
         member = bot.guild.get_member(ctx.author.id)
         await member.add_roles(teamrole, bot.guild.get_role(bot.CAPTAIN_ROLE))
@@ -66,6 +65,7 @@ class Teams:
         database.conn.commit()
         await ctx.send("Team \'%s\' successfully created. Invite other players to your team using the !invite command." % teamname)
         await utils.log("%s created %s." % (database.username(ctx.author.id), teamname))
+        await teams.update_role_position(teamname)
 
     @commands.command(pass_context=True)
     async def changeteamname(self, ctx, *, teamname):
@@ -173,7 +173,7 @@ class Teams:
             return
         database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % ctx.author.id)
         database.conn.commit()
-        teams.update_elo(team)
+        await teams.update_elo(team)
         database.cur.execute("SELECT teamRoleID FROM teamTable WHERE teamname='%s';" % team)
         teamrole = database.cur.fetchone()[0]
         member = bot.guild.get_member(ctx.author.id)
@@ -222,7 +222,7 @@ class Teams:
             teamrole = bot.guild.get_role(roleid)
             database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % player.id)
             database.conn.commit()
-            teams.update_elo(team)
+            await teams.update_elo(team)
             member = bot.guild.get_member(player.id)
             await member.remove_roles(teamrole)
             await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
@@ -285,11 +285,11 @@ class Teams:
 
     @commands.command(pass_context=True)
     async def teamlist(self, ctx):
-        database.cur.execute("SELECT teamname FROM teamtable;")
+        database.cur.execute("SELECT teamname, elo FROM teamtable ORDER BY elo DESC;")
         teams = database.cur.fetchall()
-        str = "__**Teams:**__"
-        for t in teams:
-            str += "\n%s" % t[0]
+        str = "__**Team - Elo**__"
+        for tname, telo in teams:
+            str += "\n%s - %s" % (tname, telo)
         await ctx.send(str)
 
 bot.add_cog(Teams())

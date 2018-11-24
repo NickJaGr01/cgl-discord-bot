@@ -22,6 +22,9 @@ class Owner:
         targetusername = database.username(target.id)
         await ctx.send("%s has been given %s elo." % (targetusername, delo))
         await utils.log("OWNER: %s gave %s rep to %s." % (database.username(ctx.author.id), drep, targetusername))
+        pteam = database.player_team(target.id)
+        if pteam != None:
+            await teams.update_elo(team)
 
     @commands.command(pass_context=True)
     @commands.is_owner()
@@ -65,13 +68,20 @@ class Owner:
     async def adjustelo(self, ctx, fillteam: bool, team1size: int, team1score: int, team2score: int, *players: CGLUser):
         """adjust elo after a match"""
         k_factor = 128
+        affectedteams = []
         rounds = team1score+team2score
         team1avg = 0
         team2avg = 0
         for p in players[:team1size]:
             team1avg += database.player_elo(p.id)
+            pteam = database.player_team(p.id)
+            if pteam not in affectedteams:
+                affetedteams.append(pteam)
         for p in players[team1size:]:
             team2avg += database.player_elo(p.id)
+            pteam = database.player_team(p.id)
+            if pteam not in affectedteams:
+                affetedteams.append(pteam)
         team2size = len(players)-team1size
         if fillteam:
             team1avg += 1300 * (5-team1size)
@@ -97,6 +107,8 @@ class Owner:
             await utils.log("%s has been given %s elo." % (database.username(p.id), delo2))
         database.conn.commit()
         await ctx.send("Elo has been updated for those players.")
+        for at in affectedteams:
+            await teams.update_elo(at)
 
     @commands.command(pass_context=True)
     @commands.is_owner()
