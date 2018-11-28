@@ -89,6 +89,26 @@ class Stats:
         await ctx.send(info)
 
     @commands.command(pass_context=True)
+    async def teamlist(self, ctx, page: int = 1):
+        """displays the top teams by elo 10
+        10 teams per page"""
+        page -= 1
+        database.cur.execute("SELECT teamname, elo FROM teamtable ORDER BY elo DESC;")
+        teams = database.cur.fetchall()
+        teamcount = len(teams)
+        rank = page*10
+        start = rank
+        end = rank+10
+        if end >= teamcount:
+            end = -1
+        str = "__**Team - Elo:**__"
+        for tname, telo in teams:
+            rank += 1
+            str += "\n%s) %s - %s" % (rank, tname, telo)
+        str += "\n**Page %s of %s\nShowing %s-%s of %s**" % (page+1, math.ceil(teamcount/10), start, rank, teamcount)
+        await ctx.send(str)
+
+    @commands.command(pass_context=True)
     async def leaderboard(self, ctx, stat="elo", page: int = 1):
         """displays the top players, 10 per page
         valid stats to sort by are:
@@ -102,15 +122,16 @@ class Stats:
         database.cur.execute("SELECT username, %s FROM playerTable ORDER BY %s DESC;" % (stat, stat))
         players = database.cur.fetchall()
         playercount = len(players)
-        str = "__**Player - %s:**__" % stat
         rank = page*10
-        end = page*10+10
+        start = rank
+        end = rank+10
         if end >= playercount:
             end = -1
+        str = "__**Player - %s:**__" % stat
         for username, ustat in players[rank:end]:
             rank += 1
             str += "\n%s) %s - %s" % (rank, username, ustat)
-        str += "\n**Page %s of %s\nShowing %s-%s of %s**" % (page+1, math.ceil(playercount/10), rank-9, rank, playercount)
+        str += "\n**Page %s of %s\nShowing %s-%s of %s**" % (page+1, math.ceil(playercount/10), start, rank, playercount)
         await ctx.send(str)
 
 bot.add_cog(Stats())

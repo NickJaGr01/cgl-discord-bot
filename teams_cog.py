@@ -283,13 +283,4 @@ class Teams:
             await message.add_reaction(emojis[i])
         await message.add_reaction("✅")
 
-    @commands.command(pass_context=True)
-    async def teamlist(self, ctx):
-        database.cur.execute("SELECT teamname, elo FROM teamtable ORDER BY elo DESC;")
-        teams = database.cur.fetchall()
-        str = "__**Team - Elo**__"
-        for tname, telo in teams:
-            str += "\n%s - %s" % (tname, telo)
-        await ctx.send(str)
-
 bot.add_cog(Teams())
