@@ -60,7 +60,7 @@ class General:
             database.cur.execute("SELECT * FROM playerTable WHERE lower(username)='%s';" % username.lower())
             if database.cur.fetchone() == None:
                 await bot.guild.get_member(ctx.author.id).edit(nick=username)
-                utils.escape_string(name)
+                utils.escape_string(username)
                 database.cur.execute("UPDATE playerTable SET username='%s' WHERE discordID=%s;" % (username, ctx.author.id))
                 database.conn.commit()
                 await ctx.send("Username successfully changed.")
