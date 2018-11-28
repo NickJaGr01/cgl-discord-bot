@@ -4,6 +4,7 @@ from discord.ext import commands
 import discord
 import database
 from cgl_converters import *
+import math
 
 class Stats:
     @commands.command(pass_context=True)
@@ -100,12 +101,16 @@ class Stats:
         page -= 1
         database.cur.execute("SELECT username, %s FROM playerTable ORDER BY %s DESC;" % (sortby, sortby))
         players = database.cur.fetchall()
+        playercount = len(players)
         str = "__**Player - %s:**__" % sortby
         rank = page*10
-        for username, stat in players[page*10:page*10+10]:
+        end = page*10+10
+        if end >= playercount:
+            end = -1
+        for username, stat in players[rank:end]:
             rank += 1
             str += "\n%s) %s - %s" % (rank, username, stat)
-        str += "\n**Showing %s-%s of %s**" % (rank-9, rank, len(players))
+        str += "\n**Page %s of %s\nShowing %s-%s of %s**" % (page+1, math.ceil(playercount/10), rank-9, rank, playercount)
         await ctx.send(str)
 
 bot.add_cog(Stats())
