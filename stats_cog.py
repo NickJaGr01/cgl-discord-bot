@@ -89,27 +89,27 @@ class Stats:
         await ctx.send(info)
 
     @commands.command(pass_context=True)
-    async def leaderboard(self, ctx, sortby="elo", page: int = 1):
+    async def leaderboard(self, ctx, stat="elo", page: int = 1):
         """displays the top players, 10 per page
         valid stats to sort by are:
             elo
             rep
         by default, players are sorted by elo."""
-        valid_sorts = ["elo", "rep"]
-        if sortby.lower() not in valid_sorts:
+        valid_stats = ["elo", "rep"]
+        if stat.lower() not in valid_stats:
             await ctx.send("%s is not a valid sort parameter. Use !help leaderboard for more info.")
         page -= 1
-        database.cur.execute("SELECT username, %s FROM playerTable ORDER BY %s DESC;" % (sortby, sortby))
+        database.cur.execute("SELECT username, %s FROM playerTable ORDER BY %s DESC;" % (stat, stat))
         players = database.cur.fetchall()
         playercount = len(players)
-        str = "__**Player - %s:**__" % sortby
+        str = "__**Player - %s:**__" % stat
         rank = page*10
         end = page*10+10
         if end >= playercount:
             end = -1
-        for username, stat in players[rank:end]:
+        for username, ustat in players[rank:end]:
             rank += 1
-            str += "\n%s) %s - %s" % (rank, username, stat)
+            str += "\n%s) %s - %s" % (rank, username, ustat)
         str += "\n**Page %s of %s\nShowing %s-%s of %s**" % (page+1, math.ceil(playercount/10), rank-9, rank, playercount)
         await ctx.send(str)
 
