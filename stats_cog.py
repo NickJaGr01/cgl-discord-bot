@@ -102,7 +102,7 @@ class Stats:
         if end >= teamcount:
             end = -1
         str = "__**Team - Elo:**__"
-        for tname, telo in teams:
+        for tname, telo in teams[rank:end]:
             rank += 1
             str += "\n%s) %s - %s" % (rank, tname, telo)
         str += "\n**Page %s of %s\nShowing %s-%s of %s**" % (page+1, math.ceil(teamcount/10), start, rank, teamcount)
