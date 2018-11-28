@@ -87,4 +87,25 @@ class Stats:
             info += "\n    %s" % award
         await ctx.send(info)
 
+    @commands.command(pass_context=True)
+    async def leaderboard(self, ctx, page='1' sortby="elo"):
+        """displays the top players, 10 per page
+        valid stats to sort by are:
+            elo
+            rep
+        by default, players are sorted by elo."""
+        valid_sorts = ["elo", "rep"]
+        if sortby.lower() not in valid_sorts:
+            await ctx.send("%s is not a valid sort parameter. Use !help leaderboard for more info.")
+        page -= 1
+        database.cur.execute("SELECT username, %s FROM playerTable ORDER BY %s DESC;" % (sortby, sortby))
+        players = database.cur.fetchall()
+        str = "__**Player - %s:**__" % sortby
+        rank = page*10
+        for username, stat in players[page*10:page*10+10]:
+            rank += 1
+            str += "\n%s) %s - %s" % (rank, username, stat)
+        str += "\n%s-%s of %s" (rank-10, rank, len(players))
+        await ctx.send(str)
+
 bot.add_cog(Stats())

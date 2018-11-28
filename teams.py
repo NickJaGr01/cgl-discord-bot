@@ -119,7 +119,7 @@ async def update_role_position(team):
         rolebelow = rolebelow[0]
     rolebelow = bot.guild.get_role(rolebelow)
     await trole.edit(position=rolebelow.position+1)
-    await utils.log("%s's role position has been updated.")
+    await utils.log("%s's role position has been updated." % team)
 
 
 async def disband_team(team, message):
