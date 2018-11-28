@@ -105,7 +105,7 @@ class Stats:
         for username, stat in players[page*10:page*10+10]:
             rank += 1
             str += "\n%s) %s - %s" % (rank, username, stat)
-        str += "\n%s-%s of %s" (rank-10, rank, len(players))
+        str += "\n%s-%s of %s" % (rank-10, rank, len(players))
         await ctx.send(str)
 
 bot.add_cog(Stats())
