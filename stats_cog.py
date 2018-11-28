@@ -88,7 +88,7 @@ class Stats:
         await ctx.send(info)
 
     @commands.command(pass_context=True)
-    async def leaderboard(self, ctx, page='1' sortby="elo"):
+    async def leaderboard(self, ctx, page: int = 1, sortby="elo"):
         """displays the top players, 10 per page
         valid stats to sort by are:
             elo
