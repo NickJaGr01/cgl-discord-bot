@@ -19,23 +19,31 @@ MAJOR_OFFENSE_TABLE = {
 
 class Admin:
     @commands.command(pass_context=True)
-    async def giverep(self, ctx, target: CGLUser, drep: int):
-        """modify a player's rep"""
+    async def giverep(self, ctx, drep: int, *players: CGLUser):
+        """give rep to players"""
         modrole = bot.guild.get_role(MOD_ROLE_ID)
         if ctx.message.author.top_role >= modrole:
-            if target == None:
-                await ctx.send("There was an error identifying that player.")
-                return
             if drep == None:
                 await ctx.send("Please provide an amount of rep to give.")
                 return
-            rep = database.player_rep(target.id)
-            rep += drep
-            database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, target.id))
+            goodplayers = ""
+            badplayers = ""
+            for p in players:
+                if p == None:
+                    badplayers += "%s," % database.username(p.id)
+                    await ctx.send("There was an error identifying that player.")
+                    continue
+                else:
+                    goodplayers += "%s," database.username(p.id)
+                    rep = database.player_rep(p.id)
+                    rep += drep
+                    database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, p.id))
             database.conn.commit()
-            targetusername = database.username(target.id)
-            await ctx.send("%s has been given %s rep." % (targetusername, drep))
-            await utils.log("ADMIN: %s gave %s rep to %s." % (database.username(ctx.author.id), drep, targetusername))
+            if len(goodplayers) > 0:
+                await ctx.send("%s have been given %s rep." % (goodplayers[:-2], drep))
+                await utils.log("ADMIN: %s gave %s rep to %s." % (database.username(ctx.author.id), drep, goodplayers[:-2]))
+            if len(badplayers) > 1:
+                await ctx.send("%s were not given any rep because they do not exist." % badplayers[:-2])
         else:
             await ctx.send(NOT_MOD_MESSAGE)
 
