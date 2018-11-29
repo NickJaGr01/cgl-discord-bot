@@ -112,20 +112,12 @@ class General:
         """set your FACEIT name and get the invite link for your region's FACEIT hub"""
         if database.user_registered(ctx.author.id):
             member = bot.guild.get_member(ctx.author.id)
-            if bot.guild.get_role(bot.EU_ROLE) not in member.roles and bot.guild.get_role(bot.NA_ROLE) not in member.roles:
-                await ctx.send("Please set your region first with !setregion NA/EU.")
-                return
             if name == None:
                 await ctx.send("Please specify your FACEIT name.")
                 return
             database.cur.execute("UPDATE playerTable SET faceitname='%s' WHERE discordID=%s;" % (name, ctx.author.id))
             database.conn.commit()
-            invitelink = ""
-            if bot.guild.get_role(bot.NA_ROLE) in member.roles:
-                invitelink = bot.NA_HUB
-            if bot.guild.get_role(bot.EU_ROLE) in member.roles:
-                invitelink = bot.EU_HUB
-            await ctx.author.send("Your FACEIT name has been set to %s.\n Use this link to join the FACEIT hub:\n%s\nDO NOT share this link under ANY circumstances." % (name, invitelink))
+            await ctx.send("Your FACEIT name has been updated.")
             await utils.log("%s set their FACEIT name to %s." % (database.username(ctx.author.id), name))
         else:
             await ctx.send(bot.NOT_REGISTERED_MESSAGE)
