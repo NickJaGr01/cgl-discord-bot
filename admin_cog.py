@@ -31,10 +31,9 @@ class Admin:
             for p in players:
                 if p == None:
                     badplayers += "%s," % database.username(p.id)
-                    await ctx.send("There was an error identifying that player.")
                     continue
                 else:
-                    goodplayers += "%s," database.username(p.id)
+                    goodplayers += "%s," % database.username(p.id)
                     rep = database.player_rep(p.id)
                     rep += drep
                     database.cur.execute("UPDATE playerTable SET rep=%s WHERE discordID=%s;" % (rep, p.id))
