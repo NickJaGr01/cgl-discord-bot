@@ -64,7 +64,7 @@ class Stats:
             region = ":flag_eu: Europe"
         if region == "":
             region = "*See* **!help setregion** *for more info.*"
-        e.set_footer(value=region)
+        e.set_footer(text=region)
         await ctx.send(embed=e)
 
     @commands.command(pass_context=True)
