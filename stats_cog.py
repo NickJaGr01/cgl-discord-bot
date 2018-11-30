@@ -33,12 +33,14 @@ class Stats:
         e = discord.Embed(title=database.username(player.id), description=player.mention, colour=discord.Colour.blue())
         database.cur.execute("SELECT faceitname FROM playerTable WHERE discordID=%s;" % player.id)
         faceitname = database.cur.fetchone()[0]
+        if faceitname == None:
+            faceitname = "*This player has not connected their FACEIT.*"
         e.add_field(name="FACEIT", value=faceitname)
+        e.add_field(name="Elo", value=database.player_elo(player.id)).add_field(name="Rep", value=database.player_rep(player.id))
         team = database.player_team(player.id)
         if team == None:
             team = "*This player is not on a team.*"
         e.add_field(name="Team", value=team)
-        e.add_field(name="Elo", value=database.player_elo(player.id)).add_field(name="Rep", value=database.player_rep(player.id))
         r = ""
         for role in player.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
