@@ -56,7 +56,7 @@ class Stats:
             a += award
         if a == "":
             a = "*This player doesn't have any awards.*"
-        e.add_field(name="Roles", value=r, inline=False).add_field(name="Awards", value=a)
+        e.add_field(name="Roles", value=r, inline=True).add_field(name="Awards", value=a, inline=True)
         region = ""
         if bot.guild.get_role(bot.NA_ROLE) in player.roles:
             region = "🇺🇸 North America"
