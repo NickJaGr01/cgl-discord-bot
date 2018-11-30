@@ -38,7 +38,7 @@ class Stats:
         if team == None:
             team = "*This player is not on a team.*"
         e.add_field(name="Team", value=team, inline=False)
-        e.add_field(name="Elo", value=database.player_elo(player.id), inline=False).add_field(name="Rep", value=database.player_rep(player.id), inline=True)
+        e.add_field(name="Elo", value=database.player_elo(player.id), inline=True).add_field(name="Rep", value=database.player_rep(player.id), inline=True)
         r = ""
         for role in player.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
