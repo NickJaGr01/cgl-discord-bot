@@ -112,12 +112,12 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def dostuff(self, ctx):
+    async def dostuff(self, ctx, target: CGLUser):
         """do stuff"""
         e = discord.Embed(title="Hello!", inline=False)
         e.add_field(name="key 1", value="value 1", inline=True)
-        e.add_field(name="key 2", value="value 2", inline=True)
-        e.add_field(name="key 3", value="value 3", inline=False)
+        e.add_field(name="key 2", value="%s" % target.mention, inline=False)
+        e.add_field(name="key 3", value="value 3", inline=True)
         e.add_field(name="key 4", value="value 4", inline=True)
         await ctx.send(embed=e)
 
