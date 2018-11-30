@@ -114,7 +114,7 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        await teams.order_team_roles()
+        embed = discord.Embed(title="Hello!", inline=True)
 
 
 bot.add_cog(Owner())
