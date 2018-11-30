@@ -65,7 +65,7 @@ class Stats:
         if region == "":
             region = "*See* **!help setregion** *for more info.*"
         e.set_footer(text=region)
-        await ctx.send(embed=e)
+        await ctx.send(e)
 
     @commands.command(pass_context=True)
     async def teaminfo(self, ctx, *, team: CGLTeam):
