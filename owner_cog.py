@@ -115,6 +115,7 @@ class Owner:
     async def dostuff(self, ctx):
         """do stuff"""
         e = discord.Embed(title="Hello!", inline=True)
+        e.add_field(name="key", value="value", inline=True)
         await ctx.send(embed=e)
 
 
