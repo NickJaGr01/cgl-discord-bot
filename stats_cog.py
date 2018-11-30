@@ -38,7 +38,7 @@ class Stats:
         if team == None:
             team = "*This player is not on a team.*"
         e.add_field(name="Team", value=team, inline=False)
-        e.add_field(name="Elo", value=database.player_elo(player.id), inline=False).add_field(name="Rep", value=database.player_rep(player.id), inline=True)
+        e.add_field(name="Elo", value=database.player_elo(player.id), inline=True).add_field(name="Rep", value=database.player_rep(player.id), inline=True)
         r = ""
         for role in player.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
@@ -59,9 +59,9 @@ class Stats:
         e.add_field(name="Roles", value=r, inline=False).add_field(name="Awards", value=a)
         region = ""
         if bot.guild.get_role(bot.NA_ROLE) in player.roles:
-            region = ":flag_us: North America"
+            region = "🇺🇸 North America"
         if bot.guild.get_role(bot.EU_ROLE) in player.roles:
-            region = ":flag_eu: Europe"
+            region = "🇪🇺 Europe"
         if region == "":
             region = "*See* **!help setregion** *for more info.*"
         e.set_footer(text=region)
