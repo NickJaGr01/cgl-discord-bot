@@ -38,7 +38,7 @@ class Stats:
         if team == None:
             team = "*This player is not on a team.*"
         e.add_field(name="Team", value=team, inline=False)
-        e.add_field(name="Elo", value=database.player_elo(player.id), inline=False).add_field(name="Rep", value=database.player_rep(player.id), inline=True)
+        e.add_field(name="Elo", value=database.player_elo(player.id), inline=True).add_field(name="Rep", value=database.player_rep(player.id), inline=True)
         r = ""
         for role in player.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
@@ -56,7 +56,7 @@ class Stats:
             a += award
         if a == "":
             a = "*This player doesn't have any awards.*"
-        e.add_field(name="Roles", value=r).add_field(name="Awards", value=a, inline=False)
+        e.add_field(name="Roles", value=r).add_field(name="Awards", value=a, inline=True)
         region = ""
         if bot.guild.get_role(bot.NA_ROLE) in player.roles:
             region = "🇺🇸 North America"
