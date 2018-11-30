@@ -40,7 +40,7 @@ class Stats:
         e.add_field(name="Team", value=team, inline=False)
         e.add_field(name="Elo", value=database.player_elo(player.id), inline=False).add_field(name="Rep", value=database.player_rep(player.id))
         r = ""
-        for role in member.roles:
+        for role in player.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
                 if len(r) > 0:
                     r += "\n"
