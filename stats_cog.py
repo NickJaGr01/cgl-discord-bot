@@ -30,31 +30,42 @@ class Stats:
         if player == None:
             await ctx.send("That player does not exist.")
             return
-        info = "__%s__\n" % database.username(player.id)
+        e = discord.Embed(title=database.username(player.id), description=player.mention, colour=discord.Colour.blue())
         database.cur.execute("SELECT faceitname FROM playerTable WHERE discordID=%s;" % player.id)
         faceitname = database.cur.fetchone()[0]
-        info += "**FACEIT**: %s\n" % faceitname
-        info += "**Elo**: %s\n" % database.player_elo(player.id)
-        info += "**Rep**: %s\n" % database.player_rep(player.id)
-        info += "**Team**: %s\n" % database.player_team(player.id)
-        member = bot.guild.get_member(player.id)
-        region = None
-        if bot.guild.get_role(bot.NA_ROLE) in member.roles:
-            region = "NA"
-        if bot.guild.get_role(bot.EU_ROLE) in member.roles:
-            region = "EU"
-        info += "**Region**: %s\n" % region
-        info += "**Roles**:"
+        e.add_field(name="FACEIT", value=faceitname)
+        team = database.player_team(player.id)
+        if team == None:
+            team = "*This player is not on a team.*"
+        e.add_field(name="Team", value=team, inline=False)
+        e.add_field(name="Elo", value=database.player_elo(player.id), inline=False).add_field(name="Rep", value=database.player_rep(player.id))
+        r = ""
         for role in member.roles:
             if role.id in bot.PLAYER_ROLE_ROLES.values():
-                info += " %s" % role.name
-        info += "\n**Awards**:"
+                if len(r) > 0:
+                    r += "\n"
+                r += role.name
+        if r == "":
+            r = "*See* **!help setroles** *for more info.*"
         database.cur.execute("SELECT awards FROM playerTable WHERE discordID=%s;" % player.id)
         awards = database.cur.fetchone()[0]
+        a = ""
         for award in awards:
-            info += "\n    %s" % award
-
-        await ctx.send(info)
+            if len(a) > 0:
+                a += "\n"
+            a += award
+        if a == "":
+            a = "*This player doesn't have any awards.*"
+        e.add_field(name="Roles", value=r, inline=False).add_field(name="Awards", value=a)
+        region = ""
+        if bot.guild.get_role(bot.NA_ROLE) in player.roles:
+            region = ":flag_us: North America"
+        if bot.guild.get_role(bot.EU_ROLE) in player.roles:
+            region = ":flag_eu: Europe"
+        if region == "":
+            region = "*See* **!help setregion** *for more info.*"
+        e.set_footer(value=region)
+        await ctx.send(embed=e)
 
     @commands.command(pass_context=True)
     async def teaminfo(self, ctx, *, team: CGLTeam):
