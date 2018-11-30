@@ -114,7 +114,8 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        embed = discord.Embed(title="Hello!", inline=True)
+        e = discord.Embed(title="Hello!", inline=True)
+        await ctx.send(embed=e)
 
 
 bot.add_cog(Owner())
