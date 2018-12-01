@@ -76,12 +76,12 @@ class Owner:
             team1avg += database.player_elo(p.id)
             pteam = database.player_team(p.id)
             if pteam not in affectedteams:
-                affetedteams.append(pteam)
+                affectedteams.append(pteam)
         for p in players[team1size:]:
             team2avg += database.player_elo(p.id)
             pteam = database.player_team(p.id)
             if pteam not in affectedteams:
-                affetedteams.append(pteam)
+                affectedteams.append(pteam)
         team2size = len(players)-team1size
         if fillteam:
             team1avg += 1300 * (5-team1size)
