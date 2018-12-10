@@ -65,7 +65,7 @@ class Stats:
         if bot.guild.get_role(bot.EU_ROLE) in player.roles:
             region = "🇪🇺 Europe"
         if region == "":
-            region = "*See* **!help setregion** *for more info.*"
+            region = "See '!help setregion' for more info."
         e.set_footer(text=region)
         await ctx.send("", embed=e)
 
@@ -128,6 +128,7 @@ class Stats:
             elo
             rep
         by default, players are sorted by elo."""
+
         valid_stats = ["elo", "rep"]
         if stat.lower() not in valid_stats:
             await ctx.send("%s is not a valid sort parameter. Use !help leaderboard for more info.")
@@ -136,15 +137,17 @@ class Stats:
         players = database.cur.fetchall()
         playercount = len(players)
         rank = page*10
-        start = rank
+        start = rank+1
         end = rank+10
         if end >= playercount:
             end = -1
-        str = "__**Player - %s:**__" % stat
+        e = discord.Embed(title="Leaderboard - %s" % stat)
+        str = ""
         for username, ustat in players[rank:end]:
             rank += 1
             str += "\n%s) %s - %s" % (rank, username, ustat)
-        str += "\n**Page %s of %s\nShowing %s-%s of %s**" % (page+1, math.ceil(playercount/10), start, rank, playercount)
+        e.add_field(name="", value=str)
+        e.set_footer("Page %s of %s\nShowing %s-%s of %s" % (page+1, math.ceil(playercount/10), start, rank, playercount)
         await ctx.send(str)
 
 bot.add_cog(Stats())
