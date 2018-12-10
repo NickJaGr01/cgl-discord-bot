@@ -121,6 +121,7 @@ class Owner:
             if cmember == None:
                 database.cur.execute("DELETE FROM teamtable WHERE teamname='%s';" % team[0])
                 database.conn.commit()
+                continue
             await ctx.send(team[0])
             await teams.update_elo(team[0])
         await ctx.send("Done")
