@@ -75,7 +75,8 @@ class Stats:
             str += "%s" % bot.get_user(p[0]).mention
             elo += p[1]
             teamsize += 1
-        e.add_field(name="Primary", value=str)
+        if len(str) > 0:
+            e.add_field(name="Primary", value=str)
         database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
         subs = database.cur.fetchall()
         str = ""
@@ -83,7 +84,8 @@ class Stats:
             if len(str) > 0:
                 str += "\n"
             str += "%s" % bot.get_user(p[0]).mention
-        e.add_field(name="Subs", value=str)
+        if len(str) > 0:
+            e.add_field(name="Subs", value=str)
         if teamsize == 0:
             teamsize = 1
         elo = int(elo/teamsize)
