@@ -30,7 +30,6 @@ async def on_message(msg):
 
 @bot.event
 async def on_reaction_add(reaction, user):
-    print(reaction.emoji)
     if user.id != bot.appinfo.id:
         if reaction.message.author.id == bot.appinfo.id:
             await teams.process_invite(reaction, user)
@@ -52,11 +51,12 @@ async def on_member_join(member):
 @bot.event
 async def on_member_remove(member):
     if database.user_registered(member.id):
-        database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % member.id)
         #check if the member is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % member.id)
         team = database.cur.fetchone()
-        await log("%s has left the server." % database.username(member.id))
         if team != None:
             team = team[0]
             await teams.disband_team(team, "Your team has been disbanded because your captain has left the server.")
+        database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % member.id)
+        database.conn.commit()
+        await log("%s has left the server." % database.username(member.id))

@@ -114,12 +114,14 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        e = discord.Embed(title="Hello!", colour=discord.Colour.blue(), description="Description")
-        e.add_field(name="key 1", value="value 1", inline=True)
-        e.add_field(name="key 2", value="value 2", inline=False)
-        e.add_field(name="key 3", value="value 3", inline=True)
-        e.add_field(name="key 4", value="value 4", inline=True)
-        await ctx.send(embed=e)
-
+        database.cur.execute("SELECT discordID FROM playerTable;")
+        players = database.cur.fetchall()
+        for id, username in players:
+            member = bot.guild.get_member(id)
+            if member == None:
+                database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % id)
+                await ctx.send(username)
+        database.conn.commit()
+        await ctx.send("Done")
 
 bot.add_cog(Owner())
