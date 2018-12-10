@@ -118,7 +118,9 @@ class Owner:
         allteams = database.cur.fetchall()
         for team in allteams:
             cmember = bot.guild.get_member(team[1])
-            if cmember == None:
+            database.cur.execute("SELECT team FROM playertable WHERE discordid=%s;" % team[1])
+            cteam = database.cur.fetchone()[0]
+            if cmember == None or cteam != team[0]:
                 database.cur.execute("DELETE FROM teamtable WHERE teamname='%s';" % team[0])
                 database.conn.commit()
                 continue
