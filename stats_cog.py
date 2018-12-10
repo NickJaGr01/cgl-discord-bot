@@ -99,7 +99,7 @@ class Stats:
         rstr = "This team's captain has not set their region."
         captain = bot.guild.get_member(captainid)
         if bot.guild.get_role(bot.NA_ROLE) in captain.roles:
-            rtsr = "🇺🇸 North America"
+            rstr = "🇺🇸 North America"
         elif bot.guild.get_role(bot.EU_ROLE) in captain.roles:
             rstr = "🇪🇺 Europe"
         e.set_footer(text=rstr)
