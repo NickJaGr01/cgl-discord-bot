@@ -8,6 +8,7 @@ class Team:
         self.players = []
         self.region = None
         self.awards = []
+        self.captain = None
 
     def add_player(self, player):
         self.players.append(player)

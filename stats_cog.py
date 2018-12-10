@@ -96,9 +96,10 @@ class Stats:
             astr = "*This team does not have any awards.*"
         e.add_field(name="Awards", value=astr)
         rstr = "This team's captain has not set their region."
-        if team.region == "NA":
+        captain = bot.guild.get_member(team.captain)
+        if bot.guild.get_role(bot.NA_ROLE) in captain.roles:
             rtsr = "🇺🇸 North America"
-        elif team.region == "EU":
+        elif bot.guild.get_role(bot.EU_ROLE) in captain.roles:
             rstr = "🇪🇺 Europe"
         e.set_footer(text=rstr)
         await ctx.send(embed=e)
