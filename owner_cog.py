@@ -114,9 +114,13 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        database.cur.execute("SELECT teamname FROM teamtable;")
+        database.cur.execute("SELECT teamname, captainid FROM teamtable;")
         allteams = database.cur.fetchall()
         for team in allteams:
+            cmember = bot.guild.get_member(team[1])
+            if cmember == None:
+                database.cur.execute("DELETE FROM teamtable WHERE teamname='%s';" % team[0])
+                database.conn.commit()
             await ctx.send(team[0])
             await teams.update_elo(team[0])
         await ctx.send("Done")
