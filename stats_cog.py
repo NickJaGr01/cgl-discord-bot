@@ -65,23 +65,23 @@ class Stats:
         e = discord.Embed(title=team.teamname, description="Captain: %s" % database.username(database.cur.fetchone()[0]), colour=discord.Colour.blue())
         elo = 0
         teamsize = 0
-        database.cur.execute("SELECT username, elo FROM playerTable WHERE team='%s' AND isPrimary=true;" % team.teamname)
+        database.cur.execute("SELECT discordID, elo FROM playerTable WHERE team='%s' AND isPrimary=true;" % team.teamname)
         primary = database.cur.fetchall()
         pstr = ""
         for p in primary:
             if len(pstr) > 0:
                 pstr += "\n"
-            pstr += "%s" % p[0]
+            pstr += "%s" % bot.get_user(p[0]).mention
             elo += p[1]
             teamsize += 1
         e.add_field(name="Primary", value=pstr)
-        database.cur.execute("SELECT username FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
+        database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
         subs = database.cur.fetchall()
         sstr = ""
         for p in subs:
             if len(sstr) > 0:
                 sstr += "\n"
-            str += "%s" % p[0]
+            str += "%s" % bot.get_user(p[0]).mention
         e.add_field(name="Subs", value=sstr)
         if teamsize == 0:
             teamsize = 1
@@ -136,7 +136,7 @@ class Stats:
         if stat.lower() not in valid_stats:
             await ctx.send("%s is not a valid sort parameter. Use !help leaderboard for more info.")
         page -= 1
-        database.cur.execute("SELECT username, %s FROM playerTable ORDER BY %s DESC;" % (stat, stat))
+        database.cur.execute("SELECT discordID, %s FROM playerTable ORDER BY %s DESC;" % (stat, stat))
         players = database.cur.fetchall()
         playercount = len(players)
         rank = page*10
@@ -145,9 +145,9 @@ class Stats:
             end = -1
         e = discord.Embed(colour=discord.Colour.blue())
         str = ""
-        for username, ustat in players[rank:end]:
+        for id, ustat in players[rank:end]:
             rank += 1
-            str += "\n%s) %s - %s" % (rank, username, ustat)
+            str += "\n%s) %s - %s" % (rank, bot.get_user(id).mention, ustat)
         e.add_field(name="Leaderboard - %s" % stat, value=str)
         e.set_footer(text="Page %s of %s" % (page+1, math.ceil(playercount/10)))
         await ctx.send(embed=e)

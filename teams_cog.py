@@ -271,7 +271,7 @@ class Teams:
             await ctx.send("You are not the captain of a team.")
             return
         team = team[0]
-        database.cur.execute("SELECT username FROM playerTable WHERE team='%s';" % team)
+        database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s';" % team)
         players = database.cur.fetchall()
         e = discord.Embed(title="Edit Roster", description="Please select your team's primary players.\nThen select ✅ .", colour=discord.Colour.blue())
         msg = ""
@@ -279,7 +279,7 @@ class Teams:
         for p in players:
             if len(msg) > 0:
                 msg += "\n"
-            msg += "%s" % (emojis[index], p[0])
+            msg += "%s" % (emojis[index], bot.get_user(p[0]).mention)
             index += 1
         e.add_field(name="Players", value=msg)
         message = await ctx.author.send(embed=e)
