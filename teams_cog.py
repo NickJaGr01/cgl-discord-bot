@@ -273,12 +273,16 @@ class Teams:
         team = team[0]
         database.cur.execute("SELECT username FROM playerTable WHERE team='%s';" % team)
         players = database.cur.fetchall()
-        msg = "Please select your team's primary players.\nThen select ✅ ."
+        e = discord.Embed(title="Edit Roster", description="Please select your team's primary players.\nThen select ✅ .", colour=discord.Colour.blue())
+        msg = ""
         index = 0
         for p in players:
-            msg += "\n%s  %s" % (emojis[index], p[0])
+            if len(msg) > 0:
+                msg += "\n"
+            msg += "%s" % (emojis[index], p[0])
             index += 1
-        message = await ctx.author.send(msg)
+        e.add_field(name="Players", value=msg)
+        message = await ctx.author.send(embed=e)
         for i in range(index):
             await message.add_reaction(emojis[i])
         await message.add_reaction("✅")

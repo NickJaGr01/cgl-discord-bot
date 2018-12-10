@@ -8,22 +8,6 @@ import math
 
 class Stats:
     @commands.command(pass_context=True)
-    async def elo(self, ctx):
-        """displays the player's elo."""
-        if database.user_registered(ctx.author.id):
-            await ctx.send("Your current elo is %s." % database.player_elo(ctx.author.id))
-        else:
-            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
-
-    @commands.command(pass_context=True)
-    async def rep(self, ctx):
-        """displays the player's rep."""
-        if database.user_registered(ctx.author.id):
-            await ctx.send("Your current rep is %s." % database.player_rep(ctx.author.id))
-        else:
-            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
-
-    @commands.command(pass_context=True)
     async def playerinfo(self, ctx, *, player: CGLUser):
         """display info about a player
         """
@@ -76,30 +60,48 @@ class Stats:
         if team == None:
             await ctx.send("That team does not exist.")
             return
-        info = "__%s__\n" % team.teamname
-        info += "**Primary**:\n"
+
+        database.cur.execute("SELECT captainID FROM teamtable WHERE teamname='%s';" % team.teamname)
+        e = discord.Embed(title=team.teamname, description="Captain: %s" % database.username(database.cur.fetchone()[0]), colour=discord.Colour.blue())
         elo = 0
         teamsize = 0
         database.cur.execute("SELECT username, elo FROM playerTable WHERE team='%s' AND isPrimary=true;" % team.teamname)
         primary = database.cur.fetchall()
+        pstr = ""
         for p in primary:
-            info += "    %s\n" % p[0]
+            if len(pstr) > 0:
+                pstr += "\n"
+            pstr += "%s" % p[0]
             elo += p[1]
             teamsize += 1
-        info += "**Subs**:\n"
+        e.add_field(name="Primary", value=pstr)
         database.cur.execute("SELECT username FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
         subs = database.cur.fetchall()
+        sstr = ""
         for p in subs:
-            info += "    %s\n" % p[0]
+            if len(sstr) > 0:
+                sstr += "\n"
+            str += "%s" % p[0]
+        e.add_field(name="Subs", value=sstr)
         if teamsize == 0:
             teamsize = 1
         elo = int(elo/teamsize)
-        info += "**Team Elo**: %s\n" % elo
-        info += "**Region**: %s\n" % team.region
-        info += "**Awards**:"
+        e.add_field(name="Team Elo", value=elo)
+        astr = ""
         for award in team.awards:
-            info += "\n    %s" % award
-        await ctx.send(info)
+            if len(astr) > 0:
+                astr += "\n"
+            info += "%s" % award
+        if len(astr) == 0:
+            astr = "*This team does not have any awards.*"
+        e.add_field(name="Awards", value=astr)
+        rstr = "This team's captain has not set their region."
+        if team.region == "NA":
+            rtsr = "🇺🇸 North America"
+        elif team.region == "EU":
+            rstr = "🇪🇺 Europe"
+        e.set_footer(text=rtsr)
+        await ctx.send(embed=e)
 
     @commands.command(pass_context=True)
     async def teamlist(self, ctx, page: int = 1):
@@ -110,16 +112,17 @@ class Stats:
         teams = database.cur.fetchall()
         teamcount = len(teams)
         rank = page*10
-        start = rank
         end = rank+10
         if end >= teamcount:
             end = -1
-        str = "__**Team - Elo:**__"
+        e = discord.Embed(colour=discord.Colour.blue())
+        str = ""
         for tname, telo in teams[rank:end]:
             rank += 1
             str += "\n%s) %s - %s" % (rank, tname, telo)
-        str += "\n**Page %s of %s\nShowing %s-%s of %s**" % (page+1, math.ceil(teamcount/10), start, rank, teamcount)
-        await ctx.send(str)
+        e.add_field(name="Teams - Elo", value=str)
+        e.set_footer(text="\nPage %s of %s" % (page+1, math.ceil(teamcount/10)))
+        await ctx.send(embed=e)
 
     @commands.command(pass_context=True)
     async def leaderboard(self, ctx, stat="elo", page: int = 1):
@@ -137,17 +140,16 @@ class Stats:
         players = database.cur.fetchall()
         playercount = len(players)
         rank = page*10
-        start = rank+1
         end = rank+10
         if end >= playercount:
             end = -1
-        e = discord.Embed()
+        e = discord.Embed(colour=discord.Colour.blue())
         str = ""
         for username, ustat in players[rank:end]:
             rank += 1
             str += "\n%s) %s - %s" % (rank, username, ustat)
         e.add_field(name="Leaderboard - %s" % stat, value=str)
-        e.set_footer(text="Page %s of %s\nShowing %s-%s of %s" % (page+1, math.ceil(playercount/10), start, rank, playercount))
+        e.set_footer(text="Page %s of %s" % (page+1, math.ceil(playercount/10)))
         await ctx.send(embed=e)
 
 bot.add_cog(Stats())
