@@ -100,7 +100,7 @@ class Stats:
             rtsr = "🇺🇸 North America"
         elif team.region == "EU":
             rstr = "🇪🇺 Europe"
-        e.set_footer(text=rtsr)
+        e.set_footer(text=rstr)
         await ctx.send(embed=e)
 
     @commands.command(pass_context=True)
