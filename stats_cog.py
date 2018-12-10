@@ -141,12 +141,12 @@ class Stats:
         end = rank+10
         if end >= playercount:
             end = -1
-        e = discord.Embed(title="Leaderboard - %s" % stat)
+        e = discord.Embed()
         str = ""
         for username, ustat in players[rank:end]:
             rank += 1
             str += "\n%s) %s - %s" % (rank, username, ustat)
-        e.add_field(name="", value=str)
+        e.add_field(name="Leaderboard - %s" % stat, value=str)
         e.set_footer(text="Page %s of %s\nShowing %s-%s of %s" % (page+1, math.ceil(playercount/10), start, rank, playercount))
         await ctx.send(embed=e)
 
