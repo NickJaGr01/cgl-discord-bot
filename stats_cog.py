@@ -148,7 +148,6 @@ class Stats:
             str += "\n%s) %s - %s" % (rank, username, ustat)
         e.add_field(name="Leaderboard - %s" % stat, value=str)
         e.set_footer(text="Page %s of %s\nShowing %s-%s of %s" % (page+1, math.ceil(playercount/10), start, rank, playercount))
-        e.set_image(url="https://img.huffingtonpost.com/asset/5b7fdeab1900001d035028dc.jpeg?cache=sixpwrbb1s&ops=1910_1000")
         await ctx.send(embed=e)
 
 bot.add_cog(Stats())
