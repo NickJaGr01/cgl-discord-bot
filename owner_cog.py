@@ -117,8 +117,8 @@ class Owner:
         database.cur.execute("SELECT teamname FROM teamtable;")
         allteams = database.cur.fetchall()
         for team in allteams:
-            await teams.update_elo(team[0])
             await ctx.send(team[0])
+            await teams.update_elo(team[0])
         await ctx.send("Done")
 
 bot.add_cog(Owner())
