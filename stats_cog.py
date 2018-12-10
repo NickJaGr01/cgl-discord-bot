@@ -81,7 +81,7 @@ class Stats:
         for p in subs:
             if len(sstr) > 0:
                 sstr += "\n"
-            str += "%s" % bot.get_user(p[0]).mention
+            sstr += "%s" % bot.get_user(p[0]).mention
         e.add_field(name="Subs", value=sstr)
         if teamsize == 0:
             teamsize = 1
