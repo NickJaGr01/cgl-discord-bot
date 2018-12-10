@@ -68,34 +68,34 @@ class Stats:
         teamsize = 0
         database.cur.execute("SELECT discordID, elo FROM playerTable WHERE team='%s' AND isPrimary=true;" % team.teamname)
         primary = database.cur.fetchall()
-        pstr = ""
+        str = ""
         for p in primary:
-            if len(pstr) > 0:
-                pstr += "\n"
-            pstr += "%s" % bot.get_user(p[0]).mention
+            if len(str) > 0:
+                str += "\n"
+            str += "%s" % bot.get_user(p[0]).mention
             elo += p[1]
             teamsize += 1
-        e.add_field(name="Primary", value=pstr)
+        e.add_field(name="Primary", value=str)
         database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
         subs = database.cur.fetchall()
-        sstr = ""
+        str = ""
         for p in subs:
-            if len(sstr) > 0:
-                sstr += "\n"
-            sstr += "%s" % bot.get_user(p[0]).mention
-        e.add_field(name="Subs", value=sstr)
+            if len(str) > 0:
+                str += "\n"
+            str += "%s" % bot.get_user(p[0]).mention
+        e.add_field(name="Subs", value=str)
         if teamsize == 0:
             teamsize = 1
         elo = int(elo/teamsize)
         e.add_field(name="Team Elo", value=elo)
-        astr = ""
+        str = ""
         for award in team.awards:
-            if len(astr) > 0:
-                astr += "\n"
-            astr += "%s" % award
-        if len(astr) == 0:
-            astr = "*This team does not have any awards.*"
-        e.add_field(name="Awards", value=astr)
+            if len(str) > 0:
+                str += "\n"
+            str += "%s" % award
+        if len(str) == 0:
+            str = "*This team does not have any awards.*"
+        e.add_field(name="Awards", value=str)
         rstr = "This team's captain has not set their region."
         captain = bot.guild.get_member(captainid)
         if bot.guild.get_role(bot.NA_ROLE) in captain.roles:
