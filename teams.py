@@ -141,12 +141,21 @@ async def disband_team(team, message):
     await utils.log("%s has been disbanded." % team)
 
 async def update_elo(team):
-    database.cur.execute("SELECT elo FROM playertable WHERE team='%s' AND isprimary=true;" % team)
-    primaryplayers = database.cur.fetchall()
-    avgelo = 0
-    for p in primaryplayers:
-        avgelo += p[0]
-    avgelo /= len(primaryplayers)
-    database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % (avgelo, team))
-    await utils.log("%s's team elo has been updated." % team)
+    database.cur.execute("SELECT elo FROM playertable WHERE team='%s';" % team)
+    elos = database.cur.fetchall()
+    total = 0
+    teamsize = 0
+    for p in elos:
+        total += p[0]
+        teamsize += 1
+    average = total / teamsize
+    if teamsize < 5:
+        makeup = 5 - teamsize
+        for x in range(makeup):
+            total += min(1300, average)
+            teamsize += 1
+        average = total / teamsize
+    database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % (average, team))
+    database.conn.commit()
     await update_role_position(team)
+    return average

@@ -114,14 +114,11 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        database.cur.execute("SELECT discordID, username FROM playerTable;")
-        players = database.cur.fetchall()
-        for id, username in players:
-            member = bot.guild.get_member(id)
-            if member == None:
-                database.cur.execute("UPDATE playerTable SET team=NULL WHERE discordID=%s;" % id)
-                await ctx.send(username)
-        database.conn.commit()
+        database.cur.execute("SELECT teamname FROM teamtable;")
+        allteams = database.cur.fetchall()
+        for team in allteams:
+            await teams.update_elo(team[0])
+            await ctx.send(team[0])
         await ctx.send("Done")
 
 bot.add_cog(Owner())
