@@ -103,7 +103,7 @@ class Stats:
         elif bot.guild.get_role(bot.EU_ROLE) in captain.roles:
             rstr = "🇪🇺 Europe"
         e.set_footer(text=rstr)
-        await ctx.send(embed=e)
+        await ctx.send("", embed=e)
 
     @commands.command(pass_context=True)
     async def teamlist(self, ctx, page: int = 1):
