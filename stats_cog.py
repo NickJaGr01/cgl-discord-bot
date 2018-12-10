@@ -91,7 +91,7 @@ class Stats:
         for award in team.awards:
             if len(astr) > 0:
                 astr += "\n"
-            info += "%s" % award
+            astr += "%s" % award
         if len(astr) == 0:
             astr = "*This team does not have any awards.*"
         e.add_field(name="Awards", value=astr)
