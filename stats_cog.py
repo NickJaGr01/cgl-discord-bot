@@ -148,6 +148,6 @@ class Stats:
             str += "\n%s) %s - %s" % (rank, username, ustat)
         e.add_field(name="", value=str)
         e.set_footer("Page %s of %s\nShowing %s-%s of %s" % (page+1, math.ceil(playercount/10), start, rank, playercount)
-        await ctx.send(str)
+        await ctx.send(embed=e)
 
 bot.add_cog(Stats())
