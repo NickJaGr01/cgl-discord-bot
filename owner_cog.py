@@ -114,7 +114,7 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        database.cur.execute("SELECT discordID FROM playerTable;")
+        database.cur.execute("SELECT discordID, username FROM playerTable;")
         players = database.cur.fetchall()
         for id, username in players:
             member = bot.guild.get_member(id)
