@@ -62,7 +62,8 @@ class Stats:
             return
 
         database.cur.execute("SELECT captainID FROM teamtable WHERE teamname='%s';" % team.teamname)
-        e = discord.Embed(title=team.teamname, description="Captain: %s" % database.username(database.cur.fetchone()[0]), colour=discord.Colour.blue())
+        captainid = database.cur.fetchone()[0]
+        e = discord.Embed(title=team.teamname, description="Captain: %s" % database.username(captainid), colour=discord.Colour.blue())
         elo = 0
         teamsize = 0
         database.cur.execute("SELECT discordID, elo FROM playerTable WHERE team='%s' AND isPrimary=true;" % team.teamname)
@@ -96,7 +97,7 @@ class Stats:
             astr = "*This team does not have any awards.*"
         e.add_field(name="Awards", value=astr)
         rstr = "This team's captain has not set their region."
-        captain = bot.guild.get_member(team.captain)
+        captain = bot.guild.get_member(captainid)
         if bot.guild.get_role(bot.NA_ROLE) in captain.roles:
             rtsr = "🇺🇸 North America"
         elif bot.guild.get_role(bot.EU_ROLE) in captain.roles:
