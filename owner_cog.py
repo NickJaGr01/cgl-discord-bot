@@ -117,6 +117,10 @@ class Owner:
         database.cur.execute("SELECT teamname, captainid FROM teamtable;")
         allteams = database.cur.fetchall()
         for team in allteams:
+            if team[0] == "Dont know":
+                database.cur.execute("DELETE FROM teamtable WHERE teamname='%s';" % team[0])
+                database.conn.commit()
+                continue
             cmember = bot.guild.get_member(team[1])
             database.cur.execute("SELECT team FROM playertable WHERE discordid=%s;" % team[1])
             cteam = database.cur.fetchone()[0]
