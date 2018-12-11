@@ -53,7 +53,7 @@ class Teams:
             await ctx.send("The team name '%s' is already taken. Please choose another name." % teamname)
             return
         #create the team
-        teamrole = await bot.guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True)
+        teamrole = await bot.guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, mentionable=True)
         await teamrole.edit(permissions=bot.guild.get_role(bot.MEMBER_ROLE).permissions)
         member = bot.guild.get_member(ctx.author.id)
         await member.add_roles(teamrole, bot.guild.get_role(bot.CAPTAIN_ROLE))

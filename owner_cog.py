@@ -114,22 +114,12 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        database.cur.execute("SELECT teamname, captainid FROM teamtable;")
+        database.cur.execute("SELECT teamname, teamroleid FROM teamtable;")
         allteams = database.cur.fetchall()
         for team in allteams:
-            if team[0] == "Dont know":
-                database.cur.execute("DELETE FROM teamtable WHERE teamname='%s';" % team[0])
-                database.conn.commit()
-                continue
-            cmember = bot.guild.get_member(team[1])
-            database.cur.execute("SELECT team FROM playertable WHERE discordid=%s;" % team[1])
-            cteam = database.cur.fetchone()[0]
-            if cmember == None or cteam != team[0]:
-                database.cur.execute("DELETE FROM teamtable WHERE teamname='%s';" % team[0])
-                database.conn.commit()
-                continue
             await ctx.send(team[0])
-            await teams.update_elo(team[0])
+            role = bot.guild.get_role(team[1])
+            await role.edit(mentionable=True)
         await ctx.send("Done")
 
 bot.add_cog(Owner())
