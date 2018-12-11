@@ -114,12 +114,11 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        database.cur.execute("SELECT teamname, teamroleid FROM teamtable;")
+        database.cur.execute("SELECT teamname FROM teamtable;")
         allteams = database.cur.fetchall()
         for team in allteams:
             await ctx.send(team[0])
-            role = bot.guild.get_role(team[1])
-            await role.edit(mentionable=True)
+            await teams.update_elo(team[0])
         await ctx.send("Done")
 
 bot.add_cog(Owner())

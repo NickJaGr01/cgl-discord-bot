@@ -152,7 +152,7 @@ async def update_elo(team):
     if teamsize < 5:
         makeup = 5 - teamsize
         for x in range(makeup):
-            total += min(1300, average)
+            total += min(1150, average)
             teamsize += 1
         average = total / teamsize
     database.cur.execute("UPDATE teamtable SET elo=%s WHERE teamname='%s';" % (average, team))
