@@ -16,14 +16,24 @@ class CGLUser(commands.MemberConverter):
                 return bot.guild.get_member(discordid[0])
         return None
 
-class CGLTeam(commands.Converter):
+class CGLTeam(commands.RoleConverter):
     async def convert(cls, ctx, argument):
-        database.cur.execute("SELECT teamname, captainID FROM teamTable WHERE lower(teamname)='%s';" % argument.lower())
+        teamname = None
+        try:
+            trole = await super().convert(ctx, argument)
+            database.cur.execute("SELECT teamname FROM teamTable WHERE teamroleid=%s;" % trole.id)
+            teamname = database.cur.fetchone()
+            if teamname == None:
+                return None
+            teamname = teamname[0]
+        except:
+            database.cur.execute("SELECT teamname FROM teamTable WHERE lower(teamname)='%s';" % argument.lower())
+            teamname = database.cur.fetchone()
+            if teamname == None:
+                return None
+            teamname = teamname[0]
+        database.cur.execute("SELECT teamname, captainID FROM teamTable WHERE teamname='%s';" % teamname)
         data = database.cur.fetchone()
-        if data == None:
-            #could not find team
-            return None
-        teamname = data[0]
         team = Team(teamname)
         captainID = data[1]
         team.captain = captainID
