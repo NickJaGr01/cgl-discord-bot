@@ -118,7 +118,7 @@ class Stats:
         str = ""
         for trole, telo in teams[rank:end]:
             rank += 1
-            str += "\n%s) %s - %s" % (rank, bot.guild.get_role(tname).mention, telo)
+            str += "\n%s) %s - %s" % (rank, bot.guild.get_role(trole).mention, telo)
         e.add_field(name="Teams - Elo", value=str)
         e.set_footer(text="\nPage %s of %s" % (page+1, math.ceil(teamcount/10)))
         await ctx.send(embed=e)
