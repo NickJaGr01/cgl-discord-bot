@@ -107,7 +107,7 @@ class Stats:
         """displays the top teams by elo 10
         10 teams per page"""
         page -= 1
-        database.cur.execute("SELECT teamname, elo FROM teamtable ORDER BY elo DESC;")
+        database.cur.execute("SELECT teamroleid, elo FROM teamtable ORDER BY elo DESC;")
         teams = database.cur.fetchall()
         teamcount = len(teams)
         rank = page*10
@@ -116,9 +116,9 @@ class Stats:
             end = -1
         e = discord.Embed(colour=discord.Colour.blue())
         str = ""
-        for tname, telo in teams[rank:end]:
+        for trole, telo in teams[rank:end]:
             rank += 1
-            str += "\n%s) %s - %s" % (rank, tname, telo)
+            str += "\n%s) %s - %s" % (rank, bot.guild.get_role(tname).mention, telo)
         e.add_field(name="Teams - Elo", value=str)
         e.set_footer(text="\nPage %s of %s" % (page+1, math.ceil(teamcount/10)))
         await ctx.send(embed=e)
