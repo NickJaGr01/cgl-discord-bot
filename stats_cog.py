@@ -64,7 +64,6 @@ class Stats:
         database.cur.execute("SELECT captainID FROM teamtable WHERE teamname='%s';" % team.teamname)
         captainid = database.cur.fetchone()[0]
         e = discord.Embed(title=team.teamname, description="Captain: %s" % database.username(captainid), colour=discord.Colour.blue())
-        elo = 0
         teamsize = 0
         database.cur.execute("SELECT discordID, elo FROM playerTable WHERE team='%s' AND isPrimary=true;" % team.teamname)
         primary = database.cur.fetchall()
@@ -73,8 +72,6 @@ class Stats:
             if len(str) > 0:
                 str += "\n"
             str += "%s" % bot.get_user(p[0]).mention
-            elo += p[1]
-            teamsize += 1
         if len(str) > 0:
             e.add_field(name="Primary", value=str)
         database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
@@ -86,9 +83,7 @@ class Stats:
             str += "%s" % bot.get_user(p[0]).mention
         if len(str) > 0:
             e.add_field(name="Subs", value=str)
-        if teamsize == 0:
-            teamsize = 1
-        elo = int(elo/teamsize)
+        elo = database.team_elo(team.teamname)
         e.add_field(name="Team Elo", value=elo)
         str = ""
         for award in team.awards:
