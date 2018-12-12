@@ -121,9 +121,4 @@ class Owner:
             await teams.update_elo(team[0])
         await ctx.send("Done")
 
-    @commands.command(pass_context=True)
-    @checks.is_registered()
-    async def test(self, ctx):
-        await ctx.send("hello")
-
 bot.add_cog(Owner())

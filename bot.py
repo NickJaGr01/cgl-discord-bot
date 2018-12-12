@@ -59,7 +59,7 @@ async def on_ready() :
     bot.STANDIN_CHANNEL = int(os.environ['STANDIN_CHANNEL'])
     bot.TEAMS_BOTTOM_END_ROLE = int(os.environ['TEAMS_BOTTOM_END_ROLE'])
     bot.TEAMS_TOP_END_ROLE = int(os.environ['TEAMS_TOP_END_ROLE'])
-    bot.MAX_TEAM_SIZE = 12
+    bot.MAX_TEAM_SIZE = 7
 
     #bot.task = asyncio.create_task(background_thread())
 
