@@ -28,6 +28,11 @@ async def on_message(msg):
                 database.cur.execute("UPDATE settings SET int=%s WHERE key='last_sponsor_id';" % newmsg.id)
     await bot.process_commands(msg)
 
+async def on_message_delete(msg):
+    e = discord.Embed(title="Deleted Message", description=msg.author.mention, colour=discord.Colour.blue())
+    e.add_field(name="Sent at %s" % msg.created_at, value=msg.content)
+    await bot.guild.get_channel(bot.MESSAGE_LOG_CHANNEL).send(embed=e)
+
 @bot.event
 async def on_reaction_add(reaction, user):
     if user.id != bot.appinfo.id:

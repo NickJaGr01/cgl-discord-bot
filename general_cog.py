@@ -43,7 +43,7 @@ class General:
             database.cur.execute("INSERT INTO playerTable (discordID, username, elo, rep, stats, awards, isprimary) VALUES (%s, '%s', %s, %s, '%s', '{}', false);" % (ctx.author.id, username, 1300, 100, json.dumps(PLAYER_STATS_DICT)))
             database.conn.commit()
             await ctx.author.send("You have been suggessfully registered. Welcome to CGL!")
-            await utils.log("%s registered as %s." % (ctx.author.mention, username))
+            await utils.log("%s registered." % (ctx.author.mention)
         else:
             await ctx.send("The username %s is not available. Please choose another one to register for CGL." % username)
 
