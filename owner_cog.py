@@ -13,18 +13,19 @@ NOT_OWNER_MESSAGE = "This command is only for use by the owner."
 class Owner:
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def giveelo(self, ctx, target: CGLUser, delo: int):
+    async def giveelo(self, ctx, delo: int, *players: CGLUser):
         """change a player's elo"""
-        elo = database.player_elo(target.id)
-        elo += delo
-        database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, target.id))
-        database.conn.commit()
-        targetusername = database.username(target.id)
-        await ctx.send("%s has been given %s elo." % (targetusername, delo))
-        await utils.log("OWNER: %s gave %s elo to %s." % (database.username(ctx.author.id), delo, targetusername))
-        pteam = database.player_team(target.id)
-        if pteam != None:
-            await teams.update_elo(team)
+        for target in players:
+            elo = database.player_elo(target.id)
+            elo += delo
+            database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, target.id))
+            database.conn.commit()
+            targetusername = database.username(target.id)
+            await utils.log("OWNER: %s gave %s elo to %s." % (database.username(ctx.author.id), delo, targetusername))
+            pteam = database.player_team(target.id)
+            if pteam != None:
+                await teams.update_elo(team)
+        await ctx.send("Those players have been given %s elo." % delo)
 
     @commands.command(pass_context=True)
     @commands.is_owner()
