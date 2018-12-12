@@ -65,7 +65,7 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def adjuststats(self, ctx, map, team1size: int, team1score: int, team2score: int, *players: CGLUser):
+    async def adjuststats(self, ctx, fillteam: bool=False, map, team1size: int, team1score: int, team2score: int, *players: CGLUser):
         """adjust stats after a match"""
         k_factor = 128
         affectedteams = []
@@ -105,8 +105,6 @@ class Owner:
             elo += delo2
             database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, p.id))
             await utils.log("%s has been given %s elo." % (database.username(p.id), delo2))
-        database.conn.commit()
-        await ctx.send("Elo has been updated for those players.")
         for at in affectedteams:
             await teams.update_elo(at)
         #update map stats for players and teams
@@ -155,6 +153,7 @@ class Owner:
             total += 1
             database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, team))
         database.conn.commit()
+        await ctx.send("Stats have been updated for those players.")
 
 
 
