@@ -65,7 +65,7 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def adjuststats(self, ctx, fillteam: bool, teammatch: bool, map, team1size: int, team1score: int, team2score: int, *players: CGLUser):
+    async def adjustelo(self, ctx, fillteam: bool, team1size: int, team1score: int, team2score: int, *players: CGLUser):
         """adjust stats after a match"""
         async with ctx.channel.typing():
             k_factor = 128
@@ -106,53 +106,25 @@ class Owner:
                 elo += delo2
                 database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, p.id))
                 await utils.log("%s has been given %s elo." % (database.username(p.id), delo2))
-            #update map stats for players and teams
-            result = 1 if team1score > team2score else 0
-            teams = []
-            for p in players[:team1size]:
-                thisteam = database.player_team(p.id)
-                if thisteam != None and thisteam not in teams:
-                    database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, map, thisteam))
-                    wins, total = database.cur.fetchone()
-                    wins = int(wins)
-                    total = int(total)
-                    wins += result
-                    total += 1
-                    database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, thisteam))
-                    teams.append(thisteam)
-                database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM playertable WHERE discordid=%s;" % (map, map, p.id))
-                wins, total = database.cur.fetchone()
-                wins = int(wins)
-                total = int(total)
-                wins += result
-                total += 1
-                database.cur.execute("UPDATE playertable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE discordid=%s;"% (map, wins, map, total, p.id))
-            result = (result - 1) * -1
-            teams = []
-            for p in players[:team1size]:
-                thisteam = database.player_team(p.id)
-                if thisteam != None and thisteam not in teams:
-                    database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, map, thisteam))
-                    wins, total = database.cur.fetchone()
-                    wins = int(wins)
-                    total = int(total)
-                    wins += result
-                    total += 1
-                    database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, thisteam))
-                    teams.append(thisteam)
-                database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM playertable WHERE discordid=%s;" % (map, map, p.id))
-                wins, total = database.cur.fetchone()
-                wins = int(wins)
-                total = int(total)
-                wins += result
-                total += 1
-                database.cur.execute("UPDATE playertable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE discordid=%s;"% (map, wins, map, total, p.id))
             database.conn.commit()
             for at in affectedteams:
                 await teams.update_elo(at)
-            await ctx.send("Stats have been updated for those players.")
+            await ctx.send("Elo has been updated for those players.")
 
-
+    @commands.command(pass_context=True)
+    @commands.is_owner()
+    async def adjustteamstats(self, ctx, map, win: bool, *, team: CGLTeam):
+        async with ctx.channel.typing():
+            database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, map, thisteam))
+            wins, total = database.cur.fetchone()
+            wins = int(wins)
+            total = int(total)
+            wins += result
+            total += 1
+            database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, thisteam))
+            teams.append(thisteam)
+            database.conn.commit()
+            await ctx.send("That team's stats have been updated.")
 
     @commands.command(pass_context=True)
     @commands.is_owner()
