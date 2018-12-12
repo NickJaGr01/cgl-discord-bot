@@ -114,12 +114,16 @@ class Owner:
                 if thisteam != None and thisteam not in teams:
                     database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, map, thisteam))
                     wins, total = database.cur.fetchone()
+                    wins = int(wins)
+                    total = int(total)
                     wins += result
                     total += 1
                     database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, thisteam))
                     teams.append(thisteam)
                 database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM playertable WHERE discordid=%s;" % (map, map, p.id))
                 wins, total = database.cur.fetchone()
+                wins = int(wins)
+                total = int(total)
                 wins += result
                 total += 1
                 database.cur.execute("UPDATE playertable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE discordid=%s;"% (map, wins, map, total, p.id))
@@ -130,12 +134,16 @@ class Owner:
                 if thisteam != None and thisteam not in teams:
                     database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, map, thisteam))
                     wins, total = database.cur.fetchone()
+                    wins = int(wins)
+                    total = int(total)
                     wins += result
                     total += 1
                     database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, thisteam))
                     teams.append(thisteam)
                 database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM playertable WHERE discordid=%s;" % (map, map, p.id))
                 wins, total = database.cur.fetchone()
+                wins = int(wins)
+                total = int(total)
                 wins += result
                 total += 1
                 database.cur.execute("UPDATE playertable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE discordid=%s;"% (map, wins, map, total, p.id))
