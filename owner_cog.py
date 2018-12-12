@@ -65,7 +65,7 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def adjuststats(self, ctx, fillteam: bool, map, team1size: int, team1score: int, team2score: int, *players: CGLUser):
+    async def adjuststats(self, ctx, fillteam: bool, teammatch: bool, map, team1size: int, team1score: int, team2score: int, *players: CGLUser):
         """adjust stats after a match"""
         k_factor = 128
         affectedteams = []
@@ -75,12 +75,12 @@ class Owner:
         for p in players[:team1size]:
             team1avg += database.player_elo(p.id)
             pteam = database.player_team(p.id)
-            if pteam not in affectedteams:
+            if pteam != None and pteam not in affectedteams:
                 affectedteams.append(pteam)
         for p in players[team1size:]:
             team2avg += database.player_elo(p.id)
             pteam = database.player_team(p.id)
-            if pteam not in affectedteams:
+            if pteam != None and pteam not in affectedteams:
                 affectedteams.append(pteam)
         team2size = len(players)-team1size
         if fillteam:
@@ -105,54 +105,42 @@ class Owner:
             elo += delo2
             database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, p.id))
             await utils.log("%s has been given %s elo." % (database.username(p.id), delo2))
-        for at in affectedteams:
-            await teams.update_elo(at)
         #update map stats for players and teams
         result = 1 if team1score > team2score else 0
-        team = None
-        sameteam = True
+        teams = []
         for p in players[:team1size]:
-            database.cur.execute("SELECT team FROM playertable WHERE discordid=%s;" % p.id)
-            thisteam = database.cur.fetchone()[0]
-            if team == None:
-                team = thisteam
-            else:
-                if thisteam != team:
-                    sameteam = False
+            thisteam = database.player_team(p.id)
+            if thisteam != None and thisteam not in teams:
+                database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' FROM teamtable WHERE teamname='%s';" % (map, map, thisteam))
+                wins, total = database.cur.fetchone()
+                wins += result
+                total += 1
+                database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, thisteam))
+                teams.append(thisteam)
             database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' FROM playertable WHERE discordid=%s;" % (map, map, p.id))
             wins, total = database.cur.fetchone()
             wins += result
             total += 1
             database.cur.execute("UPDATE playertable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE discordid=%s;"% (map, wins, map, total, p.id))
-        if sameteam:
-            database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' FROM teamtable WHERE teamname='%s';" % (map, map, team))
-            wins, total = database.cur.fetchone()
-            wins += result
-            total += 1
-            database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, team))
         result = (result - 1) * -1
-        team = None
-        sameteam = True
-        for p in players[team1size:]:
-            database.cur.execute("SELECT team FROM playertable WHERE discordid=%s;" % p.id)
-            thisteam = database.cur.fetchone()[0]
-            if team == None:
-                team = thisteam
-            else:
-                if thisteam != team:
-                    sameteam = False
+        teams = []
+        for p in players[:team1size]:
+            thisteam = database.player_team(p.id)
+            if thisteam != None and thisteam not in teams:
+                database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' FROM teamtable WHERE teamname='%s';" % (map, map, thisteam))
+                wins, total = database.cur.fetchone()
+                wins += result
+                total += 1
+                database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, thisteam))
+                teams.append(thisteam)
             database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' FROM playertable WHERE discordid=%s;" % (map, map, p.id))
             wins, total = database.cur.fetchone()
             wins += result
             total += 1
             database.cur.execute("UPDATE playertable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE discordid=%s;"% (map, wins, map, total, p.id))
-        if sameteam:
-            database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' FROM teamtable WHERE teamname='%s';" % (map, map, team))
-            wins, total = database.cur.fetchone()
-            wins += result
-            total += 1
-            database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, team))
         database.conn.commit()
+        for at in affectedteams:
+            await teams.update_elo(at)
         await ctx.send("Stats have been updated for those players.")
 
 

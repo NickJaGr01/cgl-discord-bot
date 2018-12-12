@@ -141,7 +141,6 @@ async def disband_team(team, message):
     await utils.log("%s has been disbanded." % team)
 
 async def update_elo(team):
-    print(team)
     database.cur.execute("SELECT elo FROM playertable WHERE team='%s';" % team)
     elos = database.cur.fetchall()
     total = 0
