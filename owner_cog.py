@@ -65,7 +65,7 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def adjuststats(self, ctx, fillteam: bool=False, map, team1size: int, team1score: int, team2score: int, *players: CGLUser):
+    async def adjuststats(self, ctx, fillteam: bool, map, team1size: int, team1score: int, team2score: int, *players: CGLUser):
         """adjust stats after a match"""
         k_factor = 128
         affectedteams = []
