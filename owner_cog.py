@@ -120,6 +120,7 @@ class Owner:
     @commands.is_owner()
     async def reportmatch(self, ctx, map, win: bool, *, team: CGLTeam):
         async with ctx.channel.typing():
+            result = 1 if win else 0
             database.cur.execute("SELECT stats->'maps'->'%s'->>'wins' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, team))
             wins = database.cur.fetchone()
             database.cur.execute("SELECT stats ->'maps'->'%s'->>'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, team))
