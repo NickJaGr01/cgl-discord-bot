@@ -127,7 +127,6 @@ class Owner:
             wins += result
             total += 1
             database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, team))
-            teams.append(thisteam)
             database.conn.commit()
             await ctx.send("That team's stats have been updated.")
 
