@@ -15,20 +15,21 @@ class Owner:
     @commands.is_owner()
     async def giveelo(self, ctx, delo: int, *players: CGLUser):
         """change a player's elo"""
-        affectedteams = []
-        for target in players:
-            elo = database.player_elo(target.id)
-            elo += delo
-            database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, target.id))
-            targetusername = database.username(target.id)
-            await utils.log("OWNER: %s gave %s elo to %s." % (database.username(ctx.author.id), delo, targetusername))
-            pteam = database.player_team(target.id)
-            if pteam != None:
-                affectedteams.append(pteam)
-        database.conn.commit()
-        for at in affectedteams:
-            await teams.update_elo(at)
-        await ctx.send("Those players have been given %s elo." % delo)
+        async with ctx.channel.typing():
+            affectedteams = []
+            for target in players:
+                elo = database.player_elo(target.id)
+                elo += delo
+                database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, target.id))
+                targetusername = database.username(target.id)
+                await utils.log("OWNER: %s gave %s elo to %s." % (database.username(ctx.author.id), delo, targetusername))
+                pteam = database.player_team(target.id)
+                if pteam != None and pteam not in affectedteams:
+                    affectedteams.append(pteam)
+            database.conn.commit()
+            for at in affectedteams:
+                await teams.update_elo(at)
+            await ctx.send("Those players have been given %s elo." % delo)
 
     @commands.command(pass_context=True)
     @commands.is_owner()
@@ -117,15 +118,15 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def adjustteamstats(self, ctx, map, win: bool, *, team: CGLTeam):
+    async def reportmatch(self, ctx, map, win: bool, *, team: CGLTeam):
         async with ctx.channel.typing():
-            database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, map, thisteam))
+            database.cur.execute("SELECT stats -> 'maps' -> '%s' ->> 'wins', stats -> 'maps' -> '%s' ->> 'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, map, team))
             wins, total = database.cur.fetchone()
             wins = int(wins)
             total = int(total)
             wins += result
             total += 1
-            database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, thisteam))
+            database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, team))
             teams.append(thisteam)
             database.conn.commit()
             await ctx.send("That team's stats have been updated.")
