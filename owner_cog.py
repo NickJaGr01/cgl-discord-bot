@@ -121,9 +121,9 @@ class Owner:
     async def reportmatch(self, ctx, map, win: bool, *, team: CGLTeam):
         async with ctx.channel.typing():
             database.cur.execute("SELECT stats->'maps'->'%s'->>'wins' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, team))
-            wins = database.cur.fetchone()[0]
+            wins = database.cur.fetchone()
             database.cur.execute("SELECT stats ->'maps'->'%s'->>'total' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, team))
-            total = int(database.cur.fetchone()[0])
+            total = database.cur.fetchone()
             wins += result
             total += 1
             database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, team))
