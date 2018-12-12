@@ -15,16 +15,19 @@ class Owner:
     @commands.is_owner()
     async def giveelo(self, ctx, delo: int, *players: CGLUser):
         """change a player's elo"""
+        affectedteams = []
         for target in players:
             elo = database.player_elo(target.id)
             elo += delo
             database.cur.execute("UPDATE playerTable SET elo=%s WHERE discordID=%s;" % (elo, target.id))
-            database.conn.commit()
             targetusername = database.username(target.id)
             await utils.log("OWNER: %s gave %s elo to %s." % (database.username(ctx.author.id), delo, targetusername))
             pteam = database.player_team(target.id)
             if pteam != None:
-                await teams.update_elo(team)
+                affectedteams.append(pteam)
+        database.conn.commit()
+        for at in affectedteams:
+            await teams.update_elo(at)
         await ctx.send("Those players have been given %s elo." % delo)
 
     @commands.command(pass_context=True)
