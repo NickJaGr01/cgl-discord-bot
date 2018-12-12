@@ -6,8 +6,6 @@ import database
 def is_registered():
     async def predicate(ctx):
         reg = database.user_registered(ctx.author.id)
-        if not reg:
-            await ctx.send(bot.NOT_REGISTERED_MESSAGE)
         return reg
     return commands.check(predicate)
 
