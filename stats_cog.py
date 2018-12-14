@@ -18,7 +18,7 @@ class Stats:
         database.cur.execute("SELECT faceitname FROM playerTable WHERE discordID=%s;" % player.id)
         faceitlink = database.cur.fetchone()[0]
         if faceitlink != None:
-            faceitname = faceitlink[faceitlink.index("/")+1:]
+            faceitname = faceitlink[faceitlink.rfind("/")+1:]
             e.add_field(name="FACEIT", value="[%s](%s)" % (faceitname, faceitlink))
         e.add_field(name="Elo", value=database.player_elo(player.id)).add_field(name="Rep", value=database.player_rep(player.id))
         team = database.player_team(player.id)
