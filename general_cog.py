@@ -95,7 +95,7 @@ class General:
     @commands.command(pass_context=True)
     @checks.is_registered()
     async def setfaceitlink(self, ctx, *, profile_link):
-        """set your FACEIT name and get the invite link for your region's FACEIT hub"""
+        """set your FACEIT profile link"""
         member = bot.guild.get_member(ctx.author.id)
         r = requests.get(profile_link)
         if r.status_code != 200:
@@ -104,7 +104,7 @@ class General:
         database.cur.execute("UPDATE playerTable SET faceitname='%s' WHERE discordID=%s;" % (profile_link, ctx.author.id))
         database.conn.commit()
         await ctx.send("Your FACEIT link has been updated.")
-        await utils.log("%s set their FACEIT to <%s>." % (database.username(ctx.author.id), profile_name))
+        await utils.log("%s set their FACEIT to <%s>." % (database.username(ctx.author.id), profile_link))
 
     @commands.command(pass_context=True)
     @checks.is_registered()
