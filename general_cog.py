@@ -98,7 +98,7 @@ class General:
         """set your FACEIT name and get the invite link for your region's FACEIT hub"""
         member = bot.guild.get_member(ctx.author.id)
         r = requests.get(profile_link)
-        if requests.status_code != 200:
+        if r.status_code != 200:
             await ctx.send("That is not a valid link.")
             return
         database.cur.execute("UPDATE playerTable SET faceitname='%s' WHERE discordID=%s;" % (profile_link, ctx.author.id))
