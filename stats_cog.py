@@ -16,10 +16,10 @@ class Stats:
             return
         e = discord.Embed(title=database.username(player.id), description=player.mention, colour=discord.Colour.blue())
         database.cur.execute("SELECT faceitname FROM playerTable WHERE discordID=%s;" % player.id)
-        faceitname = database.cur.fetchone()[0]
-        if faceitname == None:
-            faceitname = "*This player has not connected their FACEIT.*"
-        e.add_field(name="FACEIT", value="<%s>" % faceitname)
+        faceitlink = database.cur.fetchone()[0]
+        if faceitlink != None:
+            faceitname = faceitlink[faceitlink.index("/")+1:]
+            e.add_field(name="FACEIT", value="[%s](%s)" % (faceitname, faceitlink))
         e.add_field(name="Elo", value=database.player_elo(player.id)).add_field(name="Rep", value=database.player_rep(player.id))
         team = database.player_team(player.id)
         if team == None:
