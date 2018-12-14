@@ -120,8 +120,6 @@ class Owner:
     @commands.is_owner()
     async def reportmatch(self, ctx, map, win: bool, *, team: CGLTeam):
         async with ctx.channel.typing():
-            database.cur.execute("SELECT stats FROM teamtable WHERE teamname='%s';" % team)
-            print(database.cur.fetchone())
             result = 1 if win else 0
             database.cur.execute("SELECT stats->'maps'->'%s'->>'wins' AS INTEGER FROM teamtable WHERE teamname='%s';" % (map, team))
             wins = database.cur.fetchone()
@@ -132,6 +130,14 @@ class Owner:
             database.cur.execute("UPDATE teamtable SET stats->'maps'->'%s'->>'wins'=%s, stats->'maps'->'%s'->>'total'=%s WHERE teamname='%s';"% (map, wins, map, total, team))
             database.conn.commit()
             await ctx.send("That team's stats have been updated.")
+
+    @commands.command(pass_context=True)
+    @commands.is_owner()
+    async def o_setfaceit(self, ctx, player: CGLUser, *, faceit):
+        database.cur.execute("UPDATE playertable SET faceitname='%s' WHERE discordid=%s;" % (faceit, player.id))
+        database.conn.commit()
+        await ctx.send("That player's FACEIT has been updated.")
+        await utils.log("OWNER: %s's FACEIT has been changed to <%s>" % (database.username(player.id), faceit))
 
     @commands.command(pass_context=True)
     @commands.is_owner()

@@ -9,6 +9,7 @@ from cgl_converters import *
 from datetime import datetime
 from datetime import timedelta
 import checks
+import requests
 
 PLAYER_STATS_DICT = {
     "maps": {
@@ -93,16 +94,17 @@ class General:
 
     @commands.command(pass_context=True)
     @checks.is_registered()
-    async def setfaceitname(self, ctx, *, name):
+    async def setfaceitlink(self, ctx, *, profile_link):
         """set your FACEIT name and get the invite link for your region's FACEIT hub"""
         member = bot.guild.get_member(ctx.author.id)
-        if name == None:
-            await ctx.send("Please specify your FACEIT name.")
+        r = requests.get(profile_link)
+        if requests.status_code != 200:
+            await ctx.send("That is not a valid link.")
             return
-        database.cur.execute("UPDATE playerTable SET faceitname='%s' WHERE discordID=%s;" % (name, ctx.author.id))
+        database.cur.execute("UPDATE playerTable SET faceitname='%s' WHERE discordID=%s;" % (profile_link, ctx.author.id))
         database.conn.commit()
-        await ctx.send("Your FACEIT name has been updated.")
-        await utils.log("%s set their FACEIT name to %s." % (database.username(ctx.author.id), name))
+        await ctx.send("Your FACEIT link has been updated.")
+        await utils.log("%s set their FACEIT to <%s>." % (database.username(ctx.author.id), profile_name))
 
     @commands.command(pass_context=True)
     @checks.is_registered()
