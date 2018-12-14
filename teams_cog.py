@@ -241,7 +241,7 @@ class Teams:
         msg = "Please select your team's primary players.\nThen select ✅ ."
         index = 0
         for p in players:
-            msg += "\n%s" % (emojis[index], bot.get_user(p[0]).mention)
+            msg += "\n%s %s" % (emojis[index], bot.get_user(p[0]).mention)
             index += 1
         message = await ctx.author.send(msg)
         for i in range(index):
