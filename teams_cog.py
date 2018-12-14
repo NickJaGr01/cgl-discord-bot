@@ -221,10 +221,10 @@ class Teams:
             return
         database.cur.execute("UPDATE teamTable SET captainID=%s WHERE teamname='%s';" % (player.id, team))
         database.conn.commit()
-        await target.add_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
+        await player.add_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
         await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
-        await target.send("You have been made the new captain of your team.")
-        targetusername = database.username(target.id)
+        await player.send("You have been made the new captain of your team.")
+        targetusername = database.username(player.id)
         await ctx.send("%s has been made the new captain of %s." % (targetusername, team))
         await utils.log("%s made %s the captain of %s." % (database.username(ctx.author.id), targetusername, team))
 
