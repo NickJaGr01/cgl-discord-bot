@@ -11,7 +11,7 @@ async def process_get_roles(reaction, user):
                     if r.count == 2:
                         if role not in member.roles:
                             await member.add_roles(role)
-                    else if r.count == 1:
+                    elif r.count == 1:
                         if role in member.roles:
                             await member.remove_roles(role)
             await user.send("Your roles have been updated")
