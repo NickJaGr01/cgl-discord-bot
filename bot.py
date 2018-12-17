@@ -62,6 +62,7 @@ async def on_ready() :
     bot.TEAMS_TOP_END_ROLE = int(os.environ['TEAMS_TOP_END_ROLE'])
     bot.MESSAGE_LOG_CHANNEL = int(os.environ['MESSAGE_LOG_CHANNEL'])
     bot.MAX_TEAM_SIZE = 7
+    bot.LIST_EMOJIS = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣"]
 
     #bot.task = asyncio.create_task(background_thread())
 

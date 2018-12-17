@@ -36,6 +36,7 @@ async def on_message_delete(msg):
 
 @bot.event
 async def on_reaction_add(reaction, user):
+    print(reaction.emoji)
     if user.id != bot.appinfo.id:
         if reaction.message.author.id == bot.appinfo.id:
             await teams.process_invite(reaction, user)

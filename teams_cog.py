@@ -229,7 +229,6 @@ class Teams:
     @checks.is_captain()
     async def editroster(self, ctx):
         """set primary and substitute team members"""
-        emojis = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣"]
         #check that the user is the captain of a team
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
         team = database.cur.fetchone()[0]
@@ -238,11 +237,11 @@ class Teams:
         msg = "Please select your team's primary players.\nThen select ✅ ."
         index = 0
         for p in players:
-            msg += "\n%s %s" % (emojis[index], bot.get_user(p[0]).mention)
+            msg += "\n%s %s" % (bot.LIST_EMOJIS[index], bot.get_user(p[0]).mention)
             index += 1
         message = await ctx.author.send(msg)
         for i in range(index):
-            await message.add_reaction(emojis[i])
+            await message.add_reaction(bot.LIST_EMOJIS[i])
         await message.add_reaction("✅")
 
 bot.add_cog(Teams())

@@ -67,7 +67,6 @@ async def process_invite(reaction, user):
             await reaction.message.delete()
 
 async def process_roster_edit(reaction, user):
-    emojis = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣"]
     if reaction.message.content.startswith("Please select your team's primary players"):
         if reaction.emoji == "✅":
             database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % user.id)
@@ -80,7 +79,7 @@ async def process_roster_edit(reaction, user):
             for r in reactions:
                 if r.emoji in emojis:
                     if r.count == 2:
-                        index = emojis.index(r.emoji)
+                        index = bot.LIST_EMOJIS.index(r.emoji)
                         primary.append(players[index][0])
                         subs.remove(players[index][0])
             if len(primary) > 5:
