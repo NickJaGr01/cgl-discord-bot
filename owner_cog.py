@@ -157,11 +157,12 @@ class Owner:
     @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
-        database.cur.execute("SELECT teamname FROM teamtable;")
+        database.cur.execute("SELECT teamname, captainid FROM teamtable;")
         allteams = database.cur.fetchall()
-        for team in allteams:
-            await ctx.send(team[0])
-            await teams.update_elo(team[0])
+        for team, captain:
+            member = bot.guild.get_member(captain)
+            if member == None:
+                await teams.disband_team(team, "Your team has been disbanded because your captain has left the server.")
         await ctx.send("Done")
 
 bot.add_cog(Owner())

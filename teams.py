@@ -133,6 +133,8 @@ async def disband_team(team, message):
     database.conn.commit()
     for entry in playerids:
         member = bot.guild.get_member(entry[0])
+        if member == None:
+            continue
         await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
         if message != None:
             await member.send(message)
