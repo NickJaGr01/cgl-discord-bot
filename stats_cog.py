@@ -63,7 +63,7 @@ class Stats:
 
         database.cur.execute("SELECT captainID FROM teamtable WHERE teamname='%s';" % team.teamname)
         captainid = database.cur.fetchone()[0]
-        e = discord.Embed(title=team.teamname, description="Captain: %s" % database.username(captainid), colour=discord.Colour.blue())
+        e = discord.Embed(title=team.teamname, description="Owner: %s" % bot.guild.get_member(captainid).mention, colour=discord.Colour.blue())
         teamsize = 0
         database.cur.execute("SELECT discordID, elo FROM playerTable WHERE team='%s' AND isPrimary=true;" % team.teamname)
         primary = database.cur.fetchall()
@@ -114,7 +114,7 @@ class Stats:
 
     @commands.command(pass_context=True)
     async def teamlist(self, ctx, page: int = 1):
-        """displays the top teams by elo 10
+        """displays the top teams by elo
         10 teams per page"""
         page -= 1
         database.cur.execute("SELECT teamroleid, elo FROM teamtable ORDER BY elo DESC;")

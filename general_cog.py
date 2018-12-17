@@ -110,7 +110,7 @@ class General:
     @checks.is_registered()
     async def setroles(self, ctx, *roles):
         """set your player roles
-        valid roles are AWPer, Rifler, IGL, Entry, Lurker, Support"""
+        valid roles are Captain, AWPer, Rifler, IGL, Entry, Lurker, Support"""
         if roles == None:
             await ctx.send("Please specify your roles.")
             return

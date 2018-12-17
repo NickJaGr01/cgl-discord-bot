@@ -56,7 +56,6 @@ class Teams:
         teamrole = await bot.guild.create_role(name=teamname, colour=discord.Colour.orange(), hoist=True, mentionable=True)
         await teamrole.edit(permissions=bot.guild.get_role(bot.MEMBER_ROLE).permissions)
         member = bot.guild.get_member(ctx.author.id)
-        await member.add_roles(teamrole, bot.guild.get_role(bot.CAPTAIN_ROLE))
         await member.remove_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
         utils.escape_string(teamname)
         captainelo = database.player_elo(ctx.author.id)
@@ -205,8 +204,8 @@ class Teams:
 
     @commands.command(pass_context=True)
     @checks.is_captain()
-    async def makecaptain(self, ctx, player: CGLUser):
-        """makes the player the new captain of the user's team"""
+    async def makeowner(self, ctx, player: CGLUser):
+        """makes the player the new owner of the user's team"""
         if player == None:
             await ctx.send("Please provide a player to make the captain of your team.")
             return
@@ -221,12 +220,10 @@ class Teams:
             return
         database.cur.execute("UPDATE teamTable SET captainID=%s WHERE teamname='%s';" % (player.id, team))
         database.conn.commit()
-        await player.add_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
-        await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
-        await player.send("You have been made the new captain of your team.")
+        await player.send("You have been made the new owner of your team.")
         targetusername = database.username(player.id)
-        await ctx.send("%s has been made the new captain of %s." % (targetusername, team))
-        await utils.log("%s made %s the captain of %s." % (database.username(ctx.author.id), targetusername, team))
+        await ctx.send("%s has been made the new owner of %s." % (targetusername, team))
+        await utils.log("%s made %s the owner of %s." % (database.username(ctx.author.id), targetusername, team))
 
     @commands.command(pass_context=True)
     @checks.is_captain()
