@@ -8,7 +8,7 @@ async def process_get_roles(reaction, user):
             for r in reactions:
                 if r.emoji in bot.LIST_EMOJIS:
                     index = bot.LIST_EMOJIS.index(r.emoji)
-                    role = bot.PLAYER_ROLE_ROLES.values()[index]
+                    role = list(bot.PLAYER_ROLE_ROLES.values())[index]
                     if r.count == 2:
                         if role not in member.roles:
                             await member.add_roles(role)
