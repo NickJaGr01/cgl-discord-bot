@@ -77,7 +77,7 @@ async def process_roster_edit(reaction, user):
             primary = []
             subs = [p[0] for p in players]
             for r in reactions:
-                if r.emoji in emojis:
+                if r.emoji in bot.LIST_EMOJIS:
                     if r.count == 2:
                         index = bot.LIST_EMOJIS.index(r.emoji)
                         primary.append(players[index][0])
