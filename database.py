@@ -1,5 +1,6 @@
 import os
 import psycopg2
+from bot import bot
 
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -32,3 +33,11 @@ def player_team(discordID):
 def player_suspension(discordID):
     cur.execute("SELECT end_of_suspension FROM playerTable WHERE discordID=%s;" % discordID)
     return cur.fetchone()[0]
+
+def get_ingame_roles(discordid):
+    player = bot.guild.get_member(discordid)
+    r = []
+    for role in player.roles:
+        if role.id in bot.PLAYER_ROLE_ROLES.values():
+            r.append(role.name)
+    return r

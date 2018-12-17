@@ -72,6 +72,11 @@ class Stats:
             if len(str) > 0:
                 str += "\n"
             str += "%s" % bot.get_user(p[0]).mention
+            proles = database.get_ingame_roles(p[0])
+            if len(proles) > 0:
+                str += " - "
+                for r in proles:
+                    str += r
         if len(str) > 0:
             e.add_field(name="Primary", value=str)
         database.cur.execute("SELECT discordID FROM playerTable WHERE team='%s' AND isPrimary=false;" % team.teamname)
@@ -81,6 +86,11 @@ class Stats:
             if len(str) > 0:
                 str += "\n"
             str += "%s" % bot.get_user(p[0]).mention
+            proles = database.get_ingame_roles(p[0])
+            if len(proles) > 0:
+                str += " - "
+                for r in proles:
+                    str += r
         if len(str) > 0:
             e.add_field(name="Subs", value=str)
         elo = database.team_elo(team.teamname)
