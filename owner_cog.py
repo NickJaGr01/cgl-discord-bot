@@ -159,7 +159,7 @@ class Owner:
         """do stuff"""
         database.cur.execute("SELECT teamname, captainid FROM teamtable;")
         allteams = database.cur.fetchall()
-        for team, captain:
+        for team, captain in allteams:
             member = bot.guild.get_member(captain)
             if member == None:
                 await teams.disband_team(team, "Your team has been disbanded because your captain has left the server.")
