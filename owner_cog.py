@@ -141,6 +141,19 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
+    async def o_cleanupleftplayers(self, ctx):
+        async with ctx.channel.typing():
+            database.cur.execute("SELECT discordid, team FROM playerTable;")
+            allplayers = database.cur.fetchall()
+            for id, team in allplayers:
+                if bot.guild.get_member(id) == None:
+                    if team != None:
+                        database.cur.execute("UPDATE playertable SET team=NULL WHERE discordid=%s;" % id)
+            database.conn.commit()
+        await ctx.send("**Done**")
+
+    @commands.command(pass_context=True)
+    @commands.is_owner()
     async def dostuff(self, ctx):
         """do stuff"""
         database.cur.execute("SELECT teamname FROM teamtable;")
