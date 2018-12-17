@@ -11,6 +11,7 @@ import database
 from utils import *
 from bot import bot
 import teams
+import general
 #import roles
 
 @bot.event
@@ -41,6 +42,7 @@ async def on_reaction_add(reaction, user):
         if reaction.message.author.id == bot.appinfo.id:
             await teams.process_invite(reaction, user)
             await teams.process_roster_edit(reaction, user)
+            await general.process_get_roles(reaction, user)
         #if reaction.message.channel.id == x:
             #await roles.process_roles(reaction, user)
 

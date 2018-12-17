@@ -111,25 +111,15 @@ class General:
     async def setroles(self, ctx, *roles):
         """set your player roles
         valid roles are Captain, AWPer, Rifler, IGL, Entry, Lurker, Support"""
-        if roles == None:
-            await ctx.send("Please specify your roles.")
-            return
-        member = bot.guild.get_member(ctx.author.id)
-        badroles = ""
-        goodroles = ""
-        for r in bot.PLAYER_ROLE_ROLES.values():
-            await member.remove_roles(bot.guild.get_role(r))
-        for r in roles:
-            if r.lower() not in bot.PLAYER_ROLE_ROLES:
-                badroles += "%s, " % r
-            else:
-                role = bot.guild.get_role(bot.PLAYER_ROLE_ROLES[r.lower()])
-                await member.add_roles(role)
-                goodroles += "%s, " % role.name
-        await ctx.send("Your roles have been updated.")
-        if len(badroles) > 0:
-            await ctx.send("The roles %s were not granted because they do not exist." % badroles[:-2])
-        await utils.log("%s set their in-game roles to: %s" % (database.username(ctx.author.id), goodroles[:-2]))
+        str = "Please select your roles.\nThen select ✅ ."
+        index = 0
+        for r in bot.PLAYER_ROLE_ROLES:
+            str += "\n%s %s" % (bot.LIST_EMOJIS[index], r)
+            index += 1
+        msg = await ctx.author.send(str)
+        for x in range(len(bot.PLAYER_ROLE_ROLES)):
+            await msg.add_reaction(bot.LIST_EMOJIS[x])
+        await msg.add_reaction("✅")
 
     @commands.command(pass_context=True)
     @checks.is_registered()
