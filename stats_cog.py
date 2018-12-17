@@ -72,7 +72,7 @@ class Stats:
             if len(str) > 0:
                 str += "\n"
             str += "%s" % bot.get_user(p[0]).mention
-            proles = database.get_ingame_roles(p[0])
+            proles = get_ingame_roles(p[0])
             if len(proles) > 0:
                 str += " - "
                 for r in proles:
@@ -86,7 +86,7 @@ class Stats:
             if len(str) > 0:
                 str += "\n"
             str += "%s" % bot.get_user(p[0]).mention
-            proles = database.get_ingame_roles(p[0])
+            proles = get_ingame_roles(p[0])
             if len(proles) > 0:
                 str += " - "
                 for r in proles:

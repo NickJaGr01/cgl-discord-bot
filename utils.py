@@ -12,3 +12,11 @@ def ip_from_domain(domain):
 
 def escape_string(str):
     str.replace("'", "\\'")
+
+def get_ingame_roles(discordid):
+    player = bot.guild.get_member(discordid)
+    r = []
+    for role in player.roles:
+        if role.id in bot.PLAYER_ROLE_ROLES.values():
+            r.append(role.name)
+    return r
