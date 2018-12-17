@@ -47,7 +47,7 @@ async def on_ready() :
     bot.EU_HUB = os.environ['EU_HUB']
     #bot.CAPTAIN_ROLE = int(os.environ['CAPTAIN_ROLE'])
     bot.PLAYER_ROLE_ROLES = {
-        "captain": int(os.environ['CAPTAIN_ROLE'])
+        "captain": int(os.environ['CAPTAIN_ROLE']),
         "awper": int(os.environ['AWPER_ROLE']),
         "rifler": int(os.environ['RIFLER_ROLE']),
         "igl": int(os.environ['IGL_ROLE']),
