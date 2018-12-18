@@ -108,7 +108,7 @@ class General:
 
     @commands.command(pass_context=True)
     @checks.is_registered()
-    async def setroles(self, ctx, *roles):
+    async def setroles(self, ctx):
         """set your player roles
         valid roles are Captain, AWPer, Rifler, IGL, Entry, Lurker, Support"""
         str = "Please select your roles.\nThen select ✅ ."
