@@ -83,7 +83,7 @@ class Teams:
         await teamrole.edit(name=teamname)
         utils.escape_string(teamname)
         database.cur.execute("UPDATE teamtable SET teamname='%s' WHERE teamname='%s';" % (teamname, team))
-        database.cur.execute("UPDATE teamtable SET team='%s' WHERE team='%s';" % (teamname, team))
+        database.cur.execute("UPDATE playertable SET team='%s' WHERE team='%s';" % (teamname, team))
         database.conn.commit()
         await ctx.send("Your team name has been changed to %s." % teamname)
 
