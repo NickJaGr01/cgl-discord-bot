@@ -156,6 +156,7 @@ class Stats:
         str = ""
         for id, ustat in players[rank:end]:
             rank += 1
+            print(id)
             str += "\n%s) %s - %s" % (rank, bot.get_user(id).mention, ustat)
         e.add_field(name="Leaderboard - %s" % stat, value=str)
         e.set_footer(text="Page %s of %s" % (page+1, math.ceil(playercount/10)))
