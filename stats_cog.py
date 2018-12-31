@@ -155,9 +155,10 @@ class Stats:
         e = discord.Embed(colour=discord.Colour.blue())
         str = ""
         for id, ustat in players[rank:end]:
-            rank += 1
-            print(id)
-            str += "\n%s) %s - %s" % (rank, bot.get_user(id).mention, ustat)
+            user = bot.get_user(id)
+            if user != None:
+                rank += 1
+                str += "\n%s) %s - %s" % (rank, user.mention, ustat)
         e.add_field(name="Leaderboard - %s" % stat, value=str)
         e.set_footer(text="Page %s of %s" % (page+1, math.ceil(playercount/10)))
         await ctx.send(embed=e)
