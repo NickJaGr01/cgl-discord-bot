@@ -16,7 +16,6 @@ bot = commands.Bot(command_prefix='!')
 import teams
 import matches
 
-secs = 0
 async def background_thread():
     print("starting thread")
     bot.delta_time = 0
@@ -35,7 +34,9 @@ async def background_thread():
         await asyncio.sleep(1)
         print("6")
 
+secs = 0
 async def thread_update():
+    global secs
     print("update")
     await matches.check_matches()
     print("add")
