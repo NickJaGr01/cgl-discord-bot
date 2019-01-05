@@ -9,13 +9,12 @@ import math
 import asyncio
 from datetime import datetime
 import database
-import redis
 import requests
 
 bot = commands.Bot(command_prefix='!')
 
-
 import teams
+import matches
 
 secs = 0
 async def background_thread():
@@ -29,15 +28,8 @@ async def background_thread():
         await thread_update()
         await asyncio.sleep(1)
 
-REDIS_URL = os.environ['REDIS_URL']
-r = redis.Redis.from_url(REDIS_URL)
-p = r.pubsub(ignore_subscribe_messages=True)
-p.subscribe('requests')
 async def thread_update():
-    msg = p.get_message()
-    if msg != None:
-        if msg['type'] == 'message':
-            await bot.appinfo.owner.send(msg['data'])
+    await matches.check_matches()
     secs += bot.delta_time
     if secs >= 300:
         r = requests.get('https://cgl-discord-bot.herokuapp.com/')
