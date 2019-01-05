@@ -8,7 +8,6 @@ class MainHandler(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([(r"/", MainHandler),])
 
-def start_listening():
-    app = make_app()
-    app.listen(8888)
-    tornado.ioloop.IOLoop.current().start()
+app = make_app()
+app.listen(8888)
+tornado.ioloop.IOLoop.current().start()

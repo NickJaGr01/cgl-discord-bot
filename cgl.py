@@ -10,6 +10,3 @@ import stats_cog
 
 token = os.environ['DISCORD_KEY']
 bot.bot.run(token)
-
-import http_server
-http_server.start_listening()
