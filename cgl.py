@@ -8,7 +8,7 @@ import admin_cog
 import teams_cog
 import stats_cog
 
-import http
+import http_server
 http.start_listening()
 
 token = os.environ['DISCORD_KEY']
