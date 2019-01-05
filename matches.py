@@ -1,13 +1,13 @@
 class Match:
-    def __init__(self, team1, team2, map):
-        self.team1 = team1
-        self.team2 = team2
+    def __init__(self, team1_name, team1_players, team2_name, team2_players, map):
+        self.team1_name = team1_name
+        self.team1_name = team1_players
+        self.team2_name = team2_name
+        self.team2_players = team2_players
         self.map = map
 
-async def check_matches():
+def queue_match(match):
     pass
 
-
-
-def create_match():
+async def check_matches():
     pass
