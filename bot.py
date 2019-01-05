@@ -39,7 +39,6 @@ async def thread_update():
     if msg != None:
         if msg['type'] == 'message':
             await bot.appinfo.owner.send(msg['data'])
-    msg = p.get_message()
     secs += bot.delta_time
     if secs >= 300:
         r = requests.get('https://cgl-discord-bot.herokuapp.com/')
