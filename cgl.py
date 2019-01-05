@@ -9,7 +9,7 @@ import teams_cog
 import stats_cog
 
 import http_server
-http.start_listening()
+http_server.start_listening()
 
 token = os.environ['DISCORD_KEY']
 bot.bot.run(token)
