@@ -23,11 +23,17 @@ async def background_thread():
     loop = asyncio.get_event_loop()
     last_time = loop.time()
     while True:
+        print("1")
         now = loop.time()
+        print("2")
         bot.delta_time = now - last_time
+        print("3")
         last_time = now
+        print("4")
         await thread_update()
+        print("5")
         await asyncio.sleep(1)
+        print("6")
 
 async def thread_update():
     print("secs = %s" % secs)
