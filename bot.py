@@ -9,6 +9,7 @@ import math
 import asyncio
 from datetime import datetime
 import database
+import redis
 
 bot = commands.Bot(command_prefix='!')
 
@@ -23,9 +24,19 @@ async def background_thread():
         now = loop.time()
         bot.delta_time = now - last_time
         last_time = now
-        await teams.process_standins()
-
+        await thread_update()
         await asyncio.sleep(1)
+
+REDIS_URL = os.environ['REDIS_URL']
+r = redis.Redis.from_url(REDIS_URL)
+p = r.pubsub(ignore_subscribe_messages=True)
+p.subscribe('requests')
+async def thread_update():
+    msg = p.get_message()
+    while msg != None:
+        if msg['type'] == 'message':
+            await bot.appinfo.owner.send(msg['data'])
+        msg = p.get_message()
 
 @bot.event
 async def on_ready() :
@@ -65,7 +76,7 @@ async def on_ready() :
     bot.LIST_EMOJIS = ["0⃣", "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟", "🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵"]
 
 
-    #bot.task = asyncio.create_task(background_thread())
+    bot.task = asyncio.create_task(background_thread())
 
 
 
