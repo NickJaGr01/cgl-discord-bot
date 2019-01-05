@@ -14,7 +14,9 @@ class Match:
         self.id = uuid.uuid1()
 
 def queue_match(match):
-    database.cur.execute("INSERT INTO matchtable (id, team1name, team1players, team2name, team2players, map, location, finished) VALUES ('%s', '%s', '{%s}', '%s', '{%s}', '%s', '%s', false);" % (match.id, match.team1_name, (*match.team1_players, sep=", "), match.team2_name, (*match.team2_players, sep=", "), match.map, match.location))
+    t1p = *match.team1_players, sep=", "
+    t2p = *match.team2_players, sep=", "
+    database.cur.execute("INSERT INTO matchtable (id, team1name, team1players, team2name, team2players, map, location, finished) VALUES ('%s', '%s', '{%s}', '%s', '{%s}', '%s', '%s', false);" % (match.id, match.team1_name, t1p, match.team2_name, t2p, match.map, match.location))
     database.conn.commit()
 
 def start_match(match):
@@ -40,6 +42,8 @@ async def check_matches():
     completed_matches = database.cur.fetchall()
     for team1_name, team1_players, team2_name, team2_players, map, team1_score, team2_score in completed_matches:
         print("match completed")
-        await bot.appinfo.owner.send("%s (%s) - **%s**\nvs\n%s (%s) - **%s**\n%s" % (team1_name, (*team1_players, sep=", "), team1_score, team2_name, (*team2_players, sep=", "), team2_score, map))
+        t1p = *match.team1_players, sep=", "
+        t2p = *match.team2_players, sep=", "
+        await bot.appinfo.owner.send("%s (%s) - **%s**\nvs\n%s (%s) - **%s**\n%s" % (team1_name, t1p, team1_score, team2_name, t2p, team2_score, map))
     database.cur.execute("DELETE FROM matchtable WHERE finished=true;")
     database.conn.commit()
