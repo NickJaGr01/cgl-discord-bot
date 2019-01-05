@@ -36,9 +36,10 @@ async def background_thread():
         print("6")
 
 async def thread_update():
-    print("secs = %s" % secs)
+    print("update")
     await matches.check_matches()
     secs += bot.delta_time
+    print("secs = %s" % secs)
     if secs >= 300:
         r = requests.get('https://cgl-discord-bot.herokuapp.com/')
         print("ping sent")
