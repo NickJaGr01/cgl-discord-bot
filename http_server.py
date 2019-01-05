@@ -10,5 +10,7 @@ def make_app():
     return tornado.web.Application([(r"/", MainHandler),])
 
 app = make_app()
-app.listen(os.environ['PORT'])
+port = int(os.environ['PORT'])
+app.listen(port)
+print("listening to port %s" % port)
 tornado.ioloop.IOLoop.current().start()
