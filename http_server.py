@@ -55,7 +55,7 @@ class ConfigHandler(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
     (r"/", MainHandler),
-    (r"/config/(*)", ConfigHandler)
+    (r"/config/*", ConfigHandler)
     ])
 
 app = make_app()
