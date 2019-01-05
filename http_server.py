@@ -9,7 +9,7 @@ match_config = {
 	"players_per_team": 1,
 	"min_players_to_ready": 1,
 	"min_spectators_to_ready": 0,
-	"skip_veto": false,
+	"skip_veto": False,
 	"veto_first": "team1",
 	"side_type": "standard",
 
