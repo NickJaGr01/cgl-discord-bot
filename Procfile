@@ -1,2 +1,2 @@
-web: python3 http_server.py 8888
+web: python3 http_server.py $PORT
 worker: python3 cgl.py
