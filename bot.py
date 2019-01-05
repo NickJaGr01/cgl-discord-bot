@@ -10,12 +10,14 @@ import asyncio
 from datetime import datetime
 import database
 import redis
+import requests
 
 bot = commands.Bot(command_prefix='!')
 
 
 import teams
 
+secs = 0
 async def background_thread():
     bot.delta_time = 0
     loop = asyncio.get_event_loop()
@@ -37,6 +39,10 @@ async def thread_update():
         if msg['type'] == 'message':
             await bot.appinfo.owner.send(str(msg['data']))
         msg = p.get_message()
+    secs += 1
+    if secs >= 1800:
+        r = requests.get('https://cgl-discord-bot.herokuapp.com/')
+        secs = 0
 
 @bot.event
 async def on_ready() :
