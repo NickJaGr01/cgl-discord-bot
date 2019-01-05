@@ -30,16 +30,16 @@ async def background_thread():
         await asyncio.sleep(1)
 
 async def thread_update():
+    print("secs = %s" % secs)
     await matches.check_matches()
     secs += bot.delta_time
-    print("secs = %s" % secs)
     if secs >= 300:
         r = requests.get('https://cgl-discord-bot.herokuapp.com/')
         print("ping sent")
         secs = 0
 
 @bot.event
-async def on_ready() :
+async def on_ready():
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
