@@ -10,4 +10,4 @@ def queue_match(match):
     pass
 
 async def check_matches():
-    pass
+    print("check")
