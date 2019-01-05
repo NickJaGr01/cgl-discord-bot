@@ -7,6 +7,7 @@ from cgl_converters import *
 import servers
 import checks
 import teams
+import matches
 
 NOT_OWNER_MESSAGE = "This command is only for use by the owner."
 
@@ -115,6 +116,21 @@ class Owner:
             for at in affectedteams:
                 await teams.update_elo(at)
             await ctx.send("Elo has been updated for those players.")
+
+    @commands.command(pass_context=True)
+    @commands.is_owner()
+    async def creatematch(self, ctx, location, map, team1_name, team2_name, team1_size, *players: CGLUser):
+        for i in range(len(players)):
+            players[i] = players[i].id
+        team1_players = players[:team1_size]
+        team2_players = players[team1_size:]
+        match = Match(team1_name, team1_players, team2_name, team2_players, map, location)
+        matches.queue_match(match)
+        success = matches.start_match(match)
+        if success:
+            await ctx.send("Match has been started.")
+        else:
+            await ctx.send("Match could not be started.")
 
     @commands.command(pass_context=True)
     @commands.is_owner()

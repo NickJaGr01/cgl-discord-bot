@@ -17,7 +17,6 @@ import teams
 import matches
 
 async def background_thread():
-    print("starting thread")
     bot.delta_time = 0
     loop = asyncio.get_event_loop()
     last_time = loop.time()

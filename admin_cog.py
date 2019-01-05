@@ -81,17 +81,19 @@ class Admin:
     @server.command(pass_context=True)
     @commands.has_role('League Admin')
     async def list(self, ctx):
-        database.cur.execute("SELECT servername, location, up FROM servertable;")
-        serverlist = database.cur.fetchall()
-        str = "```\nserver name:        location:           up:\n"
-        for name, location, up in serverlist:
-            str += name
-            str = str.ljust(len(str)+(20-len(name)))
-            str += location
-            str = str.ljust(len(str)+(20-len(location)))
-            str += "%s\n" % up
-        str += "```"
-        await ctx.send(str)
+        serverlist, scode = servers.server_list()
+        if scode == 200:
+            str = "```\nserver name:        location:           up:\n"
+            for server in serverlist:
+                str += server['name']
+                str = str.ljust(len(str)+(20-len(server['name'])))
+                str += server['location']
+                str = str.ljust(len(str)+(20-len(server['location'])))
+                str += "%s\n" % server['on']
+            str += "```"
+            await ctx.send(str)
+        else:
+            await ctx.send("There was an error retrieving the server list.")
     @server.command(pass_context=True)
     @commands.has_role('League Admin')
     async def info(self, ctx, servername):
@@ -114,8 +116,6 @@ class Admin:
     async def start(self, ctx, servername):
         scode = servers.start_server(servers.server_id(servername))
         if scode == 200:
-            database.cur.execute("UPDATE servertable SET up=true WHERE servername='%s';" % servername)
-            database.conn.commit()
             await ctx.send("Server started.")
         else:
             await ctx.send("Failed to start server.")
@@ -124,8 +124,6 @@ class Admin:
     async def stop(self, ctx, servername):
         scode = servers.stop_server(servers.server_id(servername))
         if scode == 200:
-            database.cur.execute("UPDATE servertable SET up=false WHERE servername='%s';" % servername)
-            database.conn.commit()
             await ctx.send("Server stopped.")
         else:
             await ctx.send("Failed to stop server.")
@@ -147,8 +145,6 @@ class Admin:
     async def location(self, ctx, servername, location):
         scode = servers.edit_server(servers.server_id(servername), {'location':location})
         if scode == 200:
-            database.cur.execute("UPDATE servertable SET location='%s' WHERE servername='%s';" % (location, servername))
-            database.conn.commit()
             await ctx.send("Server location has been changed.")
         else:
             await ctx.send("There was an error editing the server settings.")
@@ -157,8 +153,6 @@ class Admin:
     async def name(self, ctx, servername, newname):
         scode = servers.edit_server(servers.server_id(servername), {'name':newname})
         if scode == 200:
-            database.cur.execute("UPDATE servertable SET servername='%s' WHERE servername='%s';" % (newname, servername))
-            database.conn.commit()
             await ctx.send("Server name has been changed.")
         else:
             await ctx.send("There was an error editing the server settings.")

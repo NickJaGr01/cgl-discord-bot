@@ -7,9 +7,27 @@ login_email = os.environ['DATHOST_EMAIL']
 login_pass = os.environ['DATHOST_PASSWORD']
 rcon_pass = os.environ['RCON_PASSWORD']
 
+def find_open_server():
+    serverlist, scode = server_list()
+    serverid = None
+    for server in serverlist:
+        if not server['on']:
+            serverid = server['id']
+    return serverid
+
+def server_list():
+    r = requests.get('https://dathost.net/api/0.1/game-servers', auth=(login_email, login_pass))
+    return r.json(), r.status_code
+
 def server_id(name):
-    database.cur.execute("SELECT serverID FROM serverTable WHERE serverName='%s';" % name)
-    return database.cur.fetchone()[0]
+    r = requests.get('https://dathost.net/api/0.1/game-servers', auth=(login_email, login_pass))
+    j = r.json()
+    id = None
+    for server in j:
+        if server['name'] == name:
+            id = server['id']
+            break
+    return id
 
 def create_server(name, location, map):
     p = {
@@ -68,3 +86,4 @@ def put_console(id, line):
         'line': line
     }
     r = requests.post('https://dathost.net/api/0.1/game-servers/%s/console' % id, auth=(login_email, login_pass), data=p)
+    return r.status_code
