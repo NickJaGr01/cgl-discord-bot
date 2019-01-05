@@ -27,7 +27,7 @@ async def background_thread():
         now = loop.time()
         bot.delta_time = now - last_time
         last_time = now
-        await thread_update()
+        #await thread_update()
         await asyncio.sleep(1)
 
 REDIS_URL = os.environ['REDIS_URL']
