@@ -36,10 +36,10 @@ p = r.pubsub(ignore_subscribe_messages=True)
 p.subscribe('requests')
 async def thread_update():
     msg = p.get_message()
-    while msg != None:
+    if msg != None:
         if msg['type'] == 'message':
             await bot.appinfo.owner.send(msg['data'])
-        msg = p.get_message()
+    msg = p.get_message()
     secs += bot.delta_time
     if secs >= 300:
         r = requests.get('https://cgl-discord-bot.herokuapp.com/')
