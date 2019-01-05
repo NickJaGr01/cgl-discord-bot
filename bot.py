@@ -35,7 +35,7 @@ async def thread_update():
     msg = p.get_message()
     while msg != None:
         if msg['type'] == 'message':
-            await bot.appinfo.owner.send(msg['data'])
+            await bot.appinfo.owner.send(str(msg['data']))
         msg = p.get_message()
 
 @bot.event
