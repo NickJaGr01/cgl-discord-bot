@@ -46,6 +46,8 @@ class ConfigHandler(tornado.web.RequestHandler):
         database.cur.execute("SELECT team1name, team1players, team2name, team2players, map FROM matchtable WHERE id='%s';" % matchid)
         team1_name, team1_players, team2_name, team2_players, map = database.cur.fetchone()
         config = generate_config(team1_name, team1_players, team2_name, team2_players, map)
+        #self.content_type='application/json'
+        self.set_header("Content-Type", "application/json")
         self.write(json.dumps(config))
 
 def make_app():
