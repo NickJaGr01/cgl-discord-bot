@@ -110,7 +110,7 @@ class General:
     @checks.is_registered()
     async def setsteamid(self, ctx, steamid):
         database.cur.execute("UPDATE playertable SET steamid='%s' WHERE discordid=%s;" % (steamid, ctx.author.id))
-        database.cur.commit()
+        database.conn.commit()
         await ctx.send("Your steam id has been updated.")
 
     @commands.command(pass_context=True)
