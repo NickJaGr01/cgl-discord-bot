@@ -43,6 +43,7 @@ class MainHandler(tornado.web.RequestHandler):
 
 class ConfigHandler(tornado.web.RequestHandler):
     def get(self, matchid):
+        print("request received")
         database.cur.execute("SELECT team1name, team1players, team2name, team2players, map FROM matchtable WHERE id='%s';" % matchid)
         team1_name, team1_players, team2_name, team2_players, map = database.cur.fetchone()
         print("creating config")
@@ -55,7 +56,7 @@ class ConfigHandler(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
     (r"/", MainHandler),
-    (r"/config/([0-9]+)", ConfigHandler)
+    (r"/config/([0-9a-z+-]+)", ConfigHandler)
     ])
 
 app = make_app()
