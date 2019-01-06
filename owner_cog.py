@@ -120,10 +120,11 @@ class Owner:
     @commands.command(pass_context=True)
     @commands.is_owner()
     async def creatematch(self, ctx, location, map, team1_name, team2_name, team1_size, *players: CGLUser):
-        for i in range(len(players)):
-            players[i] = players[i].id
-        team1_players = players[:team1_size]
-        team2_players = players[team1_size:]
+        p = []
+        for player in players:
+            p.append(player.id)
+        team1_players = p[:team1_size]
+        team2_players = p[team1_size:]
         match = Match(team1_name, team1_players, team2_name, team2_players, map, location)
         matches.queue_match(match)
         server = matches.start_match(match)
