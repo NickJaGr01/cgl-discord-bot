@@ -47,6 +47,7 @@ class ConfigHandler(tornado.web.RequestHandler):
         team1_name, team1_players, team2_name, team2_players, map = database.cur.fetchone()
         config = generate_config(team1_name, team1_players, team2_name, team2_players, map)
         #self.content_type='application/json'
+        print("sending config")
         self.set_header("Content-Type", "application/json")
         self.write(config)
 
