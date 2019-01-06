@@ -36,6 +36,19 @@ match_config = {
     }
 }
 
+def generate_config(team1_name, team1_players, team2_name, team2_players, map):
+    config = match_config.copy()
+    config['matchid'] = "%s vs %s" % (team1_name, team2_name)
+    config['num_maps'] = 1
+    config['maplist'].append(map)
+    config['team1']['name'] = team1_name
+    config['team2']['name'] = team2_name
+    for p in team1_players:
+        config['team1']['players'][database.steamid(p)] = database.username(p)
+    for p in team2_players:
+        config['team2']['players'][database.steamid(p)] = database.username(p)
+    return config
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("Hello World!")
@@ -64,18 +77,3 @@ port = int(os.environ['PORT'])
 app.listen(port)
 print("listening to port %s" % port)
 tornado.ioloop.IOLoop.current().start()
-
-
-
-def generate_config(team1_name, team1_players, team2_name, team2_players, map):
-    config = match_config.copy()
-    config['matchid'] = "%s vs %s" % (team1_name, team2_name)
-    config['num_maps'] = 1
-    config['maplist'].append(map)
-    config['team1']['name'] = team1_name
-    config['team2']['name'] = team2_name
-    for p in team1_players:
-        config['team1']['players'][database.steamid(p)] = database.username(p)
-    for p in team2_players:
-        config['team2']['players'][database.steamid(p)] = database.username(p)
-    return config
