@@ -16,6 +16,8 @@ class Match:
 def queue_match(match):
     t1p = *match.team1_players, sep=", "
     t2p = *match.team2_players, sep=", "
+    print(t1p)
+    print(t2p)
     database.cur.execute("INSERT INTO matchtable (id, team1name, team1players, team2name, team2players, map, location, finished) VALUES (%s, '%s', '{%s}', '%s', '{%s}', '%s', '%s', false);" % (match.id, match.team1_name, t1p, match.team2_name, t2p, match.map, match.location))
     database.conn.commit()
 
