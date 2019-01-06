@@ -119,7 +119,7 @@ class Owner:
 
     @commands.command(pass_context=True)
     @commands.is_owner()
-    async def creatematch(self, ctx, location, map, team1_name, team2_name, team1_size, *players: CGLUser):
+    async def creatematch(self, ctx, location, map, team1_name, team2_name, team1_size: int, *players: CGLUser):
         p = []
         for player in players:
             p.append(player.id)
