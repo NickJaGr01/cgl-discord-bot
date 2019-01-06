@@ -48,7 +48,7 @@ class ConfigHandler(tornado.web.RequestHandler):
         config = generate_config(team1_name, team1_players, team2_name, team2_players, map)
         #self.content_type='application/json'
         self.set_header("Content-Type", "application/json")
-        self.write(json.dumps(config))
+        self.write(config)
 
 def make_app():
     return tornado.web.Application([
