@@ -11,12 +11,12 @@ class Match:
         self.team2_players = team2_players
         self.map = map
         self.location = location
-        self.id = uuid.uuid1()
+        self.id = uuid.uuid1().int
 
 def queue_match(match):
     t1p = *match.team1_players, sep=", "
     t2p = *match.team2_players, sep=", "
-    database.cur.execute("INSERT INTO matchtable (id, team1name, team1players, team2name, team2players, map, location, finished) VALUES ('%s', '%s', '{%s}', '%s', '{%s}', '%s', '%s', false);" % (match.id, match.team1_name, t1p, match.team2_name, t2p, match.map, match.location))
+    database.cur.execute("INSERT INTO matchtable (id, team1name, team1players, team2name, team2players, map, location, finished) VALUES (%s, '%s', '{%s}', '%s', '{%s}', '%s', '%s', false);" % (match.id, match.team1_name, t1p, match.team2_name, t2p, match.map, match.location))
     database.conn.commit()
 
 def start_match(match):
