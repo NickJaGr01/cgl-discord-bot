@@ -44,7 +44,7 @@ def start_match(match):
     scode = servers.put_console(serverid, "get5_loadmatch_url https://cgl-discord-bot.herokuapp.com/config/%s" % match.id)
     if scode != 200:
         return None
-    return servers.server_info(serverid)
+    return servers.server_info(serverid)[0]
 
 
 async def check_matches():
