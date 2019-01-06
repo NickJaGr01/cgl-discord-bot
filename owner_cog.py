@@ -125,7 +125,7 @@ class Owner:
             p.append(player.id)
         team1_players = p[:team1_size]
         team2_players = p[team1_size:]
-        match = Match(team1_name, team1_players, team2_name, team2_players, map, location)
+        match = matches.Match(team1_name, team1_players, team2_name, team2_players, map, location)
         matches.queue_match(match)
         server = matches.start_match(match)
         if server != None:
