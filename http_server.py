@@ -43,7 +43,7 @@ class MainHandler(tornado.web.RequestHandler):
 
 class ConfigHandler(tornado.web.RequestHandler):
     def get(self, matchid):
-        database.cur.execute("SELECT team1name, team1players, team2name, team2players, map FROM matchtable WHERE id=%s;" % matchid)
+        database.cur.execute("SELECT team1name, team1players, team2name, team2players, map FROM matchtable WHERE id='%s';" % matchid)
         team1_name, team1_players, team2_name, team2_players, map = database.cur.fetchone()
         config = generate_config(team1_name, team1_players, team2_name, team2_players, map)
         self.write(json.dumps(config))
