@@ -14,8 +14,12 @@ class Match:
         self.id = uuid.uuid1().int
 
 def queue_match(match):
-    t1p = *match.team1_players, sep=", "
-    t2p = *match.team2_players, sep=", "
+    t1p = ""
+    if len(match.team1_players) > 0:
+        t1p = *match.team1_players, sep=", "
+    t2p = ""
+    if len(match.team2_players) > 0:
+        t2p = *match.team2_players, sep=", "
     print(t1p)
     print(t2p)
     database.cur.execute("INSERT INTO matchtable (id, team1name, team1players, team2name, team2players, map, location, finished) VALUES (%s, '%s', '{%s}', '%s', '{%s}', '%s', '%s', false);" % (match.id, match.team1_name, t1p, match.team2_name, t2p, match.map, match.location))
