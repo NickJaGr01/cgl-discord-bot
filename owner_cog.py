@@ -126,9 +126,10 @@ class Owner:
         team2_players = players[team1_size:]
         match = Match(team1_name, team1_players, team2_name, team2_players, map, location)
         matches.queue_match(match)
-        success = matches.start_match(match)
-        if success:
-            await ctx.send("Match has been started.")
+        server = matches.start_match(match)
+        if server != None:
+            ip = utils.ip_from_domain(server['ip'])
+            await ctx.send("**game:** %s:%s" % (ip, server['ports']['game']))
         else:
             await ctx.send("Match could not be started.")
 

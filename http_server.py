@@ -2,14 +2,15 @@ import tornado.ioloop
 import tornado.web
 import database
 import os
+import json
 
 match_config = {
-	"matchid": "example_match",
-	"num_maps": 3,
-	"players_per_team": 1,
+	"matchid": "",
+	"num_maps": 1,
+	"players_per_team": 5,
 	"min_players_to_ready": 1,
 	"min_spectators_to_ready": 0,
-	"skip_veto": False,
+	"skip_veto": True,
 	"veto_first": "team1",
 	"side_type": "standard",
 
@@ -20,23 +21,23 @@ match_config = {
 	"maplist": [],
 
 	"team1": {
-		"name": "EnvyUs",
-		"tag": "EnvyUs",
-		"flag": "FR",
-		"logo": "nv",
+		"name": "",
+		"tag": "",
+		"flag": "us",
+		"logo": "nip",
 		"players": {}
 	},
 
 	"team2": {
 		"name": "",
 		"tag": "",
-		"flag": "",
-		"logo": "",
-		"players": []
+		"flag": "us",
+		"logo": "nip",
+		"players": {}
 	},
 
 	"cvars": {
-		"hostname": "Match server #1"
+		"hostname": "CGL Server"
 	}
 }
 
@@ -47,10 +48,10 @@ class MainHandler(tornado.web.RequestHandler):
 
 class ConfigHandler(tornado.web.RequestHandler):
     def get(self, matchid):
-        self.write(matchid)
-        #database.cur.execute("SELECT team1name, team1players, team2name, team2players, map FROM matchtable WHERE id='%s';" % matchid)
-        #team1_name, team1_players, team2_name, team2_players, map = database.cur.fetchone()
-        #config = generate_config(team1_name, team1_players, team2_name, team2_players, map)
+        database.cur.execute("SELECT team1name, team1players, team2name, team2players, map FROM matchtable WHERE id=%s;" % matchid)
+        team1_name, team1_players, team2_name, team2_players, map = database.cur.fetchone()
+        config = generate_config(team1_name, team1_players, team2_name, team2_players, map)
+		self.write(json.dumps(config))
 
 def make_app():
     return tornado.web.Application([
@@ -67,4 +68,14 @@ tornado.ioloop.IOLoop.current().start()
 
 
 def generate_config(team1_name, team1_players, team2_name, team2_players, map):
-    pass
+    config = match_config.copy()
+	config['matchid'] = "%s vs %s" % (team1_name, team2_name)
+	config['num_maps'] = 1
+	config['maplist'].append(map)
+	config['team1']['name'] = team1_name
+	config['team2']['name'] = team2_name
+	for p in team1_players:
+		config['team1']['players'][database.steamid(p)] = database.username(p)
+	for p in team2_players:
+		config['team2']['players'][database.steamid(p)] = database.username(p)
+	return config

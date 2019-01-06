@@ -9,6 +9,10 @@ def username(discordID):
     cur.execute("SELECT username FROM playerTable WHERE discordID=%s;" % discordID)
     return cur.fetchone()[0]
 
+def steamid(discordID):
+    cur.execute("SELECT steamid FROM playertable WHERE discordID=%s;" % discordID)
+    return cur.fetchone()[0]
+
 def user_registered(discordID):
     cur.execute("SELECT * FROM playerTable WHERE discordID=%s;" % discordID)
     return (cur.fetchone() != None)

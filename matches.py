@@ -22,19 +22,19 @@ def queue_match(match):
 def start_match(match):
     serverid = servers.find_open_server()
     if serverid == None:
-        return False
+        return None
     #move the server and start it
     scode = servers.edit_server(serverid, {'location':match.location})
     if scode != 200:
-        return False
+        return None
     scode = servers.start_server(serverid)
     if scode != 200:
-        return False
+        return None
     #tell the server to request the match config from CGL
     scode = servers.put_console(serverid, "get5_loadmatch_url https://cgl-discord-bot.herokuapp.com/config/%s" % match.id)
     if scode != 200:
-        return False
-    return True
+        return None
+    return servers.server_info(serverid)
 
 
 async def check_matches():

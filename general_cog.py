@@ -108,6 +108,13 @@ class General:
 
     @commands.command(pass_context=True)
     @checks.is_registered()
+    async def setsteamid(self, ctx, steamid):
+        database.cur.execute("UPDATE playertable SET steamid='%s' WHERE discordid=%s;" % (steamid, ctx.author.id))
+        database.cur.commit()
+        await ctx.send("Your steam id has been updated.")
+
+    @commands.command(pass_context=True)
+    @checks.is_registered()
     async def setroles(self, ctx):
         """set your player roles
         valid roles are Captain, AWPer, Rifler, IGL, Entry, Lurker, Support"""
