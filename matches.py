@@ -16,12 +16,12 @@ class Match:
 def queue_match(match):
     t1p = ""
     for i in range(len(match.team1_players)):
-        t1p += match.team1_players[i]
+        t1p += str(match.team1_players[i])
         if i < len(match.team1_players) - 1:
             t1p += ", "
     t2p = ""
     for i in range(len(match.team2_players)):
-        t2p += match.team2_players[i]
+        t2p += str(match.team2_players[i])
         if i < len(match.team2_players) - 1:
             t2p += ", "
     print(t1p)
