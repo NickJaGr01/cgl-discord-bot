@@ -15,11 +15,15 @@ class Match:
 
 def queue_match(match):
     t1p = ""
-    if len(match.team1_players) > 0:
-        t1p = *match.team1_players, sep=", "
+    for i in range(len(match.team1_players)):
+        t1p += match.team1_players[i]
+        if i < len(match.team1_players) - 1:
+            t1p += ", "
     t2p = ""
-    if len(match.team2_players) > 0:
-        t2p = *match.team2_players, sep=", "
+    for i in range(len(match.team2_players)):
+        t2p += match.team2_players[i]
+        if i < len(match.team2_players) - 1:
+            t2p += ", "
     print(t1p)
     print(t2p)
     database.cur.execute("INSERT INTO matchtable (id, team1name, team1players, team2name, team2players, map, location, finished) VALUES (%s, '%s', '{%s}', '%s', '{%s}', '%s', '%s', false);" % (match.id, match.team1_name, t1p, match.team2_name, t2p, match.map, match.location))
