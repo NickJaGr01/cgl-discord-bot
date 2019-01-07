@@ -65,7 +65,7 @@ class ConfigHandler(tornado.web.RequestHandler):
         print("sending config")
         self.set_status(200)
         self.set_header("Content-Type", "application/json")
-        self.write(config)
+        self.write(json.dumps(config))
 
 def make_app():
     return tornado.web.Application([
