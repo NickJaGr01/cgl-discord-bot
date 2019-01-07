@@ -40,6 +40,7 @@ def generate_config(team1_name, team1_players, team2_name, team2_players, map):
     config = match_config.copy()
     config['matchid'] = "%s vs %s" % (team1_name, team2_name)
     config['num_maps'] = 1
+    config['maplist'] = []
     config['maplist'].append(map)
     config['team1']['name'] = team1_name
     config['team2']['name'] = team2_name
