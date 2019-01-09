@@ -28,11 +28,14 @@ match_config = {
         "name": "",
         "tag": "",
         "flag": "us",
-        "logo": "nip",
-        "players": {}
+        "logo": "nip"#,
+        #"players": {}
     },
     "cvars": {
-        "hostname": "CGL Server"
+        "hostname": "CGL Server",
+        "mp_overtime_enable": "1",
+        "mp_overtime_maxrounds": "6",
+        "mp_overtime_startmoney": "10000"
     }
 }
 
@@ -46,8 +49,8 @@ def generate_config(team1_name, team1_players, team2_name, team2_players, map):
     config['team2']['name'] = team2_name
     for p in team1_players:
         config['team1']['players'][database.steamid(p)] = database.username(p)
-    for p in team2_players:
-        config['team2']['players'][database.steamid(p)] = database.username(p)
+    #for p in team2_players:
+    #    config['team2']['players'][database.steamid(p)] = database.username(p)
     return config
 
 class MainHandler(tornado.web.RequestHandler):
