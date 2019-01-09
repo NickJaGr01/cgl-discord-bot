@@ -71,7 +71,7 @@ class ConfigHandler(tornado.web.RequestHandler):
         self.set_header("Content-Type", "application/json")
         self.write(json.dumps(config))
 
-class ResultHander(tornado.web.RequestHandler):
+class ResultHandler(tornado.web.RequestHandler):
     def post(self, matchid, score):
         print("result received")
         scores = score.split("-")
