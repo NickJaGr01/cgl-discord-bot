@@ -82,7 +82,7 @@ def make_app():
     return tornado.web.Application([
     (r"/", MainHandler),
     (r"/config/([0-9a-z+-]+)", ConfigHandler),
-    (r"/result/([0-9a-z+-]+)/([0-9]+-[0-9]+)")
+    (r"/result/([0-9a-z+-]+)/([0-9]+-[0-9]+)", ResultHandler)
     ])
 
 app = make_app()
