@@ -71,10 +71,18 @@ class ConfigHandler(tornado.web.RequestHandler):
         self.set_header("Content-Type", "application/json")
         self.write(json.dumps(config))
 
+class ResultHander(tornado.web.RequestHandler):
+    def post(self, matchid, score):
+        print("result received")
+        scores = score.split("-")
+        print("team1: %s\nteam2: %s" % (scores[0], scores[1]))
+
+
 def make_app():
     return tornado.web.Application([
     (r"/", MainHandler),
-    (r"/config/([0-9a-z+-]+)", ConfigHandler)
+    (r"/config/([0-9a-z+-]+)", ConfigHandler),
+    (r"/result/([0-9a-z+-]+)/([0-9]+-[0-9]+)")
     ])
 
 app = make_app()
