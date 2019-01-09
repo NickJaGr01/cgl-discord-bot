@@ -120,20 +120,21 @@ class Owner:
     @commands.command(pass_context=True)
     @commands.is_owner()
     async def creatematch(self, ctx, location, map, team1_name, team2_name, team1_size: int, *players: CGLUser):
-        p = []
-        for player in players:
-            p.append(player.id)
-        team1_players = p[:team1_size]
-        team2_players = p[team1_size:]
-        print(team1_players)
-        match = matches.Match(team1_name, team1_players, team2_name, team2_players, map, location)
-        matches.queue_match(match)
-        server = matches.start_match(match)
-        if server != None:
-            ip = utils.ip_from_domain(server['ip'])
-            await ctx.send("**game:** %s:%s" % (ip, server['ports']['game']))
-        else:
-            await ctx.send("Match could not be started.")
+        async with ctx.channel.typing():
+            p = []
+            for player in players:
+                p.append(player.id)
+            team1_players = p[:team1_size]
+            team2_players = p[team1_size:]
+            print(team1_players)
+            match = matches.Match(team1_name, team1_players, team2_name, team2_players, map, location)
+            matches.queue_match(match)
+            server = matches.start_match(match)
+            if server != None:
+                ip = utils.ip_from_domain(server['ip'])
+                await ctx.send("**game:** %s:%s" % (ip, server['ports']['game']))
+            else:
+                await ctx.send("Match could not be started.")
 
     @commands.command(pass_context=True)
     @commands.is_owner()

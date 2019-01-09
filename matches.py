@@ -41,7 +41,7 @@ def start_match(match):
     if scode != 200:
         return None
     #tell the server to request the match config from CGL
-    scode = servers.put_console(serverid, "get5_loadmatch_url https://cgl-discord-bot.herokuapp.com/config/%s" % match.id)
+    scode = servers.put_console(serverid, "get5_loadmatch_url \"https://cgl-discord-bot.herokuapp.com/config/%s\"" % match.id)
     if scode != 200:
         return None
     return servers.server_info(serverid)[0]
