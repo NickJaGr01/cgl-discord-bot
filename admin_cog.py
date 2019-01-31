@@ -19,7 +19,7 @@ MAJOR_OFFENSE_TABLE = {
 
 class Admin:
     @commands.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def giverep(self, ctx, drep: int, *players: CGLUser):
         """give rep to players"""
         if drep == None:
@@ -44,7 +44,7 @@ class Admin:
             await ctx.send("%s were not given any rep because they do not exist." % badplayers[:-1])
 
     @commands.group(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def server(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send("Use !help server for a list of subcommands.")
@@ -79,7 +79,7 @@ class Admin:
         else:
             await ctx.send("The server could not be deleted.")
     @server.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def list(self, ctx):
         serverlist, scode = servers.server_list()
         if scode == 200:
@@ -95,7 +95,7 @@ class Admin:
         else:
             await ctx.send("There was an error retrieving the server list.")
     @server.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def info(self, ctx, servername):
         server, scode = servers.server_info(servers.server_id(servername))
         if scode == 200:
@@ -112,7 +112,7 @@ class Admin:
         else:
             await ctx.send("Failed to get server info.")
     @server.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def start(self, ctx, servername):
         scode = servers.start_server(servers.server_id(servername))
         if scode == 200:
@@ -120,7 +120,7 @@ class Admin:
         else:
             await ctx.send("Failed to start server.")
     @server.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def stop(self, ctx, servername):
         scode = servers.stop_server(servers.server_id(servername))
         if scode == 200:
@@ -133,7 +133,7 @@ class Admin:
         if ctx.invoked_subcommand is None:
             await ctx.send("Use !help server edit for a list of subcommands.")
     @edit.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def map(self, ctx, servername, map):
         scode = servers.edit_server(servers.server_id(servername), {'csgo_settings.mapgroup_start_map':map})
         if scode == 200:
@@ -141,7 +141,7 @@ class Admin:
         else:
             await ctx.send("There was an error editing the server settings.")
     @edit.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def location(self, ctx, servername, location):
         scode = servers.edit_server(servers.server_id(servername), {'location':location})
         if scode == 200:
@@ -149,7 +149,7 @@ class Admin:
         else:
             await ctx.send("There was an error editing the server settings.")
     @edit.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def name(self, ctx, servername, newname):
         scode = servers.edit_server(servers.server_id(servername), {'name':newname})
         if scode == 200:
@@ -157,7 +157,7 @@ class Admin:
         else:
             await ctx.send("There was an error editing the server settings.")
     @edit.command(pass_context=True)
-    @commands.has_role('League Admin')
+    @commands.has_role('Admin')
     async def slots(self, ctx, servername, slots: int):
         scode = servers.edit_server(servers.server_id(servername), {'csgo_settings.slots':slots})
         if scode == 200:
