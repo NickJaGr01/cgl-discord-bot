@@ -68,9 +68,9 @@ async def on_member_join(member):
                 utils.escape_string(team)
                 database.cur.execute("UPDATE teamtable SET teamroleid=%s WHERE teamname='%s';" % (teamrole.id, team))
                 database.conn.commit()
-                await teams.update_role_position(teamname)
             await member.remove_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
             await member.add_roles(teamrole)
+            await teams.update_role_position(teamname)
 
 
 @bot.event
