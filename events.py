@@ -56,6 +56,23 @@ async def on_member_join(member):
         await member.send("Welcome back to CGL! We're glad you came back.")
         await log("%s rejoined the server." % (member.mention))
 
+        database.cur.execute("SELECT team FROM playertable WHERE discordid=%s;" % member.id)
+        team = database.cur.fetchone()[0]
+        if team != None:
+            database.cur.execute("SELECT teamroleid FROM teamtable WHERE teamname='%s';" % team)
+            troleid = database.cur.fetchone()[0]
+            teamrole = bot.guild.get_role(troleid)
+            if teamrole == None:
+                teamrole = await bot.guild.create_role(name=team, colour=discord.Colour.orange(), hoist=True, mentionable=True)
+                await teamrole.edit(permissions=bot.guild.get_role(bot.MEMBER_ROLE).permissions)
+                utils.escape_string(team)
+                database.cur.execute("UPDATE teamtable SET teamroleid=%s WHERE teamname='%s';" % (teamrole.id, team))
+                database.conn.commit()
+                await teams.update_role_position(teamname)''
+            await member.remove_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
+            await member.add_roles(teamrole)
+
+
 @bot.event
 async def on_member_remove(member):
     if database.user_registered(member.id):
