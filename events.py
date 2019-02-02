@@ -57,6 +57,7 @@ async def on_member_join(member):
         await log("%s rejoined the server." % (member.mention))
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         database.cur.execute("SELECT team FROM playertable WHERE discordid=%s;" % member.id)
         team = database.cur.fetchone()[0]
         if team != None:
@@ -74,6 +75,8 @@ async def on_member_join(member):
             await member.add_roles(teamrole)
 
 
+=======
+>>>>>>> parent of 9f46594... add team roles when join
 =======
 >>>>>>> parent of 9f46594... add team roles when join
 @bot.event
