@@ -168,7 +168,6 @@ class Teams:
         database.cur.execute("SELECT teamname FROM teamTable WHERE captainID=%s;" % ctx.author.id)
         team = database.cur.fetchone()[0]
         await teams.disband_team(team, "Team '%s' has been disbanded by the team captain.\nYou are now a free agent." % team)
-        await ctx.author.remove_roles(bot.guild.get_role(bot.CAPTAIN_ROLE))
         await ctx.send("Team '%s' has been disbanded ." % team)
         await utils.log("%s disbanded %s." % (database.username(ctx.author.id), team))
 

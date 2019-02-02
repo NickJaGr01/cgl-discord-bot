@@ -138,7 +138,8 @@ async def disband_team(team, message):
         await member.add_roles(bot.guild.get_role(bot.FREE_AGENT_ROLE))
         if message != None:
             await member.send(message)
-    await teamrole.delete()
+    if teamrole != None:
+        await teamrole.delete()
     await utils.log("%s has been disbanded." % team)
 
 async def update_elo(team):
